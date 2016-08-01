@@ -15,6 +15,7 @@ TEMPLATE = app
 SOURCES += main.cpp\
         control.cpp
 
-HEADERS  += control.h
+HEADERS  += control.h \
+        quanser.h
 
 FORMS    += control.ui
