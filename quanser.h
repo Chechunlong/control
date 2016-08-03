@@ -5,9 +5,8 @@
 // Created on 6 de Março de 2008, 20:23
 //
 
-
 /*
-    Modificado por carvalhojldc (João Leite)
+    Modificado por carvalhojldc - João Leite
 */
 
 #ifndef _QUANSER_H
