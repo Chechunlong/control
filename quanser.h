@@ -5,8 +5,14 @@
 // Created on 6 de Março de 2008, 20:23
 //
 
+
+/*
+    Modificado por carvalhojldc (João Leite)
+*/
+
 #ifndef _QUANSER_H
 #define	_QUANSER_H
+
 #include <unistd.h>
 #include <stdlib.h>
 #include <cstdlib>
@@ -22,15 +28,15 @@
 using std::cout;
 using std::cin;
 using std::string;
-using namespace std;
 
 class Quanser {
 private:
-   char* server;
-   int tcpPort;
+   char*  server;
+   int    tcpPort;
    int    sockfd;
    char   hostaddress[32];
    struct sockaddr_in address;
+   bool   status;
 
    
    /**
@@ -52,9 +58,11 @@ private:
       if (result == -1)  {
          perror ("Houve erro no cliente");
          return 1;
+         status = false;
       }
       else {
          return 0;
+         status = true;
       }
    }
    
@@ -107,6 +115,7 @@ public:
     *Construtor
     */
    Quanser (char* _server, int _tcpPort) {
+    status = false;
       this->tcpPort = _tcpPort;
       this->server = _server;
       this->connectServer();
@@ -116,6 +125,9 @@ public:
     *Grava a tensao especificada no parametro no canal DA 
     */
    int writeDA(int _channel, float _volts) {
+       if( _volts > 4 ) {
+            _volts = 4;
+       }
         std::string _toSend = "WRITE ";
         _toSend.append(itoa(_channel));
         _toSend.append(" ");
@@ -151,6 +163,10 @@ public:
       cout << "Destruido... \n";
       close(this->sockfd);
    }
+
+    bool getStatus() const {
+        return status;
+    }
 };
 
 
