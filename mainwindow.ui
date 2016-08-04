@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Control Quasar</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="QGroupBox" name="groupConectar">
@@ -164,31 +164,6 @@
         <height>31</height>
        </rect>
       </property>
-      <item>
-       <property name="text">
-        <string>Degrau</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Quadrada</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Senoidal</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Dente de Serra</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Aleatório</string>
-       </property>
-      </item>
      </widget>
      <widget class="QLabel" name="labelTipoSinal">
       <property name="geometry">
@@ -277,46 +252,6 @@
         <height>31</height>
        </rect>
       </property>
-      <item>
-       <property name="text">
-        <string>Canal 0</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Canal 1</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Canal 2</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Canal 3</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Canal 4</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Canal 5</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Canal 6</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Canal 7</string>
-       </property>
-      </item>
      </widget>
     </widget>
    </widget>

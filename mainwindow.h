@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QString>
+
 #include "qcustomplot.h"
 #include "quanser.h"
 #include "qthread.h"
@@ -15,34 +16,42 @@ namespace Ui {
 
 class MainWindow : public QMainWindow
 {
-    Q_OBJECT
+Q_OBJECT
 
-    public:
-        explicit MainWindow(QWidget *parent = 0);
-        ~MainWindow();
+public:
+    explicit MainWindow(QWidget *parent = 0);
+    ~MainWindow();
 
 
-        int    malha = 0;      /* 0 = Malha Fechada | 1 = Malha Aberta */
-        int    tipo_sinal = 0; /* 0 = Degrau | 1 = Quadrada | 2 = Senoidal | 3 = Dente de Serra | 4 = Aleatório */
-        double amplitude = 0.0;
-        double offSet = 0.0;
-        double periodo = 0.0;
-        int    canalEscrita = 0;
+    int    malha = 0;      /* 0 = Malha Fechada | 1 = Malha Aberta */
+    int    tipo_sinal = 0; /* 0 = Degrau | 1 = Quadrada | 2 = Senoidal | 3 = Dente de Serra | 4 = Aleatório */
+    double amplitude = 0.0;
+    double offSet = 0.0;
+    double periodo = 0.0;
+    int    canalEscrita = 0;
 
-        QThread *threadEscrita;
-        QThread *threadLeitura;
+    QThread *threadEscrita;
+    QThread *threadLeitura;
 
 
 private slots:
-        void on_radioAberta_clicked();
+    void on_radioAberta_clicked();
 
-        void on_radioFechada_clicked();
+    void on_radioFechada_clicked();
 
-        void connectServer();
+    void connectServer();
+
+    void updateData();
 
 private:
-        Ui::MainWindow *ui;
-        Quanser *quanser;
+    Ui::MainWindow *ui;
+    Quanser *quanser;
+
+    const float MAX_VOLTAGE = 4;
+    const float MIN_VOLTAGE = -4;
+
+    const char* SERVER = "10.13.99.69";
+    const int PORT = 20081;
 };
 
 #endif // MAINWINDOW_H
