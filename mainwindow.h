@@ -43,6 +43,10 @@ private slots:
 
     void updateData();
 
+    void openLoop();
+
+    void closeLoop();
+
 private:
     Ui::MainWindow *ui;
     Quanser *quanser;
@@ -50,8 +54,12 @@ private:
     const float MAX_VOLTAGE = 4;
     const float MIN_VOLTAGE = -4;
 
-    const char* SERVER = "10.13.99.69";
+    const char* SERVER = "10.13.99.6";
     const int PORT = 20081;
+    int timerId;
+
+protected:
+    void timerEvent(QTimerEvent *event);
 };
 
 #endif // MAINWINDOW_H

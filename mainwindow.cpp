@@ -70,6 +70,9 @@ void MainWindow::updateData()
 {
     QString _amplitude = ui->dSpinAmp->text();
     _amplitude.replace(",",".");
+
+    this->amplitude = _amplitude.toDouble();
+
     QString _periodo = ui->dSpinPeriodo->text();
     QString _offset = ui->dSpinOffSet->text();
 
@@ -97,10 +100,34 @@ void MainWindow::updateData()
 
         qDebug() << "Tensão escolhida: " << tensao;
 
+        //verifica se tem um loop em execução
+        if(timerId > 0){
+            closeLoop();
+        }
+        openLoop();
+
     }
     else if(ui->radioFechada->isChecked()) {
 
     }
 }
 
+void MainWindow::openLoop(){
+    timerId = startTimer(10);
+}
 
+void MainWindow::closeLoop(){
+    killTimer(timerId);
+    qDebug() << "parou";
+}
+
+void MainWindow::timerEvent(QTimerEvent *event){
+    //pega o os parametros lidos em updateData() para gerar o sinal
+
+    //ler o nivel do tanque
+    double nivel = quanser->readAD(0);
+    //calcula o erro (nivel em cm (?))
+    double erro = amplitude - nivel*3.2;//não tenho certeza se o fator de conversão é esse.
+    //sinal de saida = erro
+    quanser ->writeDA(0,erro);
+}
