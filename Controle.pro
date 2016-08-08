@@ -20,6 +20,7 @@ SOURCES += main.cpp\
 HEADERS  += mainwindow.h \
     quanser.h \
     qcustomplot.h \
-    signal.h
+    signal.h \
+    control.h
 
 FORMS    += mainwindow.ui

@@ -6,6 +6,8 @@ class Signal
 {
 public:
     Signal();
+
+
 };
 
 #endif // SIGNAL_H

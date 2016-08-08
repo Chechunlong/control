@@ -7,11 +7,30 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    timerLeitura = new QTimer(this);
+    threadLeitura = new QThread(0);
+
+    timerLeitura->moveToThread(threadEscrita);
+    connect(timerLeitura, SIGNAL(timeout()), this, SLOT(receiveData()));
+
+    this->timerLeitura->start(100);
+    this->threadLeitura->start();
+
+    timerEscrita= new QTimer(this);
+    threadEscrita = new QThread(0);
+
+    timerEscrita->moveToThread(threadEscrita);
+    connect(timerEscrita, SIGNAL(timeout()), this, SLOT(sendData()));
+
+    this->timerEscrita->start(100);
+    this->threadEscrita->start();
+
     connect(ui->buttonConectar, SIGNAL(clicked(bool)),this,SLOT(connectServer()));
     connect(ui->buttonAtualizar, SIGNAL(clicked(bool)),this,SLOT(updateData()));
 
     // Criando canais de escrita
-    for(int i=0; i<4; i++) {
+    for(int i=0; i<4; i++)
+    {
         ui->comboCanalEscrita->addItem("Canal " + QString::number(i),QVariant(i));
     }
 
@@ -45,8 +64,8 @@ void MainWindow::on_radioFechada_clicked()
     ui->labelAmp->setText("Amplitude (cm) ");
     ui->labelOffSet->setText("Off-set (cm) ");
 
-    ui->dSpinAmp->setRange(0,35); // conferir o tamanho em cm
-    ui->dSpinOffSet->setRange(0,35); // conferir o tamanho em cm
+    ui->dSpinAmp->setRange(MIN_LEVEL,MAX_LEVEL); // conferir o tamanho em cm
+    ui->dSpinOffSet->setRange(MIN_LEVEL,MAX_LEVEL); // conferir o tamanho em cm
 }
 
 void MainWindow::connectServer()
@@ -55,79 +74,91 @@ void MainWindow::connectServer()
 
     qDebug() << "Status da conexão: " << quanser->getStatus();
 
-    if(quanser->getStatus()) {
+    if(quanser->getStatus())
+    {
         ui->labelStatus->setText("Conectado!");
         ui->labelStatus->setStyleSheet("QLabel { color : green; }");
         ui->buttonConectar->setDisabled(true);
     }
-    else {
+    else
+    {
         ui->labelStatus->setText("Conexão Falhou!");
         ui->labelStatus->setStyleSheet("QLabel { color : red; }");
     }
 }
 
-void MainWindow::updateData()
+void MainWindow::data()
 {
-    QString _amplitude = ui->dSpinAmp->text();
-    _amplitude.replace(",",".");
+    this->amplitude = ui->dSpinAmp->value();
+    this->periodo = ui->dSpinPeriodo->value();
+    this->offSet = ui->dSpinOffSet->value();
 
-    this->amplitude = _amplitude.toDouble();
-
-    QString _periodo = ui->dSpinPeriodo->text();
-    QString _offset = ui->dSpinOffSet->text();
-
-    qDebug() << "_amplitude: " << _amplitude;
-    qDebug() << "_periodo: " << _periodo;
-    qDebug() << "_offset: " << _offset;
-
-    int canal = ui->comboCanalEscrita->currentIndex();
+    int canalEscrita = ui->comboCanalEscrita->currentIndex();
     int sinal = ui->comboTipoSinal->currentIndex();
 
-    qDebug() << "Canal de escrita: " << canal;
-    qDebug() << "Sinal escolhido: " << sinal << " " << ui->comboTipoSinal->currentText();
+    {
+        qDebug() << "_amplitude: " << this->amplitude;
+        qDebug() << "_periodo: " << this->periodo;
+        qDebug() << "_offset: " << this->offSet;
+        qDebug() << "Canal de escrita: " << canalEscrita;
+        qDebug() << "Sinal escolhido: " << sinal << " " << ui->comboTipoSinal->currentText();
+    }
 
-    if(ui->radioAberta->isChecked()) {
+    if(ui->radioAberta->isChecked())
+    {
 
-
-        float tensao = _amplitude.toFloat();
-
-        if(tensao > MAX_VOLTAGE) {
-            tensao = 4;
-        }
-        else if(tensao < MIN_VOLTAGE) {
-            tensao = -4;
-        }
+        float tensao = this->amplitude;
+        tensao = voltageControl(tensao);
 
         qDebug() << "Tensão escolhida: " << tensao;
 
-        //verifica se tem um loop em execução
-        if(timerId > 0){
-            closeLoop();
-        }
-        openLoop();
-
     }
-    else if(ui->radioFechada->isChecked()) {
+    else if(ui->radioFechada->isChecked())
+    {
+        this->amplitude = levelControl(this->amplitude);
+        float tensao = sqrt(2*GRAVITY*this->amplitude);
+        tensao = voltageControl(tensao);
 
     }
 }
 
-void MainWindow::openLoop(){
-    timerId = startTimer(10);
+float MainWindow::voltageControl(float voltage)
+{
+    if(voltage>MAX_VOLTAGE) voltage = MAX_VOLTAGE;
+    else if (voltage<MIN_VOLTAGE) voltage = MIN_VOLTAGE;
+
+    return voltage;
 }
 
-void MainWindow::closeLoop(){
-    killTimer(timerId);
-    qDebug() << "parou";
+int MainWindow::levelControl(int level)
+{
+    if(level>MAX_LEVEL) level = MAX_LEVEL;
+    else if (level<MIN_LEVEL) level = MIN_LEVEL;
+
+    return level;
 }
 
-void MainWindow::timerEvent(QTimerEvent *event){
-    //pega o os parametros lidos em updateData() para gerar o sinal
+void MainWindow::sendData()
+{
 
-    //ler o nivel do tanque
-    double nivel = quanser->readAD(0);
-    //calcula o erro (nivel em cm (?))
-    double erro = amplitude - nivel*3.2;//não tenho certeza se o fator de conversão é esse.
-    //sinal de saida = erro
-    quanser ->writeDA(0,erro);
+   qDebug() << this->amplitude;
+
+
+}
+
+void MainWindow::receiveData()
+{
+
+    float saida = 0;
+    if(ui->canal_0->isChecked()) saida = quanser->readAD(0);
+    qDebug() << "0 " << saida;
+    if(ui->canal_1->isChecked()) saida = quanser->readAD(1);
+    qDebug() << "1 " << saida;
+    if(ui->canal_2->isChecked()) saida = quanser->readAD(2);
+    qDebug() << "2 " << saida;
+    if(ui->canal_3->isChecked()) saida = quanser->readAD(3);
+    qDebug() << "3 " << saida;
+    if(ui->canal_4->isChecked()) saida = quanser->readAD(4);
+    qDebug() << "4 " << saida;
+
 }
