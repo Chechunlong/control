@@ -26,7 +26,8 @@ MainWindow::MainWindow(QWidget *parent) :
     this->threadEscrita->start();
 
     connect(ui->buttonConectar, SIGNAL(clicked(bool)),this,SLOT(connectServer()));
-    connect(ui->buttonAtualizar, SIGNAL(clicked(bool)),this,SLOT(updateData()));
+    connect(ui->buttonAtualizar, SIGNAL(clicked(bool)),this,SLOT(data()));
+
 
     // Criando canais de escrita
     for(int i=0; i<4; i++)
@@ -44,11 +45,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->radioAberta->setChecked(true); // Seta Malha aberta no início
     on_radioAberta_clicked();
 
+<<<<<<< HEAD
     ui->graficoEscrita->addGraph();
     ui->graficoEscrita->graph(0)->setPen(QPen(Qt::blue));
     ui->graficoEscrita->graph(0)->setAntialiasedFill(false);
     ui->graficoEscrita->legend->setVisible(true);
     ui->graficoEscrita->graph(0)->setName("Sinal saturado");
+=======
+    this->time = 0;
+    this->timeAux = 0;
+>>>>>>> 7292d7f57a96a1ebd49fec4185f1c0a8ef658b5d
 }
 
 MainWindow::~MainWindow()
@@ -97,23 +103,24 @@ void MainWindow::data()
 {
     this->amplitude = ui->dSpinAmp->value();
     this->periodo = ui->dSpinPeriodo->value();
+
     this->offSet = ui->dSpinOffSet->value();
 
-    int canalEscrita = ui->comboCanalEscrita->currentIndex();
-    int sinal = ui->comboTipoSinal->currentIndex();
+    this->canalEscrita = ui->comboCanalEscrita->currentIndex();
+    this->tipo_sinal = ui->comboTipoSinal->currentIndex();
 
     {
-        qDebug() << "_amplitude: " << this->amplitude;
+        /*qDebug() << "_amplitude: " << this->amplitude;
         qDebug() << "_periodo: " << this->periodo;
         qDebug() << "_offset: " << this->offSet;
         qDebug() << "Canal de escrita: " << canalEscrita;
-        qDebug() << "Sinal escolhido: " << sinal << " " << ui->comboTipoSinal->currentText();
+        qDebug() << "Sinal escolhido: " << tipo_sinal << " " << ui->comboTipoSinal->currentText();*/
     }
 
     if(ui->radioAberta->isChecked())
     {
 
-        float tensao = this->amplitude;
+        double tensao = this->amplitude;
         tensao = voltageControl(tensao);
 
         qDebug() << "Tensão escolhida: " << tensao;
@@ -122,7 +129,7 @@ void MainWindow::data()
     else if(ui->radioFechada->isChecked())
     {
         this->amplitude = levelControl(this->amplitude);
-        float tensao = sqrt(2*GRAVITY*this->amplitude);
+        double tensao = sqrt(2*GRAVITY*this->amplitude);
         tensao = voltageControl(tensao);
 
     }
@@ -148,7 +155,26 @@ void MainWindow::sendData()
 {
 
    qDebug() << this->amplitude;
+   signal = new Signal();
 
+   if(this->tipo_sinal == DEGRAU){
+       sinal_saida = signal->degrau(this->amplitude);
+   }else if(this->tipo_sinal == SENOIDAL){
+       sinal_saida = signal->seno(this->amplitude,this->time,this->periodo,this->offSet);
+   }else if(this->tipo_sinal == ALEATORIO && timeAux < time){
+       sinal_saida = signal->aleatorio(this->amplitude,this->periodo);
+
+       //variavel que indica o final do periodo selecionado.
+       this->timeAux = this->time + this->periodo;
+   }else if(this->tipo_sinal == QUADRADA){
+
+   }
+   qDebug() << "SINAL DE SAIDA = " << sinal_saida;
+   qDebug() << "tipo sinal = " << tipo_sinal;
+   qDebug() << "time" << time;
+   qDebug() << "periodo" << timeAux;
+
+    this->time += 0.1;
 
 }
 

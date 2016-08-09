@@ -8,6 +8,7 @@
 #include "qcustomplot.h"
 #include "quanser.h"
 #include "qthread.h"
+#include "signal.h"
 
 #include <QDebug>
 
@@ -43,6 +44,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     Quanser *quanser;
+    Signal *signal;
 
     const float MAX_VOLTAGE = 4;
     const float MIN_VOLTAGE = -4;
@@ -59,13 +61,21 @@ private:
     QTimer *timerLeitura;
     QThread *threadLeitura;
 
-
+    double time;
+    double timeAux;
     int malha = 0;      /* 0 = Malha Fechada | 1 = Malha Aberta */
     int tipo_sinal = 0; /* 0 = Degrau | 1 = Quadrada | 2 = Senoidal | 3 = Dente de Serra | 4 = Aleatório */
     float amplitude = 0.0;
     float offSet = 0.0;
     float periodo = 0.0;
     int canalEscrita = 0;
+    double sinal_saida;
+
+    const int DEGRAU = 0;
+    const int QUADRADA = 1;
+    const int SENOIDAL = 2;
+    const int DENTE_DE_SERRA = 3;
+    const int ALEATORIO = 4;
 
 
 protected:
