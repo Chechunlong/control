@@ -45,16 +45,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->radioAberta->setChecked(true); // Seta Malha aberta no início
     on_radioAberta_clicked();
 
-<<<<<<< HEAD
+    /*
     ui->graficoEscrita->addGraph();
     ui->graficoEscrita->graph(0)->setPen(QPen(Qt::blue));
     ui->graficoEscrita->graph(0)->setAntialiasedFill(false);
     ui->graficoEscrita->legend->setVisible(true);
     ui->graficoEscrita->graph(0)->setName("Sinal saturado");
-=======
+*/
     this->time = 0;
     this->timeAux = 0;
->>>>>>> 7292d7f57a96a1ebd49fec4185f1c0a8ef658b5d
+
 }
 
 MainWindow::~MainWindow()
@@ -154,25 +154,25 @@ int MainWindow::levelControl(int level)
 void MainWindow::sendData()
 {
 
-   qDebug() << this->amplitude;
-   signal = new Signal();
+    qDebug() << this->amplitude;
+    signal = new Signal();
 
-   if(this->tipo_sinal == DEGRAU){
+    if(this->tipo_sinal == DEGRAU){
        sinal_saida = signal->degrau(this->amplitude);
-   }else if(this->tipo_sinal == SENOIDAL){
+    }else if(this->tipo_sinal == SENOIDAL){
        sinal_saida = signal->seno(this->amplitude,this->time,this->periodo,this->offSet);
-   }else if(this->tipo_sinal == ALEATORIO && timeAux < time){
+    }else if(this->tipo_sinal == ALEATORIO && timeAux < time){
        sinal_saida = signal->aleatorio(this->amplitude,this->periodo);
 
        //variavel que indica o final do periodo selecionado.
        this->timeAux = this->time + this->periodo;
-   }else if(this->tipo_sinal == QUADRADA){
+    }else if(this->tipo_sinal == QUADRADA){
 
-   }
-   qDebug() << "SINAL DE SAIDA = " << sinal_saida;
-   qDebug() << "tipo sinal = " << tipo_sinal;
-   qDebug() << "time" << time;
-   qDebug() << "periodo" << timeAux;
+    }
+    qDebug() << "SINAL DE SAIDA = " << sinal_saida;
+    qDebug() << "tipo sinal = " << tipo_sinal;
+    qDebug() << "time" << time;
+    qDebug() << "periodo" << timeAux;
 
     this->time += 0.1;
 
@@ -181,7 +181,7 @@ void MainWindow::sendData()
 void MainWindow::receiveData()
 {
 
-    float saida = 0;
+   /* float saida = 0;
     if(ui->canal_0->isChecked()) saida = quanser->readAD(0);
     qDebug() << "0 " << saida;
     if(ui->canal_1->isChecked()) saida = quanser->readAD(1);
@@ -191,6 +191,6 @@ void MainWindow::receiveData()
     if(ui->canal_3->isChecked()) saida = quanser->readAD(3);
     qDebug() << "3 " << saida;
     if(ui->canal_4->isChecked()) saida = quanser->readAD(4);
-    qDebug() << "4 " << saida;
+    qDebug() << "4 " << saida;*/
 
 }

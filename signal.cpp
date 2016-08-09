@@ -6,23 +6,22 @@ Signal::Signal()
     srand(time(NULL));
 }
 
-double Signal::degrau(double amplitude){
-    return amplitude;
+double Signal::degrau(double tensao){
+    return tensao;
 }
 
-double Signal::seno(double amplitude,double time, double periodo, double offset){
+double Signal::seno(double tensao,double time, double periodo, double offset){
     double freq = 2*Signal::PI / periodo;
-    return amplitude * sin(freq*time) + offset;
+    return tensao * sin(freq*time) + offset;
 }
 
-double Signal::aleatorio(double amplitude, double periodo){
-    return rand() % (int)amplitude + 1;
-    //double perRand = rand() % periodo + 1;
-    //return 0;
+double Signal::aleatorio(double tensao, double periodo){
+    return rand() % (int)tensao + 1;
 }
 
-double Signal::quadrada(double amplitude, double offset){
-    return degrau(amplitude) + offset;
+double Signal::quadrada(double tensao, double offset){
+
+    return degrau(tensao) + offset;
 }
 
 

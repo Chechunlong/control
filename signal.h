@@ -7,16 +7,14 @@
 
 class Signal
 {
-    static const double PI = 3.14;
+    const double PI = 3.14159265359;
 
 public:
     Signal();
-    double degrau(double amplitude);
-    double seno(double amplitude,double time,double periodo, double offset);
-    double aleatorio(double amplitude, double periodo);
-    double quadrada(double amplitude,double offset);
-
-
+    double degrau(double );
+    double seno(double ,double ,double ,double );
+    double aleatorio(double , double );
+    double quadrada(double ,double );
 };
 
 #endif // SIGNAL_H
