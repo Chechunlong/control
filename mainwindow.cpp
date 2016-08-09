@@ -43,6 +43,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->radioAberta->setChecked(true); // Seta Malha aberta no início
     on_radioAberta_clicked();
+
+    ui->graficoEscrita->addGraph();
+    ui->graficoEscrita->graph(0)->setPen(QPen(Qt::blue));
+    ui->graficoEscrita->graph(0)->setAntialiasedFill(false);
+    ui->graficoEscrita->legend->setVisible(true);
+    ui->graficoEscrita->graph(0)->setName("Sinal saturado");
 }
 
 MainWindow::~MainWindow()
