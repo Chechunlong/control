@@ -17,20 +17,7 @@ public:
 
     }
 
-    float MainWindow::voltageControl(float voltage)
-    {
-        if(voltage>MAX_VOLTAGE) voltage = MAX_VOLTAGE;
-        else if (voltate<MIN_VOLTAGE) voltage = MIN_VOLTAGE;
-
-        return voltage;
-    }
-
-    int MainWindow::levelControl(int level)
-    {
-        if(level>MAX_LEVEL) level = MAX_LEVEL;
-        else if (level<MIN_LEVEL) level = MIN_LEVEL;
-
-        return level;
-    }
+    float MainWindow::voltageControl(float voltage);
+    int MainWindow::levelControl(int level);
 
 };
