@@ -16,7 +16,7 @@ double Signal::seno(double tensao,double time, double periodo, double offset){
 }
 
 double Signal::aleatorio(double tensao, double periodo){
-    return rand() % (int)tensao + 1;
+    return rand() % (int)tensao ;
 }
 
 double Signal::quadrada(double tensao, double offset){
