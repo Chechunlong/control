@@ -38,9 +38,7 @@ double Signal::quadrada(double tensao, double time, double periodo, double offse
 
 double Signal::serra(double tensao, double time, double periodo, double offset)
 {
-    double sinal = offset + tensao*((time/periodo)-floor(time/periodo));
-
-    return sinal;
+    return (tensao * 2 * time)/periodo - tensao + offset;
 }
 
 double Signal::periodoAleatorio()

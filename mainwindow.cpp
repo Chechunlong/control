@@ -233,6 +233,9 @@ void MainWindow::sendData()
         break;
     }
 
+    //write output signal
+    quanser->writeDA(this->canalEscrita,this->sinalSaida);
+
     // add data to lines:
     ui->graficoEscrita->graph(0)->addData(key/5, this->sinalSaida);
     //ui->graficoEscrita->graph(1)->addData(key/5, quanser->voltageControl(sinalSaida) );
