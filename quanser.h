@@ -33,6 +33,10 @@ private:
    struct sockaddr_in address;
    bool status = false;
 
+   const float MAX_VOLTAGE = 4;
+   const float MIN_VOLTAGE = -4;
+
+
    /**
     * Tenta conectar ao servidor, se conseguir conectar, retorna 0, se não
     * conseguir, retorna 1
@@ -110,6 +114,7 @@ private:
         return 0;
     }
 
+
 public:
     Quanser (const char* _server, int _tcpPort) {
         this->server = new char[strlen(_server)+1];
@@ -127,6 +132,7 @@ public:
     *Grava a tensao especificada no parametro no canal DA
     */
     int writeDA(int _channel, float _volts) {
+        _volts = voltageControl(_volts);
         string _toSend = "WRITE ";
         _toSend.append(itoa(_channel));
         _toSend.append(" ");
@@ -150,6 +156,14 @@ public:
         this->sendData(_toSend);
         string _rec = this->receiveData();
         return atof(_rec.c_str());
+    }
+
+    float voltageControl(float _volts)
+    {
+        if(_volts>MAX_VOLTAGE) _volts = MAX_VOLTAGE;
+        else if (_volts<MIN_VOLTAGE) _volts = MIN_VOLTAGE;
+
+        return _volts;
     }
 
     bool getStatus() {

@@ -4,12 +4,14 @@
 #include <QMainWindow>
 #include <QString>
 #include <cmath>
+#include "qthread.h"
 
 #include "qcustomplot.h"
 #include "quanser.h"
-#include "qthread.h"
 #include "signal.h"
+//#include "control.h"
 
+#include <iostream>
 #include <QDebug>
 
 namespace Ui {
@@ -25,6 +27,12 @@ public:
     ~MainWindow();
 
 private slots:
+    void configPanel();
+
+    void configGraphWrite();
+
+    void configGraphRead();
+
     void on_radioAberta_clicked();
 
     void on_radioFechada_clicked();
@@ -33,9 +41,9 @@ private slots:
 
     void data();
 
-    float voltageControl(float voltage);
-
     int levelControl(int level);
+
+    double voltageControl(double _volts);
 
     void sendData();
 
@@ -65,17 +73,18 @@ private:
     double timeAux;
     int malha = 0;      /* 0 = Malha Fechada | 1 = Malha Aberta */
     int tipo_sinal = 0; /* 0 = Degrau | 1 = Quadrada | 2 = Senoidal | 3 = Dente de Serra | 4 = Aleatório */
-    float amplitude = 0.0;
-    float offSet = 0.0;
-    float periodo = 0.0;
+    double amplitude = 0.0;
+    double offSet = 0.0;
+    double periodo = 0;
+    double tensao;
     int canalEscrita = 0;
-    double sinal_saida;
+    double sinalSaida;
 
-    const int DEGRAU = 0;
-    const int QUADRADA = 1;
-    const int SENOIDAL = 2;
-    const int DENTE_DE_SERRA = 3;
-    const int ALEATORIO = 4;
+    static constexpr int DEGRAU = 0;
+    static constexpr int QUADRADA = 1;
+    static constexpr int SENOIDAL = 2;
+    static constexpr int DENTE_DE_SERRA = 3;
+    static constexpr int ALEATORIO = 4;
 
 
 protected:
