@@ -40,6 +40,7 @@ private:
     * conseguir, retorna 1
     */
    int connectServer () {
+
       this->sockfd  = socket(AF_INET, SOCK_STREAM,0);  // criacao do socket
       this->address.sin_family = AF_INET;
 
@@ -113,7 +114,7 @@ public:
 
       this->tcpPort = _tcpPort;
       this->server = _server;
-      //this->connectServer();
+      this->connectServer();
    }
 
    /**
@@ -121,7 +122,7 @@ public:
     */
    int writeDA(int _channel, float _volts) {
 
-       return 0; // teste
+       //return 0; // teste
        if(_volts>4) _volts = 4;
        if(_volts<-4) _volts = -4;
 
@@ -147,7 +148,7 @@ public:
     */
     double readAD(int _channel) {
 
-        return rand()%100; // teste
+        //return 0; // teste
         std::string _toSend = "READ ";
         _toSend.append(itoa(_channel));
         _toSend.append("\n");

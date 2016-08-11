@@ -22,3 +22,6 @@ HEADERS  += mainwindow.h \
     signal.h
 
 FORMS    += mainwindow.ui
+
+DISTFILES += \
+    ff

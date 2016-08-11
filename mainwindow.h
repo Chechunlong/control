@@ -31,9 +31,15 @@ private slots:
 
     void configSignal();
 
+    void canalReadSelect();
+
     void closedLoop();
 
     void openLoop();
+
+    void limitRandInput();
+
+    void travel();
 
     void configGraphWrite();
 
@@ -59,6 +65,7 @@ private:
     Ui::MainWindow *ui;
     Quanser *quanser;
     Signal *signal;
+    QListWidgetItem *item;
 
     const double MAX_VOLTAGE = 4;
     const double MIN_VOLTAGE = -4;
@@ -77,28 +84,35 @@ private:
     static constexpr int DENTE_DE_SERRA = 3;
     static constexpr int ALEATORIO = 4;
 
+
     QTimer *timerEscrita;
     QTimer *timerLeitura;
 
     QThread *threadEscrita;
     QThread *threadLeitura;
 
+    int tipoMalha = 1; /* 0 -> fechada, 1 -> aberto*/
+
     double time;
     double timeAux;
     int tipo_sinal = 0; /* 0 = Degrau | 1 = Quadrada | 2 = Senoidal | 3 = Dente de Serra | 4 = Aleatório */
 
     double amplitude;
-    double tensao;
+
     double offSet;
     double periodo;
     double sinalEscrita;
     double sinalLeitura;
 
+    double sinalCalculado;
+
+    double tensao;
+    double tensaoErro;
     double erro;
 
     int canalEscrita;
     int canalLeitura;
-    vector<int> canalLeituraVec;
+    bool canalLeituraVec[7];
 
 };
 
