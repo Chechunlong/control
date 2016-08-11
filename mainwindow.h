@@ -66,6 +66,8 @@ private:
     const int MAX_LEVEL = 30;
     const int MIN_LEVEL = 0;
 
+    const double FATOR_CONVERSAO = 6.25;
+
     const char* SERVER = "10.13.99.69";
     const int PORT = 20081;
 
@@ -92,8 +94,11 @@ private:
     double sinalEscrita;
     double sinalLeitura;
 
+    double erro;
+
     int canalEscrita;
     int canalLeitura;
+    vector<int> canalLeituraVec;
 
 };
 

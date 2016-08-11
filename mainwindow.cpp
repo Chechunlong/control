@@ -229,12 +229,13 @@ void MainWindow::connectServer()
 void MainWindow::data()
 {
     double _amplitude = ui->dSpinAmp->value();
+
     this->periodo = ui->dSpinPeriodo->value();
-
     this->offSet = ui->dSpinOffSet->value();
-
     this->canalEscrita = ui->comboCanalEscrita->currentIndex();
     this->tipo_sinal = ui->comboTipoSinal->currentIndex();
+
+    this->canalLeitura = this->canalEscrita; // TEMP
 
     if(ui->radioAberta->isChecked())
     {
@@ -243,8 +244,7 @@ void MainWindow::data()
     else if(ui->radioFechada->isChecked())
     {
         this->amplitude = levelControl(_amplitude);
-        double _tensao = sqrt(2*GRAVITY*this->amplitude);
-        this->tensao = voltageControl(_tensao);
+        this->tensao = 2;
     }
 }
 
@@ -258,8 +258,8 @@ int MainWindow::levelControl(int level)
 
 double MainWindow::voltageControl(double _volts)
 {
-    if(_volts>MAX_VOLTAGE) _volts = MAX_VOLTAGE;
-    else if (_volts<MIN_VOLTAGE) _volts = MIN_VOLTAGE;
+    if(_volts>=MAX_VOLTAGE) _volts = MAX_VOLTAGE;
+    else if (_volts<=MIN_VOLTAGE) _volts = MIN_VOLTAGE;
 
     return _volts;
 }
@@ -297,8 +297,11 @@ void MainWindow::sendData()
 
     double gerado = sinalEscrita;
 
-    if(sinalEscrita>4) sinalEscrita = 4;
-    if(sinalEscrita<-4) sinalEscrita = -4;
+    sinalEscrita = voltageControl(sinalEscrita);
+
+    if(sinalLeitura<=0 && sinalEscrita<=0) stop();
+
+    if(sinalLeitura*6.25>=28) stop();
 
     quanser->writeDA(0,sinalEscrita);
 
@@ -331,19 +334,18 @@ void MainWindow::receiveData()
 {
     double key = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
 
-    int canal0 = 0;
-    double sinal = 0;
-    qDebug() << "canais";
-    sinal =  quanser->readAD(0);
-    sinal *= 6.25;
 
+    if(ui->radioFechada->isChecked())
+    {
+        sinalLeitura = quanser->readAD(canalLeitura); // volts
+        sinalLeitura *= FATOR_CONVERSAO; // cm
 
-    if(sinal<=0) sinal = 0;
-    qDebug() << sinal;
+        erro = amplitude - sinalLeitura; // cm
 
-    double erro = amplitude - sinal;
+        tensao = tensao + erro/FATOR_CONVERSAO; // volts
+    }
 
-    ui->graficoLeitura->graph(0)->addData(key/5,sinal); // nivel tanque 1
+    ui->graficoLeitura->graph(0)->addData(key/5,sinalLeitura); // nivel tanque 1
     ui->graficoLeitura->graph(2)->addData(key/5,erro); // erro abs
     if(ui->radioFechada->isChecked())
     {

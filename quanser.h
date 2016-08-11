@@ -147,7 +147,7 @@ public:
     */
     double readAD(int _channel) {
 
-        return 1; // teste
+        return rand()%100; // teste
         std::string _toSend = "READ ";
         _toSend.append(itoa(_channel));
         _toSend.append("\n");
