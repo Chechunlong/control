@@ -14,10 +14,10 @@ MainWindow::MainWindow(QWidget *parent) :
     threadEscrita = new QThread(this);
 
     timerLeitura->start(100);
-    threadLeitura->start();
+
 
     timerEscrita->start(100);
-    threadEscrita->start();
+
 
     timerLeitura->moveToThread(threadEscrita);
     connect(timerLeitura, SIGNAL(timeout()), this, SLOT(receiveData()));
@@ -27,15 +27,22 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->buttonConectar, SIGNAL(clicked(bool)),this,SLOT(connectServer()));
     connect(ui->buttonAtualizar, SIGNAL(clicked(bool)),this,SLOT(data()));
+    connect(ui->comboTipoSinal, SIGNAL(currentIndexChanged(int)),this,SLOT(configSignal()));
+    connect(ui->radioAberta, SIGNAL(clicked(bool)),this,SLOT(openLoop()));
+    connect(ui->radioFechada, SIGNAL(clicked(bool)),this,SLOT(closedLoop()));
 
     configPanel();
     configGraphWrite();
     configGraphRead();
 
-    time = 0;
-    timeAux = 0;
     signal = new Signal();
 
+    time = 0;
+    timeAux = 0;
+    amplitude = 0;
+    offSet = 0.0;
+    tensao = 0;
+    sinalEscrita = 0;
 }
 
 MainWindow::~MainWindow()
@@ -60,24 +67,91 @@ void MainWindow::configPanel()
     ui->comboTipoSinal->addItem("Dente de Serra",QVariant(3));
     ui->comboTipoSinal->addItem("Aleatório",QVariant(4));
 
+
     ui->radioAberta->setChecked(true); // Seta Malha aberta no início
-    on_radioAberta_clicked();
+    openLoop();
+}
+
+void MainWindow::configSignal()
+{
+
+    int sinalSelecionado = ui->comboTipoSinal->currentIndex();
+
+    if(ui->radioAberta->isChecked())
+    {
+        openLoop();
+    }
+    else if(ui->radioFechada->isChecked())
+    {
+        closedLoop();
+    }
+
+    ui->labelOffSet->setEnabled(true);
+    ui->labelPeriodo->setEnabled(true);
+    ui->dSpinOffSet->setEnabled(true);
+    ui->dSpinPeriodo->setEnabled(true);
+
+    if(sinalSelecionado == 0)
+    {
+        ui->labelOffSet->setEnabled(false);
+        ui->labelPeriodo->setEnabled(false);
+        ui->dSpinOffSet->setEnabled(false);
+        ui->dSpinPeriodo->setEnabled(false);
+    }
+}
+
+void MainWindow::closedLoop()
+{
+    tipo_sinal = ui->comboTipoSinal->currentIndex();
+    if(tipo_sinal == 4)
+    {
+        ui->labelOffSet->setText("Duração MIN:");
+        ui->labelPeriodo->setText("Duração MAX:");
+    }
+    else
+    {
+        ui->labelAmp->setText("Amplitude (cm) ");
+        ui->labelOffSet->setText("Off-set (cm) ");
+        ui->labelPeriodo->setText("Período");
+
+        ui->dSpinAmp->setRange(MIN_LEVEL,MAX_LEVEL); // conferir o tamanho em cm
+        ui->dSpinOffSet->setRange(MIN_LEVEL,MAX_LEVEL); // conferir o tamanho em cm
+    }
+}
+
+void MainWindow::openLoop()
+{
+    int sinalSelecionado = ui->comboTipoSinal->currentIndex();
+    if(sinalSelecionado == 4)
+    {
+        ui->labelOffSet->setText("Duração MIN:");
+        ui->labelPeriodo->setText("Duração MAX:");
+    }
+    else
+    {
+        ui->labelAmp->setText("Tensão (V) ");
+        ui->labelOffSet->setText("Off-set (V) ");
+        ui->labelPeriodo->setText("Período");
+
+        ui->dSpinAmp->setRange(MIN_VOLTAGE,MAX_VOLTAGE); // Limita a tensão entre -4V e 4V
+        ui->dSpinOffSet->setRange(MIN_VOLTAGE,MAX_VOLTAGE); // Limita a tensão entre -4V e 4V
+    }
 }
 
 void MainWindow::configGraphWrite()
 {
     // sinal enviado
     ui->graficoEscrita->addGraph(); // blue line
-    ui->graficoEscrita->graph(0)->setPen(QPen(Qt::blue));
+    ui->graficoEscrita->graph(0)->setPen(QPen(Qt::red));
     ui->graficoEscrita->graph(0)->setAntialiasedFill(false);
     ui->graficoEscrita->legend->setVisible(true);
-    ui->graficoEscrita->graph(0)->setName("Sinal saturado");
+    ui->graficoEscrita->graph(0)->setName("Sinal Enviado");
 
     // sinal calculado
     ui->graficoEscrita->addGraph(); // red line
-    ui->graficoEscrita->graph(1)->setPen(QPen(Qt::red));
+    ui->graficoEscrita->graph(1)->setPen(QPen(Qt::blue));
     ui->graficoEscrita->graph(1)->setAntialiasedFill(false);
-    ui->graficoEscrita->graph(1)->setName("Sinal calculado");
+    ui->graficoEscrita->graph(1)->setName("Sinal Calculado");
 
     ui->graficoEscrita->xAxis->setTickLabelType(QCPAxis::ltDateTime);
     ui->graficoEscrita->xAxis->setDateTimeFormat("hh:mm:ss");
@@ -86,10 +160,10 @@ void MainWindow::configGraphWrite()
     ui->graficoEscrita->xAxis->setTickStep(2);
     ui->graficoEscrita->axisRect()->setupFullAxesBox();
 
-    ui->graficoEscrita->yAxis->setRange(-12,12);
+    ui->graficoEscrita->yAxis->setRange(-7,7);
     ui->graficoEscrita->yAxis->setNumberPrecision(1);
     ui->graficoEscrita->yAxis->setLabel("Tensao (v) ");
-    ui->graficoEscrita->xAxis->setLabel("Tempo");
+    ui->graficoEscrita->xAxis->setLabel("Tempo (s)");
 
     connect(ui->graficoEscrita->xAxis, SIGNAL(rangeChanged(QCPRange)), ui->graficoEscrita->xAxis2, SLOT(setRange(QCPRange)));
     connect(ui->graficoEscrita->yAxis, SIGNAL(rangeChanged(QCPRange)), ui->graficoEscrita->yAxis2, SLOT(setRange(QCPRange)));
@@ -101,7 +175,7 @@ void MainWindow::configGraphRead()
     ui->graficoLeitura->addGraph();
     ui->graficoLeitura->graph(0)->setPen(QPen(Qt::black));
     ui->graficoLeitura->graph(0)->setAntialiasedFill(false);
-    ui->graficoLeitura->graph(0)->setName("Nivel do tanque1");
+    ui->graficoLeitura->graph(0)->setName("Nivel do tanque");
 
     // Set Point
     ui->graficoLeitura->addGraph();
@@ -117,7 +191,6 @@ void MainWindow::configGraphRead()
 
     ui->graficoLeitura->legend->setVisible(true);
 
-
     ui->graficoLeitura->xAxis->setTickLabelType(QCPAxis::ltDateTime);
     ui->graficoLeitura->xAxis->setDateTimeFormat("hh:mm:ss");
     ui->graficoLeitura->xAxis->setAutoTickStep(false);
@@ -131,27 +204,9 @@ void MainWindow::configGraphRead()
 
 }
 
-void MainWindow::on_radioAberta_clicked()
-{
-    ui->labelAmp->setText("Tensão (V) ");
-    ui->labelOffSet->setText("Off-set (V) ");
-
-    ui->dSpinAmp->setRange(MIN_VOLTAGE,MAX_VOLTAGE); // Limita a tensão entre -4V e 4V
-    ui->dSpinOffSet->setRange(MIN_VOLTAGE,MAX_VOLTAGE); // Limita a tensão entre -4V e 4V
-}
-
-void MainWindow::on_radioFechada_clicked()
-{
-    ui->labelAmp->setText("Amplitude (cm) ");
-    ui->labelOffSet->setText("Off-set (cm) ");
-
-    ui->dSpinAmp->setRange(MIN_LEVEL,MAX_LEVEL); // conferir o tamanho em cm
-    ui->dSpinOffSet->setRange(MIN_LEVEL,MAX_LEVEL); // conferir o tamanho em cm
-}
-
 void MainWindow::connectServer()
 {
-    quanser = new Quanser(this->SERVER,this->PORT);
+    quanser = new Quanser("10.13.99.69",this->PORT);
 
     qDebug() << "Status da conexão: " << quanser->getStatus();
 
@@ -160,6 +215,9 @@ void MainWindow::connectServer()
         ui->labelStatus->setText("Conectado!");
         ui->labelStatus->setStyleSheet("QLabel { color : green; }");
         ui->buttonConectar->setDisabled(true);
+
+        threadEscrita->start();
+        threadLeitura->start();
     }
     else
     {
@@ -206,6 +264,10 @@ double MainWindow::voltageControl(double _volts)
     return _volts;
 }
 
+void MainWindow::stop() {
+    quanser->writeDA(canalEscrita, 0);
+}
+
 void MainWindow::sendData()
 {
     double key = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
@@ -213,65 +275,85 @@ void MainWindow::sendData()
 
     switch (tipo_sinal) {
     case DEGRAU:
-        sinalSaida = signal->degrau(tensao, offSet);
+        sinalEscrita = signal->degrau(tensao, offSet);
         break;
     case SENOIDAL:
-        sinalSaida = signal->seno(tensao,timeAux,periodo,offSet);
+        sinalEscrita = signal->seno(tensao,timeAux,periodo,offSet);
         break;
     case QUADRADA:
-        sinalSaida = signal->quadrada(tensao, timeAux, periodo, offSet);
+        sinalEscrita = signal->quadrada(tensao, timeAux, periodo, offSet);
         break;
     case DENTE_DE_SERRA:
-        sinalSaida = signal->serra(tensao,timeAux, periodo, offSet);
+        sinalEscrita = signal->serra(tensao,timeAux, periodo, offSet);
         break;
     case ALEATORIO:
         if(timeAux==0)
         {
-            sinalSaida = signal->aleatorio();
+            sinalEscrita = signal->aleatorio();
             periodo = signal->periodoAleatorio();
         }
         break;
     }
 
-    //write output signal
-    quanser->writeDA(this->canalEscrita,this->sinalSaida);
+    double gerado = sinalEscrita;
+
+    if(sinalEscrita>4) sinalEscrita = 4;
+    if(sinalEscrita<-4) sinalEscrita = -4;
+
+    quanser->writeDA(0,sinalEscrita);
 
     // add data to lines:
-    ui->graficoEscrita->graph(0)->addData(key/5, this->sinalSaida);
-    //ui->graficoEscrita->graph(1)->addData(key/5, quanser->voltageControl(sinalSaida) );
+    ui->graficoEscrita->graph(0)->addData(key/5, this->sinalEscrita);
+    ui->graficoEscrita->graph(1)->addData(key/5, gerado);
 
     // make key axis range scroll with the data (at a constant range size of 8):
     ui->graficoEscrita->xAxis->setRange((key + 0.25)/5, 10, Qt::AlignRight);
 
     ui->graficoEscrita->replot();
 
-    qDebug() << "tensao = " << tensao;
+   /* qDebug() << "tensao = " << tensao;
     qDebug() << "periodo = " << periodo;
     qDebug() << "offset" << offSet;
 
-    qDebug() << "SINAL DE SAIDA = " << sinalSaida;
+    qDebug() << "SINAL DE SAIDA = " << sinalEscrita;
     qDebug() << "tipo sinal = " << tipo_sinal;
     qDebug() << "time" << time;
     qDebug() << "periodo" << this->periodo;
     qDebug() << "timeAUx " << timeAux;
-
+*/
     if(timeAux >= periodo) timeAux = 0;
 
     timeAux += 0.1;
-    time += 0.1;
+    //time += 0.1;
 }
 
 void MainWindow::receiveData()
 {
     double key = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
 
-    // TODO: ...
+    int canal0 = 0;
+    double sinal = 0;
+    qDebug() << "canais";
+    sinal =  quanser->readAD(0);
+    sinal *= 6.25;
 
-    ui->graficoLeitura->graph(0)->addData(key/5,1); // nivel tanque 1
-    ui->graficoLeitura->graph(1)->addData(key/5,2); // set point
-    ui->graficoLeitura->graph(2)->addData(key/5,3); // erro abs
+
+    if(sinal<=0) sinal = 0;
+    qDebug() << sinal;
+
+    double erro = amplitude - sinal;
+
+    ui->graficoLeitura->graph(0)->addData(key/5,sinal); // nivel tanque 1
+    ui->graficoLeitura->graph(2)->addData(key/5,erro); // erro abs
+    if(ui->radioFechada->isChecked())
+    {
+        ui->graficoLeitura->graph(1)->addData(key/5,amplitude); // set point
+    }
+
 
     // make key axis range scroll with the data (at a constant range size of 8):
     ui->graficoLeitura->xAxis->setRange((key+0.25)/5, 8, Qt::AlignRight);
     ui->graficoLeitura->replot();
 }
+
+

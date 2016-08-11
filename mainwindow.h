@@ -29,13 +29,15 @@ public:
 private slots:
     void configPanel();
 
+    void configSignal();
+
+    void closedLoop();
+
+    void openLoop();
+
     void configGraphWrite();
 
     void configGraphRead();
-
-    void on_radioAberta_clicked();
-
-    void on_radioFechada_clicked();
 
     void connectServer();
 
@@ -45,40 +47,27 @@ private slots:
 
     double voltageControl(double _volts);
 
+    void stop();
+
     void sendData();
 
     void receiveData();
+
+
 
 private:
     Ui::MainWindow *ui;
     Quanser *quanser;
     Signal *signal;
 
-    const float MAX_VOLTAGE = 4;
-    const float MIN_VOLTAGE = -4;
-    const float GRAVITY = 9.806;
+    const double MAX_VOLTAGE = 4;
+    const double MIN_VOLTAGE = -4;
+    const double GRAVITY = 9.806;
     const int MAX_LEVEL = 30;
     const int MIN_LEVEL = 0;
 
-    const char* SERVER = "10.13.99.6";
+    const char* SERVER = "10.13.99.69";
     const int PORT = 20081;
-
-    QTimer *timerEscrita;
-    QThread *threadEscrita;
-
-    QTimer *timerLeitura;
-    QThread *threadLeitura;
-
-    double time;
-    double timeAux;
-    int malha = 0;      /* 0 = Malha Fechada | 1 = Malha Aberta */
-    int tipo_sinal = 0; /* 0 = Degrau | 1 = Quadrada | 2 = Senoidal | 3 = Dente de Serra | 4 = Aleatório */
-    double amplitude = 0.0;
-    double offSet = 0.0;
-    double periodo = 0;
-    double tensao;
-    int canalEscrita = 0;
-    double sinalSaida;
 
     static constexpr int DEGRAU = 0;
     static constexpr int QUADRADA = 1;
@@ -86,8 +75,25 @@ private:
     static constexpr int DENTE_DE_SERRA = 3;
     static constexpr int ALEATORIO = 4;
 
+    QTimer *timerEscrita;
+    QTimer *timerLeitura;
 
-protected:
+    QThread *threadEscrita;
+    QThread *threadLeitura;
+
+    double time;
+    double timeAux;
+    int tipo_sinal = 0; /* 0 = Degrau | 1 = Quadrada | 2 = Senoidal | 3 = Dente de Serra | 4 = Aleatório */
+
+    double amplitude;
+    double tensao;
+    double offSet;
+    double periodo;
+    double sinalEscrita;
+    double sinalLeitura;
+
+    int canalEscrita;
+    int canalLeitura;
 
 };
 

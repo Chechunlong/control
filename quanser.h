@@ -18,11 +18,12 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-
 #include <QDebug>
 
+using std::cout;
+using std::cin;
 using std::string;
-using std::stringstream;
+using namespace std;
 
 class Quanser {
 private:
@@ -31,144 +32,154 @@ private:
    int    sockfd;
    char   hostaddress[32];
    struct sockaddr_in address;
-   bool status = false;
-
-   const float MAX_VOLTAGE = 4;
-   const float MIN_VOLTAGE = -4;
+   bool status = true;
 
 
    /**
     * Tenta conectar ao servidor, se conseguir conectar, retorna 0, se não
     * conseguir, retorna 1
     */
-    int connectServer () {
-        this->sockfd  = socket(AF_INET, SOCK_STREAM,0);  // criacao do socket
+   int connectServer () {
+      this->sockfd  = socket(AF_INET, SOCK_STREAM,0);  // criacao do socket
+      this->address.sin_family = AF_INET;
 
-        qDebug() << "sockfd: " << this->sockfd;
-        if(this->sockfd < 0) {
-            perror("Socket");
-            status = false;
-            return 1;
-        }
+      this->address.sin_addr.s_addr = inet_addr(this->server);
+      this->address.sin_port = htons(this->tcpPort);
 
-        this->address.sin_family = AF_INET;
+      int len = sizeof(this->address);
 
-        this->address.sin_addr.s_addr = inet_addr(this->server);
-        this->address.sin_port = htons(this->tcpPort);
+      int result = connect(this->sockfd, (struct sockaddr *)
+         &this->address, len);
 
-        int len = sizeof(this->address);
-
-        /* Ta esperando infinitamente quando nao encontra o ip*/
-        int result = connect(this->sockfd, (struct sockaddr *) &this->address, len);
-
-        qDebug() << "4" << result;
-
-        if (result == -1)  {
-            perror ("Houve erro no cliente");
-            status = false;
-            return 1;
-        }
-        else {
-            status = true;
-            return 0;
-        }
-    }
+      if (result == -1)  {
+         perror ("Houve erro no cliente");
+         return 1;
+      }
+      else {
+         return 0;
+      }
+   }
 
    /**
-    *Converte de inteiro para string
+    *Converte de inteiro para std::string
     */
-    string itoa(int _toConvert){
-        stringstream ss;
-        string str;
+   std::string itoa(int _toConvert){
+        std::stringstream ss;
+        std::string str;
         ss << _toConvert;
         ss >> str;
         return str;
-    }
+   }
    /**
-    *Converte de float para string
+    *Converte de float para std::string
     */
-    string ftoa(float _toConvert){
-        stringstream ss;
-        string str;
-        ss << _toConvert;
-        ss >> str;
-        return str;
-    }
+   std::string ftoa(float _toConvert){
+       std::stringstream ss;
+       std::string str;
+       ss << _toConvert;
+       ss >> str;
+       return str;
+   }
 
-    string receiveData() {
-        char  ch = ' ';
-        string _received = "";
-        int _count = 0;
-        do {
-            read(this->sockfd,&ch,1);
-            _received.append(1,ch);
-            _count++;
-        } while (ch != '\n' || _count < 3); //Assumo que nao receberei mensagens menores que 3
+   std::string receiveData() {
+      char  ch = ' ';
+      std::string _received = "";
+      int _count = 0;
+      do {
+        read(this->sockfd,&ch,1);
+        _received.append(1,ch);
+        _count++;
+      } while (ch != '\n' || _count < 3); //Assumo que nao receberei mensagens menores que 3
 
-        return _received;
-    }
+      return _received;
+   }
 
-    int sendData(string _toSend) {
+   int sendData(std::string _toSend) {
         int _tamanho = _toSend.length();
         write(this->sockfd,_toSend.c_str(),_tamanho);
         return 0;
-    }
-
+   }
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
 
 public:
-    Quanser (const char* _server, int _tcpPort) {
-        this->server = new char[strlen(_server)+1];
-        this->tcpPort = _tcpPort;
-        strcpy(this->server,_server);
-        this->connectServer();
-    }
+   /**
+    *Construtor
+    */
+   Quanser (char* _server, int _tcpPort) {
 
-    ~Quanser(void){
-        delete this->server;
-        close(this->sockfd);
-    }
+
+      this->tcpPort = _tcpPort;
+      this->server = _server;
+      //this->connectServer();
+   }
 
    /**
     *Grava a tensao especificada no parametro no canal DA
     */
-    int writeDA(int _channel, float _volts) {
-        _volts = voltageControl(_volts);
-        string _toSend = "WRITE ";
+   int writeDA(int _channel, float _volts) {
+
+       return 0; // teste
+       if(_volts>4) _volts = 4;
+       if(_volts<-4) _volts = -4;
+
+        std::string _toSend = "WRITE ";
         _toSend.append(itoa(_channel));
         _toSend.append(" ");
         _toSend.append(ftoa(_volts));
         _toSend.append("\n");
         this->sendData(_toSend);
-        string _rec = this->receiveData();
+        std::string _rec = this->receiveData();
 
-        if (_rec.find("ACK",0) > _rec.length() ) return -1 ; //erro
-        else return 0;
-    }
+
+
+        if (_rec.find("ACK",0) > _rec.length() )
+            return -1 ; //erro
+        else
+            return 0;
+   }
 
 
    /**
     *Le o valor de tensao que esta no canal AD especificado
     */
     double readAD(int _channel) {
-        string _toSend = "READ ";
+
+        return 1; // teste
+        std::string _toSend = "READ ";
         _toSend.append(itoa(_channel));
         _toSend.append("\n");
         this->sendData(_toSend);
-        string _rec = this->receiveData();
-        return atof(_rec.c_str());
+        std::string _rec = this->receiveData();
+
+
+
+        double value;
+
+        stringstream strs;
+        strs<<_rec.c_str();
+        strs >> value;
+
+        return value;
     }
 
-    float voltageControl(float _volts)
-    {
-        if(_volts>MAX_VOLTAGE) _volts = MAX_VOLTAGE;
-        else if (_volts<MIN_VOLTAGE) _volts = MIN_VOLTAGE;
 
-        return _volts;
-    }
+   /**
+    *Destrutor
+    */
+   ~Quanser(void){
+      cout << "Destruido... \n";
+      close(this->sockfd);
+   }
 
     bool getStatus() {
         return status;
     }
 };
+
+
+
 
 #endif	/* _QUANSER_H */
