@@ -30,6 +30,8 @@ public:
 
     void setAmplitude(double value);
 
+    void setAuxForRand(double value);
+
     void setOffSet(double value);
 
     void setCanalEscrita(int value);

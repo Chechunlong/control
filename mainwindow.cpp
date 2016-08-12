@@ -299,6 +299,12 @@ void MainWindow::data()
         control->setTipoMalha(0);
     }
 
+    if(tipoSinal == ALEATORIO)
+    {
+        double auxForRand = ui->dSpinAux->value();
+        control->setAuxForRand(auxForRand);
+    }
+
     control->setCanalEscrita(canalEscrita);
     control->setPeriodo(periodo);
     control->setOffSet(offSet);
@@ -351,5 +357,3 @@ void MainWindow::receiveData()
     ui->graficoLeitura->xAxis->setRange((key+0.25)/5, 8, Qt::AlignRight);
     ui->graficoLeitura->replot();
 }
-
-

@@ -63,6 +63,11 @@ void Control::setAmplitude(double value)
     amplitude = value;
 }
 
+void Control::setAuxForRand(double value)
+{
+    auxForRand = value;
+}
+
 void Control::setCanalEscrita(int value)
 {
     canalEscrita = canalLeitura = value;
@@ -192,4 +197,3 @@ void Control::receiveSigal()
         canaisLeitura_value[i] = readVoltage * FATOR_CONVERSAO;
     }
 }
-
