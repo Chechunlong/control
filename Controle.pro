@@ -23,5 +23,4 @@ HEADERS  += mainwindow.h \
 
 FORMS    += mainwindow.ui
 
-DISTFILES += \
-    ff
+DISTFILES +=

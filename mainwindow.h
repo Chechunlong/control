@@ -27,23 +27,21 @@ public:
     ~MainWindow();
 
 private slots:
-    void configPanel();
+    void UI_configGraphWrite();
 
-    void configSignal();
+    void UI_configGraphRead();
 
-    void canalReadSelect();
+    void UI_canalReadSelect();
 
-    void closedLoop();
+    void UI_configPanel();
 
-    void openLoop();
+    void UI_configSignal();
 
-    void limitRandInput();
+    void UI_closedLoop();
 
-    void travel();
+    void UI_openLoop();
 
-    void configGraphWrite();
-
-    void configGraphRead();
+    void UI_limitRandInput();
 
     void connectServer();
 
@@ -51,9 +49,11 @@ private slots:
 
     int levelControl(int level);
 
-    double voltageControl(double _volts);
+    double voltageControl(double volts);
 
     void stop();
+
+    void travel();
 
     void sendData();
 
@@ -67,6 +67,10 @@ private:
     Signal *signal;
     QListWidgetItem *item;
 
+
+    const char* SERVER = "10.13.99.69";
+    const int PORT = 20081;
+
     const double MAX_VOLTAGE = 4;
     const double MIN_VOLTAGE = -4;
     const double GRAVITY = 9.806;
@@ -75,15 +79,13 @@ private:
 
     const double FATOR_CONVERSAO = 6.25;
 
-    const char* SERVER = "10.13.99.69";
-    const int PORT = 20081;
+    static const int NUMB_CAN_READ = 8;
 
     static constexpr int DEGRAU = 0;
     static constexpr int QUADRADA = 1;
     static constexpr int SENOIDAL = 2;
     static constexpr int DENTE_DE_SERRA = 3;
     static constexpr int ALEATORIO = 4;
-
 
     QTimer *timerEscrita;
     QTimer *timerLeitura;
@@ -97,22 +99,23 @@ private:
     double timeAux;
     int tipo_sinal = 0; /* 0 = Degrau | 1 = Quadrada | 2 = Senoidal | 3 = Dente de Serra | 4 = Aleatório */
 
-    double amplitude;
-
-    double offSet;
-    double periodo;
     double sinalEscrita;
     double sinalLeitura;
-
     double sinalCalculado;
 
+    // Update data function: _data()
     double tensao;
+    double offSet;
+    double periodo;
+    double amplitude;
+
+    // Malha fechada function: _receiveData()
     double tensaoErro;
     double erro;
 
     int canalEscrita;
     int canalLeitura;
-    bool canalLeituraVec[7];
+    bool canalLeituraVec[NUMB_CAN_READ];
 
 };
 

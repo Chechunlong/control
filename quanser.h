@@ -114,7 +114,7 @@ public:
 
       this->tcpPort = _tcpPort;
       this->server = _server;
-      this->connectServer();
+      //this->connectServer();
    }
 
    /**
@@ -122,7 +122,7 @@ public:
     */
    int writeDA(int _channel, float _volts) {
 
-       //return 0; // teste
+       return 0; // teste
        if(_volts>4) _volts = 4;
        if(_volts<-4) _volts = -4;
 
@@ -148,7 +148,7 @@ public:
     */
     double readAD(int _channel) {
 
-        //return 0; // teste
+        return 1; // teste
         std::string _toSend = "READ ";
         _toSend.append(itoa(_channel));
         _toSend.append("\n");
