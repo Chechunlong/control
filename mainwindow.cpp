@@ -316,7 +316,7 @@ void MainWindow::data()
     else if(ui->radioFechada->isChecked())
     {
         this->amplitude = levelControl(_amplitude);
-        this->tensao= 2; // for init
+        this->tensao= 0; // for init
 
         tipoMalha = 0;
     }
@@ -338,29 +338,13 @@ double MainWindow::voltageControl(double volts)
     return volts;
 }
 
-void MainWindow::stop() {
-    quanser->writeDA(canalEscrita, 0);
-
-    sinalLeitura = 0;
-    sinalEscrita = 0;
-    sinalCalculado = 0;
-
-    tensao = 0;
-    offSet = 0;
-    periodo = 0;
-    amplitude = 0;
-
-    tensaoErro = 0;
-    erro = 0;
-}
-
 void MainWindow::travel()
 {
     sinalEscrita = voltageControl(sinalEscrita);
 
-    if(sinalLeitura<2 && sinalEscrita<0) stop();
+    if(sinalLeitura<=3 && sinalEscrita<0) sinalEscrita = 0;
 
-    if(sinalLeitura>=28 && sinalEscrita>0) stop();
+    if(sinalLeitura>=28 && sinalEscrita>0) sinalEscrita = 0;
 }
 
 void MainWindow::sendData()
@@ -396,25 +380,22 @@ void MainWindow::sendData()
         break;
     }
 
-
     sinalEscrita = sinalCalculado;
 
-    if(this->tipoMalha == 0)
+    if(this->tipoMalha == 0) // em malha fechadax
     {
-        tensao += tensaoErro;
-        sinalEscrita += tensaoErro;
-    }
+        tensao = erro;
 
-    /*
-    if(this->tipoMalha == 1) sinalEscrita = sinalCalculado;
-    else
-    {
-        sinalCalculado += tensaoErro;
-        sinalEscrita = sinalCalculado;
+        //tensao = voltageControl(tensao);
+        //sinalEscrita += tensaoErro;
     }
-    */
 
     travel();
+
+    qDebug() << "tensao " << tensao;
+    qDebug() << "sinalEscrita " << sinalEscrita;
+    qDebug() << "sinalLeitura " << sinalLeitura;
+    qDebug() << "erro " << erro;
 
     quanser->writeDA(canalEscrita,sinalEscrita);
 
@@ -433,20 +414,16 @@ void MainWindow::receiveData()
 {
     double key = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
 
-    travel();
+    double readVoltage = quanser->readAD(canalLeitura); // volts
+    sinalLeitura = readVoltage * FATOR_CONVERSAO; // cm
 
     if(tipoMalha == 0)
     {
-        double readVoltage = quanser->readAD(canalLeitura); // volts
-
-        sinalLeitura = readVoltage * FATOR_CONVERSAO; // cm
         erro = amplitude - sinalLeitura; // cm
-        tensaoErro =  erro/FATOR_CONVERSAO;
+        tensaoErro =  erro/FATOR_CONVERSAO; // volts
 
         ui->graficoLeitura->graph(0)->addData(key/5,erro); // erro abs
         ui->graficoLeitura->graph(1)->addData(key/5,amplitude); // set point
-
-        ui->graficoLeitura->graph(canalLeitura+2)->addData(key/5,sinalLeitura);
 
         for(int i=0; i<NUMB_CAN_READ; i++)
         {
@@ -456,13 +433,15 @@ void MainWindow::receiveData()
                 ui->graficoLeitura->graph(i+2)->addData(key/5,temp);
             }
         }
-
-        ui->lb_sinalLido->setText("Nível do tanque = " + QString::number(sinalLeitura) + " cm");
         ui->lb_erro->setText("Erro = " + QString::number(erro) + " cm");
-
-        ui->graficoLeitura->xAxis->setRange((key+0.25)/5, 8, Qt::AlignRight);
-        ui->graficoLeitura->replot();
     }
+
+    ui->lb_sinalLido->setText("Nível do tanque = " + QString::number(sinalLeitura) + " cm");
+
+    ui->graficoLeitura->graph(canalLeitura+2)->addData(key/5,sinalLeitura);
+
+    ui->graficoLeitura->xAxis->setRange((key+0.25)/5, 8, Qt::AlignRight);
+    ui->graficoLeitura->replot();
 }
 
 

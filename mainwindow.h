@@ -51,15 +51,11 @@ private slots:
 
     double voltageControl(double volts);
 
-    void stop();
-
     void travel();
 
     void sendData();
 
     void receiveData();
-
-
 
 private:
     Ui::MainWindow *ui;
