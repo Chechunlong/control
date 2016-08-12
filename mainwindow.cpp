@@ -45,21 +45,6 @@ MainWindow::MainWindow(QWidget *parent) :
     UI_configPanel();
     UI_configGraphWrite();
     UI_configGraphRead();
-
-    signal = new Signal();
-
-    time        = 0.0;
-    timeAux     = 0.0;
-    amplitude   = 0.0;
-    offSet      = 0.0;
-    tensaoErro     = 0.0;
-    tensao = 0;
-    sinalEscrita = 0;
-    erro = 0;
-    sinalLeitura = 0;
-
-    tipoMalha = 1; // aberta
-
 }
 
 MainWindow::~MainWindow()
@@ -274,11 +259,9 @@ void MainWindow::UI_limitRandInput()
 
 void MainWindow::connectServer()
 {
-    quanser = new Quanser("10.13.99.69",this->PORT);
+    control = new Control();
 
-    qDebug() << "Status da conexão: " << quanser->getStatus();
-
-    if(quanser->getStatus())
+    if(control->connectionStatus())
     {
         ui->labelStatus->setText("Conectado!");
         ui->labelStatus->setStyleSheet("QLabel { color : green; }");
@@ -299,52 +282,27 @@ void MainWindow::connectServer()
 
 void MainWindow::data()
 {
-    double _amplitude = ui->dSpinAmp->value();
-
-    this->periodo = ui->dSpinPeriodo->value();
-    this->offSet = ui->dSpinOffSet->value();
-    this->canalEscrita = ui->comboCanalEscrita->currentIndex();
-    this->tipo_sinal = ui->comboTipoSinal->currentIndex();
-    this->canalLeitura = this->canalEscrita;
+    double amplitude = ui->dSpinAmp->value();
+    double periodo = ui->dSpinPeriodo->value();
+    double offSet = ui->dSpinOffSet->value();
+    int canalEscrita = ui->comboCanalEscrita->currentIndex();
+    int tipoSinal = ui->comboTipoSinal->currentIndex();
 
     if(ui->radioAberta->isChecked())
     {
-        this->tensao = voltageControl(_amplitude);
-
-        tipoMalha = 1;
+        control->setTensao(amplitude);
+        control->setTipoMalha(1);
     }
     else if(ui->radioFechada->isChecked())
     {
-        this->amplitude = levelControl(_amplitude);
-        this->tensao= 0; // for init
-
-        tipoMalha = 0;
+        control->setAmplitude(amplitude);
+        control->setTipoMalha(0);
     }
-}
 
-int MainWindow::levelControl(int level)
-{
-    if(level>MAX_LEVEL) level = MAX_LEVEL;
-    else if (level<MIN_LEVEL) level = MIN_LEVEL;
-
-    return level;
-}
-
-double MainWindow::voltageControl(double volts)
-{
-    if(volts>=MAX_VOLTAGE) volts = MAX_VOLTAGE;
-    else if (volts<=MIN_VOLTAGE) volts = MIN_VOLTAGE;
-
-    return volts;
-}
-
-void MainWindow::travel()
-{
-    sinalEscrita = voltageControl(sinalEscrita);
-
-    if(sinalLeitura<=3 && sinalEscrita<0) sinalEscrita = 0;
-
-    if(sinalLeitura>=28 && sinalEscrita>0) sinalEscrita = 0;
+    control->setCanalEscrita(canalEscrita);
+    control->setPeriodo(periodo);
+    control->setOffSet(offSet);
+    control->setTipoSinal(tipoSinal);
 }
 
 void MainWindow::sendData()
@@ -352,60 +310,17 @@ void MainWindow::sendData()
     double key = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
     //static double lastPointKey = 0;
 
-    if(timeAux > periodo) timeAux = 0;
+    control->sendSignal();
 
-    switch (tipo_sinal) {
-    case DEGRAU:
-        sinalCalculado = signal->degrau(tensao, offSet);
-        break;
-    case SENOIDAL:
-        sinalCalculado = signal->seno(tensao,timeAux,periodo,offSet);
-        break;
-    case QUADRADA:
-        sinalCalculado = signal->quadrada(tensao, timeAux, periodo, offSet);
-        break;
-    case DENTE_DE_SERRA:
-        sinalCalculado = signal->serra(tensao,timeAux, periodo, offSet);
-        break;
-    case ALEATORIO:
-        double ampMax = ui->dSpinPeriodo->value();
-        double ampMin = ui->dSpinOffSet->value();
-        double durMax = ui->dSpinPeriodo->value();
-        double durMin = ui->dSpinAux->value();
-        if(timeAux==0)
-        {
-            sinalCalculado = signal->aleatorio(ampMax, ampMin);
-            periodo = signal->periodoAleatorio(durMax, durMin);
-        }
-        break;
-    }
-
-    sinalEscrita = sinalCalculado;
-
-    if(this->tipoMalha == 0) // em malha fechadax
-    {
-        tensao = erro;
-
-        //tensao = voltageControl(tensao);
-        //sinalEscrita += tensaoErro;
-    }
-
-    travel();
-
-    qDebug() << "tensao " << tensao;
-    qDebug() << "sinalEscrita " << sinalEscrita;
-    qDebug() << "sinalLeitura " << sinalLeitura;
-    qDebug() << "erro " << erro;
-
-    quanser->writeDA(canalEscrita,sinalEscrita);
+    double sinalEscrita = control->getSinalEnviado();
+    double sinalCalculado = control->getSinalCalculado();
 
     ui->lb_tensaoEscrita->setText("Sinal enviado = " + QString::number(sinalEscrita) + " V");
     ui->lb_tensaoCalculada->setText("Sinal calculado = " + QString::number(sinalCalculado) + " V");
 
-    timeAux += 0.1;
+    ui->graficoEscrita->graph(0)->addData(key/5, sinalEscrita);
+    ui->graficoEscrita->graph(1)->addData(key/5, sinalCalculado);
 
-    ui->graficoEscrita->graph(0)->addData(key/5, this->sinalEscrita);
-    ui->graficoEscrita->graph(1)->addData(key/5, this->sinalCalculado);
     ui->graficoEscrita->xAxis->setRange((key + 0.25)/5, 10, Qt::AlignRight);
     ui->graficoEscrita->replot();
 }
@@ -414,31 +329,24 @@ void MainWindow::receiveData()
 {
     double key = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
 
-    double readVoltage = quanser->readAD(canalLeitura); // volts
-    sinalLeitura = readVoltage * FATOR_CONVERSAO; // cm
-
-    if(tipoMalha == 0)
+    for(int i=0; i<8; i++)
     {
-        erro = amplitude - sinalLeitura; // cm
-        tensaoErro =  erro/FATOR_CONVERSAO; // volts
-
-        ui->graficoLeitura->graph(0)->addData(key/5,erro); // erro abs
-        ui->graficoLeitura->graph(1)->addData(key/5,amplitude); // set point
-
-        for(int i=0; i<NUMB_CAN_READ; i++)
+        if(canalLeituraVec[i] == true)
         {
-            if(canalLeitura!=i && canalLeituraVec[i] == true)
-            {
-                double temp = quanser->readAD(i);
-                ui->graficoLeitura->graph(i+2)->addData(key/5,temp);
-            }
+            double value = control->getCanalValue(i);
+            ui->graficoLeitura->graph(i+2)->addData(key/5,value);
         }
-        ui->lb_erro->setText("Erro = " + QString::number(erro) + " cm");
     }
+
+    double sinalLeitura = control->getSinalLeitura();
 
     ui->lb_sinalLido->setText("Nível do tanque = " + QString::number(sinalLeitura) + " cm");
 
-    ui->graficoLeitura->graph(canalLeitura+2)->addData(key/5,sinalLeitura);
+    if(control->getTipoMalha() == 0) // Malha fechada
+    {
+        double erro = control->getErro();
+        ui->lb_erro->setText("Erro = " + QString::number(erro) + " cm");
+    }
 
     ui->graficoLeitura->xAxis->setRange((key+0.25)/5, 8, Qt::AlignRight);
     ui->graficoLeitura->replot();

@@ -8,18 +8,21 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
-TARGET = controle
+TARGET = Controle
 TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
     qcustomplot.cpp \
-    signal.cpp
+    signal.cpp \
+    control.cpp
 
 HEADERS  += mainwindow.h \
     quanser.h \
     qcustomplot.h \
-    signal.h
+    signal.h \
+    control.h \
+    const.h
 
 FORMS    += mainwindow.ui
 
