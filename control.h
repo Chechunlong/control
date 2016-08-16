@@ -83,7 +83,7 @@ private:
     int tipoMalha = 1; /* 0 -> fechada, 1 -> aberto*/
 
     double timeAux;
-    int tipoSinal = 0; /* 0 = Degrau | 1 = Quadrada | 2 = Senoidal | 3 = Dente de Serra | 4 = Aleatório */
+    int tipoSinal; /* 0 = Degrau | 1 = Quadrada | 2 = Senoidal | 3 = Dente de Serra | 4 = Aleatório */
 
     double sinalEscrita;
     double sinalLeitura;

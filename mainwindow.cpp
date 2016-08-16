@@ -315,22 +315,24 @@ void MainWindow::data()
 void MainWindow::sendData()
 {
     double key = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
-    //static double lastPointKey = 0;
+
 
     control->sendSignal();
 
     double sinalEscrita = control->getSinalEnviado();
     double sinalCalculado = control->getSinalCalculado();
 
-    qDebug() << "UI  sinalEscrita"<< sinalEscrita;
-    qDebug() << "UI  sinalCalculado"<< sinalCalculado;
+    QString str_sinalEnviado = "Sinal enviado = " + QString::number(sinalEscrita) + " V";
+    QString str_sinalCalculado = "Sinal calculado = " + QString::number(sinalCalculado) + " V";
 
-    ui->lb_tensaoEscrita->setText("Sinal enviado = " + QString::number(sinalEscrita) + " V");
-    ui->lb_tensaoCalculada->setText("Sinal calculado = " + QString::number(sinalCalculado) + " V");
+
+    ui->canal_0->isChecked();
+
+    ui->lb_tensaoEscrita->setText(str_sinalEnviado);
+    ui->lb_tensaoCalculada->setText(str_sinalCalculado);
 
     ui->graficoEscrita->graph(0)->addData(key/5, sinalEscrita);
     ui->graficoEscrita->graph(1)->addData(key/5, sinalCalculado);
-
     ui->graficoEscrita->xAxis->setRange((key + 0.25)/5, 10, Qt::AlignRight);
     ui->graficoEscrita->replot();
 }
@@ -339,18 +341,33 @@ void MainWindow::receiveData()
 {
     double key = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
 
-    double value = control->getCanalValue(control->getCanalLeitura());
-    ui->graficoLeitura->graph(0+2)->addData(key/5,value);
 
-    double sinalLeitura = control->getSinalLeitura();
+    control->receiveSigal();
 
-    ui->lb_sinalLido->setText("Nível do tanque = " + QString::number(sinalLeitura) + " cm");
+    int canalLeitura = control->getCanalEscrita();
+    double sinalLeitura = 0;
 
-    if(control->getTipoMalha() == M_FECHADA) // Malha fechada
+    for(int i=0; i<NUMB_CAN_READ; i++)
     {
-        double erro = control->getErro();
-        ui->lb_erro->setText("Erro = " + QString::number(erro) + " cm");
+        if(canalLeituraVec[i])
+        {
+            double value = control->getCanalValue(i);
+            ui->graficoLeitura->graph(i+2)->addData(key/5,value);
+
+            if(i==canalLeitura)
+            {
+                sinalLeitura = value;
+                if(control->getTipoMalha() == M_FECHADA) // Malha fechada
+                {
+                    double erro = control->getErro();
+                    ui->lb_erro->setText("Erro = " + QString::number(erro) + " cm");
+                }
+            }
+        }
     }
+
+    QString str_sinalLeitura = "Nível do tanque = " + QString::number(sinalLeitura) + " cm";
+    ui->lb_sinalLido->setText(str_sinalLeitura);
 
     ui->graficoLeitura->xAxis->setRange((key+0.25)/5, 8, Qt::AlignRight);
     ui->graficoLeitura->replot();

@@ -10,10 +10,23 @@ Control::Control()
         qDebug() << "ops " << e;
     }
 
+    timeAux = 0;
+    tipoSinal = 0;
+
     tensao = 0;
+    offSet = 0;
+    periodo = 0;
+    amplitude = 0;
+    auxForRand = 0;
+
     sinalEscrita = 0;
     sinalLeitura = 0;
+    sinalCalculado = 0;
+
     erro = 0;
+
+    canalEscrita = 0;
+    canalLeitura = 0;
 }
 
 double Control::getAmplitude()
@@ -66,8 +79,6 @@ double Control::getSinalLeitura()
 void Control::setAmplitude(double value)
 {
     amplitude = value;
-
-    qDebug() << amplitude;
 }
 
 void Control::setAuxForRand(double value)
@@ -93,14 +104,11 @@ void Control::setPeriodo(double value)
 void Control::setTensao(double value)
 {
     tensao = value;
-    qDebug() << tensao << "tensao";
 }
 
 void Control::setTipoMalha(int value)
 {
     tipoMalha = value;
-
-    qDebug() << tipoMalha << "tipoMalha";
 }
 
 void Control::setTipoSinal(int value)
@@ -108,7 +116,6 @@ void Control::setTipoSinal(int value)
     tipoSinal = value;
 
 }
-
 
 bool Control::connectionStatus()
 {
@@ -121,7 +128,6 @@ int Control::levelControl(int value)
     else if (value<MIN_LEVEL) value = MIN_LEVEL;
 
     return value;
-
 }
 
 double Control::voltageControl(double value)
@@ -130,7 +136,6 @@ double Control::voltageControl(double value)
     else if (value<=MIN_VOLTAGE) value = MIN_VOLTAGE;
 
     return value;
-
 }
 
 void Control::travel()

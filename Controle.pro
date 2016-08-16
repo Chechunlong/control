@@ -21,8 +21,7 @@ HEADERS  += mainwindow.h \
     quanser.h \
     qcustomplot.h \
     signal.h \
-    control.h \
-    const.h
+    control.h
 
 FORMS    += mainwindow.ui
 
