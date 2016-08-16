@@ -145,14 +145,14 @@ void Control::travel()
     if(sinalLeitura<=3 && sinalEscrita<0) sinalEscrita = 0;
 
     if(sinalLeitura>=28 && sinalEscrita>0) sinalEscrita = 0;
-
 }
 
 void Control::sendSignal()
 {
     if(timeAux > periodo) timeAux = 0;
 
-    switch (tipoSinal) {
+    switch (tipoSinal)
+    {
     case DEGRAU:
         sinalCalculado = signal->degrau(tensao, offSet);
         break;
@@ -187,10 +187,6 @@ void Control::sendSignal()
 
     travel();
 
-    qDebug() << "sinalEscrita " << sinalEscrita;
-    qDebug() << "sinalCalculado " << sinalCalculado;
-    qDebug() << "tensao " << tensao;
-
     quanser->writeDA(canalEscrita,sinalEscrita);
 
     timeAux += 0.1;
@@ -198,25 +194,20 @@ void Control::sendSignal()
 
 void Control::receiveSigal()
 {
-    // read all channels (NUMB_CAN_READ)
-
     double readVoltage;
 
-    //for(int i=0; i<NUMB_CAN_READ; i++)
-    //{
-    readVoltage = quanser->readAD(canalLeitura);
-
-    qDebug() << "canal de leitura" << canalLeitura;
-
-    sinalLeitura = readVoltage * FATOR_CONVERSAO; // cm
-    if(tipoMalha == M_FECHADA)
+    for(int canal=0; canal<NUMB_CAN_READ; canal++)
     {
-        erro = amplitude - sinalLeitura; // cm
+        readVoltage = quanser->readAD(canalLeitura);
+        canaisLeitura_value[canal] = readVoltage * FATOR_CONVERSAO;
+
+        if(canal==canalEscrita)
+        {
+            sinalLeitura = canaisLeitura_value[canal]; // cm
+            if(tipoMalha == M_FECHADA)
+            {
+                erro = amplitude - sinalLeitura; // cm
+            }
+        }
     }
-
-    qDebug() << "erro " << erro;
-    qDebug() << "sinalLeitura " << sinalLeitura;
-
-        //canaisLeitura_value[i] = readVoltage * FATOR_CONVERSAO;
-    //}
 }
