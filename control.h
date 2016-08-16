@@ -6,6 +6,7 @@
 
 #define MAX_VOLTAGE 4
 #define MIN_VOLTAGE -4
+
 #define MAX_LEVEL 30
 #define MIN_LEVEL 0
 
@@ -33,7 +34,7 @@ public:
 
     int getCanalLeitura();
 
-    bool getCanalValue(int value);
+    double getCanalValue(int value);
 
     double getErro();
 
@@ -44,6 +45,7 @@ public:
     double getSinalEnviado();
 
     double getSinalLeitura();
+
 
     void setAmplitude(double value);
 
@@ -74,8 +76,6 @@ public:
 
     void receiveSigal();
 
-
-
 private:
     Quanser *quanser;
     Signal *signal;
@@ -102,7 +102,7 @@ private:
     int canalEscrita;
     int canalLeitura;
 
-    double canaisLeitura_value[NUMB_CAN_READ];
+    double canaisLeitura_value[NUMB_CAN_READ] = {0};
 };
 
 #endif // CONTROL_H

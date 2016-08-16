@@ -44,7 +44,7 @@ int Control::getCanalLeitura()
     return canalEscrita;
 }
 
-bool Control::getCanalValue(int value)
+double Control::getCanalValue(int value)
 {
     if(value >= NUMB_CAN_READ) return -1;
 
