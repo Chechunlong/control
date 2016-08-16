@@ -111,7 +111,7 @@ public:
         this->server = new char[strlen(_server)+1];
         strcpy(this->server,_server);
 
-        //this->connectServer();
+        this->connectServer();
     }
 
     ~Quanser(void){
@@ -122,7 +122,7 @@ public:
     *Grava a tensao especificada no parametro no canal DA
     */
     int writeDA(int _channel, float _volts) {
-        return 0; // teste
+        //return 0; // teste
         if(_volts>4) _volts = 4;
         if(_volts<-4) _volts = -4;
 
@@ -145,7 +145,7 @@ public:
     *Le o valor de tensao que esta no canal AD especificado
     */
     double readAD(int _channel) {
-        return 1; // teste
+        //return 1; // teste
         string _toSend = "READ ";
         _toSend.append(itoa(_channel));
         _toSend.append("\n");

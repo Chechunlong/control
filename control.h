@@ -3,7 +3,24 @@
 
 #include "quanser.h"
 #include "signal.h"
-#include "const.h"
+
+#define MAX_VOLTAGE 4
+#define MIN_VOLTAGE -4
+#define MAX_LEVEL 30
+#define MIN_LEVEL 0
+
+#define FATOR_CONVERSAO 6.25
+
+#define NUMB_CAN_READ 8
+
+#define DEGRAU 0
+#define QUADRADA 1
+#define SENOIDAL 2
+#define DENTE_DE_SERRA 3
+#define ALEATORIO 4
+
+#define M_FECHADA 0
+#define M_ABERTA 1
 
 class Control
 {

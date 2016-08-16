@@ -291,12 +291,13 @@ void MainWindow::data()
     if(ui->radioAberta->isChecked())
     {
         control->setTensao(amplitude);
-        control->setTipoMalha(1);
+        control->setTipoMalha(M_ABERTA);
     }
     else if(ui->radioFechada->isChecked())
     {
+        control->setTensao(2);
         control->setAmplitude(amplitude);
-        control->setTipoMalha(0);
+        control->setTipoMalha(M_FECHADA);
     }
 
     if(tipoSinal == ALEATORIO)
@@ -321,6 +322,9 @@ void MainWindow::sendData()
     double sinalEscrita = control->getSinalEnviado();
     double sinalCalculado = control->getSinalCalculado();
 
+    qDebug() << "UI  sinalEscrita"<< sinalEscrita;
+    qDebug() << "UI  sinalCalculado"<< sinalCalculado;
+
     ui->lb_tensaoEscrita->setText("Sinal enviado = " + QString::number(sinalEscrita) + " V");
     ui->lb_tensaoCalculada->setText("Sinal calculado = " + QString::number(sinalCalculado) + " V");
 
@@ -335,20 +339,14 @@ void MainWindow::receiveData()
 {
     double key = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
 
-    for(int i=0; i<8; i++)
-    {
-        if(canalLeituraVec[i] == true)
-        {
-            double value = control->getCanalValue(i);
-            ui->graficoLeitura->graph(i+2)->addData(key/5,value);
-        }
-    }
+    double value = control->getCanalValue(control->getCanalLeitura());
+    ui->graficoLeitura->graph(0+2)->addData(key/5,value);
 
     double sinalLeitura = control->getSinalLeitura();
 
     ui->lb_sinalLido->setText("Nível do tanque = " + QString::number(sinalLeitura) + " cm");
 
-    if(control->getTipoMalha() == 0) // Malha fechada
+    if(control->getTipoMalha() == M_FECHADA) // Malha fechada
     {
         double erro = control->getErro();
         ui->lb_erro->setText("Erro = " + QString::number(erro) + " cm");

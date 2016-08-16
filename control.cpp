@@ -9,6 +9,11 @@ Control::Control()
     } catch(int e) {
         qDebug() << "ops " << e;
     }
+
+    tensao = 0;
+    sinalEscrita = 0;
+    sinalLeitura = 0;
+    erro = 0;
 }
 
 double Control::getAmplitude()
@@ -61,6 +66,8 @@ double Control::getSinalLeitura()
 void Control::setAmplitude(double value)
 {
     amplitude = value;
+
+    qDebug() << amplitude;
 }
 
 void Control::setAuxForRand(double value)
@@ -86,16 +93,20 @@ void Control::setPeriodo(double value)
 void Control::setTensao(double value)
 {
     tensao = value;
+    qDebug() << tensao << "tensao";
 }
 
 void Control::setTipoMalha(int value)
 {
     tipoMalha = value;
+
+    qDebug() << tipoMalha << "tipoMalha";
 }
 
 void Control::setTipoSinal(int value)
 {
     tipoSinal = value;
+
 }
 
 
@@ -171,6 +182,10 @@ void Control::sendSignal()
 
     travel();
 
+    qDebug() << "sinalEscrita " << sinalEscrita;
+    qDebug() << "sinalCalculado " << sinalCalculado;
+    qDebug() << "tensao " << tensao;
+
     quanser->writeDA(canalEscrita,sinalEscrita);
 
     timeAux += 0.1;
@@ -182,18 +197,21 @@ void Control::receiveSigal()
 
     double readVoltage;
 
-    for(int i=0; i<NUMB_CAN_READ; i++)
+    //for(int i=0; i<NUMB_CAN_READ; i++)
+    //{
+    readVoltage = quanser->readAD(canalLeitura);
+
+    qDebug() << "canal de leitura" << canalLeitura;
+
+    sinalLeitura = readVoltage * FATOR_CONVERSAO; // cm
+    if(tipoMalha == M_FECHADA)
     {
-        readVoltage = quanser->readAD(i);
-
-        if(canalLeitura == i)
-        {
-            if(tipoMalha == M_FECHADA)
-                erro = amplitude - sinalLeitura; // cm
-
-            sinalLeitura = readVoltage * FATOR_CONVERSAO; // cm
-        }
-
-        canaisLeitura_value[i] = readVoltage * FATOR_CONVERSAO;
+        erro = amplitude - sinalLeitura; // cm
     }
+
+    qDebug() << "erro " << erro;
+    qDebug() << "sinalLeitura " << sinalLeitura;
+
+        //canaisLeitura_value[i] = readVoltage * FATOR_CONVERSAO;
+    //}
 }
