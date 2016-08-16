@@ -341,10 +341,11 @@ void MainWindow::receiveData()
 {
     double key = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
 
-
     control->receiveSigal();
 
     int canalLeitura = control->getCanalEscrita();
+    int tipoMalha = control->getTipoMalha();
+
     double sinalLeitura = 0;
 
     for(int i=0; i<NUMB_CAN_READ; i++)
@@ -357,10 +358,15 @@ void MainWindow::receiveData()
             if(i==canalLeitura)
             {
                 sinalLeitura = value;
-                if(control->getTipoMalha() == M_FECHADA) // Malha fechada
+                if(tipoMalha == M_FECHADA) // Malha fechada
                 {
                     double erro = control->getErro();
+                    double setPoint = control->getAmplitude();
+
                     ui->lb_erro->setText("Erro = " + QString::number(erro) + " cm");
+
+                    ui->graficoLeitura->graph(0)->addData(key/5,erro);
+                    ui->graficoLeitura->graph(1)->addData(key/5,setPoint);
                 }
             }
         }
