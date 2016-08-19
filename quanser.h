@@ -30,7 +30,8 @@ private:
    int sockfd;
    char hostaddress[32];
    struct sockaddr_in address;
-   bool status = true;
+   bool status = false;
+   bool test = true;
 
 
    /**
@@ -103,6 +104,8 @@ public:
     Quanser (char* _server, int _tcpPort) {
         this->tcpPort = _tcpPort;
         this->server = _server;
+
+        if(!test)
         this->connectServer();
     }
 
@@ -114,6 +117,9 @@ public:
     *Grava a tensao especificada no parametro no canal DA
     */
     int writeDA(int _channel, float _volts) {
+
+        if(test) return 1;
+
         if(_volts>4) _volts = 4;
         if(_volts<-4) _volts = -4;
 
@@ -136,6 +142,9 @@ public:
     *Le o valor de tensao que esta no canal AD especificado
     */
     double readAD(int _channel) {
+
+        if(test) return 12;
+
         string _toSend = "READ ";
         _toSend.append(itoa(_channel));
         _toSend.append("\n");
@@ -152,6 +161,9 @@ public:
     }
 
     bool getStatus() {
+
+        if(test) return true;
+
         return status;
     }
 };
