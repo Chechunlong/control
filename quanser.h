@@ -30,7 +30,8 @@ private:
    int sockfd;
    char hostaddress[32];
    struct sockaddr_in address;
-   bool status = true;
+   bool status = false;
+   bool test = true;
 
 
    /**
@@ -103,6 +104,8 @@ public:
     Quanser (char* _server, int _tcpPort) {
         this->tcpPort = _tcpPort;
         this->server = _server;
+
+        if(!test)
         this->connectServer();
     }
 
@@ -128,6 +131,9 @@ public:
        if(_volts<-4) _volts = -4;
 =======
     int writeDA(int _channel, float _volts) {
+
+        if(test) return 1;
+
         if(_volts>4) _volts = 4;
         if(_volts<-4) _volts = -4;
 >>>>>>> control
@@ -152,10 +158,16 @@ public:
     */
     double readAD(int _channel) {
 <<<<<<< HEAD
+<<<<<<< HEAD
 
         //return 0; // teste
         std::string _toSend = "READ ";
 =======
+=======
+
+        if(test) return 12;
+
+>>>>>>> control
         string _toSend = "READ ";
 >>>>>>> control
         _toSend.append(itoa(_channel));
@@ -173,6 +185,9 @@ public:
     }
 
     bool getStatus() {
+
+        if(test) return true;
+
         return status;
     }
 };
