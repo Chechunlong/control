@@ -2,17 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QString>
-#include <cmath>
 #include "qthread.h"
-
 #include "qcustomplot.h"
-#include "quanser.h"
-#include "signal.h"
-//#include "control.h"
-
-#include <iostream>
-#include <QDebug>
+#include "control.h"
 
 namespace Ui {
     class MainWindow;
@@ -49,20 +41,22 @@ private slots:
 
     void data();
 
+<<<<<<< HEAD
     int levelControl(int level);
 
     double voltageControl(double _volts);
 
     void stop();
 
+=======
+>>>>>>> control
     void sendData();
 
     void receiveData();
 
-
-
 private:
     Ui::MainWindow *ui;
+<<<<<<< HEAD
     Quanser *quanser;
     Signal *signal;
     QListWidgetItem *item;
@@ -83,6 +77,10 @@ private:
     static constexpr int SENOIDAL = 2;
     static constexpr int DENTE_DE_SERRA = 3;
     static constexpr int ALEATORIO = 4;
+=======
+
+    Control *control;
+>>>>>>> control
 
 
     QTimer *timerEscrita;
@@ -91,6 +89,7 @@ private:
     QThread *threadEscrita;
     QThread *threadLeitura;
 
+<<<<<<< HEAD
     int tipoMalha = 1; /* 0 -> fechada, 1 -> aberto*/
 
     double time;
@@ -113,6 +112,9 @@ private:
     int canalEscrita;
     int canalLeitura;
     bool canalLeituraVec[7];
+=======
+    bool canalLeituraVec[NUMB_CAN_READ];
+>>>>>>> control
 
 };
 

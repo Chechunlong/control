@@ -20,17 +20,15 @@
 #include <arpa/inet.h>
 #include <QDebug>
 
-using std::cout;
-using std::cin;
 using std::string;
-using namespace std;
+using std::stringstream;
 
 class Quanser {
 private:
    char* server;
    int tcpPort;
-   int    sockfd;
-   char   hostaddress[32];
+   int sockfd;
+   char hostaddress[32];
    struct sockaddr_in address;
    bool status = true;
 
@@ -64,9 +62,9 @@ private:
    /**
     *Converte de inteiro para std::string
     */
-   std::string itoa(int _toConvert){
-        std::stringstream ss;
-        std::string str;
+    string itoa(int _toConvert){
+        stringstream ss;
+        string str;
         ss << _toConvert;
         ss >> str;
         return str;
@@ -74,88 +72,96 @@ private:
    /**
     *Converte de float para std::string
     */
-   std::string ftoa(float _toConvert){
-       std::stringstream ss;
-       std::string str;
-       ss << _toConvert;
-       ss >> str;
-       return str;
-   }
+    string ftoa(float _toConvert){
+        stringstream ss;
+        string str;
+        ss << _toConvert;
+        ss >> str;
+        return str;
+    }
 
-   std::string receiveData() {
-      char  ch = ' ';
-      std::string _received = "";
-      int _count = 0;
-      do {
-        read(this->sockfd,&ch,1);
-        _received.append(1,ch);
-        _count++;
-      } while (ch != '\n' || _count < 3); //Assumo que nao receberei mensagens menores que 3
+    string receiveData() {
+        char  ch = ' ';
+        string _received = "";
+        int _count = 0;
+        do {
+            read(this->sockfd,&ch,1);
+            _received.append(1,ch);
+            _count++;
+        } while (ch != '\n' || _count < 3); //Assumo que nao receberei mensagens menores que 3
 
-      return _received;
-   }
+        return _received;
+    }
 
-   int sendData(std::string _toSend) {
+    int sendData(string _toSend) {
         int _tamanho = _toSend.length();
         write(this->sockfd,_toSend.c_str(),_tamanho);
         return 0;
-   }
-///////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////
+    }
 
 public:
-   /**
-    *Construtor
-    */
-   Quanser (char* _server, int _tcpPort) {
+    Quanser (char* _server, int _tcpPort) {
+        this->tcpPort = _tcpPort;
+        this->server = _server;
+        this->connectServer();
+    }
 
-
+<<<<<<< HEAD
       this->tcpPort = _tcpPort;
       this->server = _server;
       this->connectServer();
    }
+=======
+    ~Quanser(void){
+        close(this->sockfd);
+    }
+>>>>>>> control
 
    /**
     *Grava a tensao especificada no parametro no canal DA
     */
+<<<<<<< HEAD
    int writeDA(int _channel, float _volts) {
 
        //return 0; // teste
        if(_volts>4) _volts = 4;
        if(_volts<-4) _volts = -4;
+=======
+    int writeDA(int _channel, float _volts) {
+        if(_volts>4) _volts = 4;
+        if(_volts<-4) _volts = -4;
+>>>>>>> control
 
-        std::string _toSend = "WRITE ";
+        string _toSend = "WRITE ";
         _toSend.append(itoa(_channel));
         _toSend.append(" ");
         _toSend.append(ftoa(_volts));
         _toSend.append("\n");
         this->sendData(_toSend);
-        std::string _rec = this->receiveData();
-
-
+        string _rec = this->receiveData();
 
         if (_rec.find("ACK",0) > _rec.length() )
             return -1 ; //erro
         else
             return 0;
-   }
+    }
 
 
    /**
     *Le o valor de tensao que esta no canal AD especificado
     */
     double readAD(int _channel) {
+<<<<<<< HEAD
 
         //return 0; // teste
         std::string _toSend = "READ ";
+=======
+        string _toSend = "READ ";
+>>>>>>> control
         _toSend.append(itoa(_channel));
         _toSend.append("\n");
         this->sendData(_toSend);
-        std::string _rec = this->receiveData();
-
-
+        string _rec = this->receiveData();
 
         double value;
 
@@ -166,21 +172,9 @@ public:
         return value;
     }
 
-
-   /**
-    *Destrutor
-    */
-   ~Quanser(void){
-      cout << "Destruido... \n";
-      close(this->sockfd);
-   }
-
     bool getStatus() {
         return status;
     }
 };
-
-
-
 
 #endif	/* _QUANSER_H */

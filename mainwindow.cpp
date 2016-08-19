@@ -24,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->buttonConectar, SIGNAL(clicked(bool)),this,SLOT(connectServer()));
     connect(ui->buttonAtualizar,SIGNAL(clicked(bool)),this,SLOT(data()));
+<<<<<<< HEAD
     connect(ui->radioAberta,    SIGNAL(clicked(bool)),this,SLOT(openLoop()));
     connect(ui->radioFechada,   SIGNAL(clicked(bool)),this,SLOT(closedLoop()));
     connect(ui->comboTipoSinal, SIGNAL(currentIndexChanged(int)),this,SLOT(configSignal()));
@@ -60,6 +61,29 @@ MainWindow::MainWindow(QWidget *parent) :
 
     tipoMalha = 1; // aberta
 
+=======
+    connect(ui->radioAberta,    SIGNAL(clicked(bool)),this,SLOT(UI_openLoop()));
+    connect(ui->radioFechada,   SIGNAL(clicked(bool)),this,SLOT(UI_closedLoop()));
+    connect(ui->comboTipoSinal, SIGNAL(currentIndexChanged(int)),this,SLOT(UI_configSignal()));
+
+    connect(ui->dSpinAmp,       SIGNAL(valueChanged(double)), this, SLOT(UI_limitRandInput()));
+    connect(ui->dSpinPeriodo,   SIGNAL(valueChanged(double)), this, SLOT(UI_limitRandInput()));
+    connect(ui->dSpinOffSet,    SIGNAL(valueChanged(double)), this, SLOT(UI_limitRandInput()));
+    connect(ui->dSpinAux,       SIGNAL(valueChanged(double)), this, SLOT(UI_limitRandInput()));
+
+    connect(ui->canal_0, SIGNAL(stateChanged(int)),this, SLOT(UI_canalReadSelect()));
+    connect(ui->canal_1, SIGNAL(stateChanged(int)),this, SLOT(UI_canalReadSelect()));
+    connect(ui->canal_2, SIGNAL(stateChanged(int)),this, SLOT(UI_canalReadSelect()));
+    connect(ui->canal_3, SIGNAL(stateChanged(int)),this, SLOT(UI_canalReadSelect()));
+    connect(ui->canal_4, SIGNAL(stateChanged(int)),this, SLOT(UI_canalReadSelect()));
+    connect(ui->canal_5, SIGNAL(stateChanged(int)),this, SLOT(UI_canalReadSelect()));
+    connect(ui->canal_6, SIGNAL(stateChanged(int)),this, SLOT(UI_canalReadSelect()));
+    connect(ui->canal_7, SIGNAL(stateChanged(int)),this, SLOT(UI_canalReadSelect()));
+
+    UI_configPanel();
+    UI_configGraphWrite();
+    UI_configGraphRead();
+>>>>>>> control
 }
 
 MainWindow::~MainWindow()
@@ -305,11 +329,9 @@ void MainWindow::configGraphRead()
 
 void MainWindow::connectServer()
 {
-    quanser = new Quanser("10.13.99.69",this->PORT);
+    control = new Control();
 
-    qDebug() << "Status da conexão: " << quanser->getStatus();
-
-    if(quanser->getStatus())
+    if(control->connectionStatus())
     {
         ui->labelStatus->setText("Conectado!");
         ui->labelStatus->setStyleSheet("QLabel { color : green; }");
@@ -330,6 +352,7 @@ void MainWindow::connectServer()
 
 void MainWindow::data()
 {
+<<<<<<< HEAD
     double _amplitude = ui->dSpinAmp->value();
 
     this->periodo       = ui->dSpinPeriodo->value();
@@ -369,11 +392,42 @@ double MainWindow::voltageControl(double _volts)
     else if (_volts<=MIN_VOLTAGE) _volts = MIN_VOLTAGE;
 
     return _volts;
+=======
+    double amplitude = ui->dSpinAmp->value();
+    double periodo = ui->dSpinPeriodo->value();
+    double offSet = ui->dSpinOffSet->value();
+    int canalEscrita = ui->comboCanalEscrita->currentIndex();
+    int tipoSinal = ui->comboTipoSinal->currentIndex();
+
+    if(ui->radioAberta->isChecked())
+    {
+        control->setTensao(amplitude);
+        control->setTipoMalha(M_ABERTA);
+    }
+    else if(ui->radioFechada->isChecked())
+    {
+        control->setTensao(2);
+        control->setAmplitude(amplitude);
+        control->setTipoMalha(M_FECHADA);
+    }
+
+    if(tipoSinal == ALEATORIO)
+    {
+        double auxForRand = ui->dSpinAux->value();
+        control->setAuxForRand(auxForRand);
+    }
+
+    control->setCanalEscrita(canalEscrita);
+    control->setPeriodo(periodo);
+    control->setOffSet(offSet);
+    control->setTipoSinal(tipoSinal);
+>>>>>>> control
 }
 
 void MainWindow::sendData()
 {
     double key = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
+<<<<<<< HEAD
     //static double lastPointKey = 0;
 
     if(timeAux > periodo) timeAux = 0;
@@ -417,14 +471,34 @@ void MainWindow::sendData()
 
     sinalEscrita = voltageControl(sinalEscrita);
     travel();
+=======
 
-    quanser->writeDA(canalEscrita,sinalEscrita);
 
+    control->sendSignal();
+
+    double sinalEscrita = control->getSinalEnviado();
+    double sinalCalculado = control->getSinalCalculado();
+
+    QString str_sinalEnviado = "Sinal enviado = " + QString::number(sinalEscrita) + " V";
+    QString str_sinalCalculado = "Sinal calculado = " + QString::number(sinalCalculado) + " V";
+>>>>>>> control
+
+
+<<<<<<< HEAD
     // add data to lines:
     ui->graficoEscrita->graph(0)->addData(key/5, this->sinalEscrita);
     ui->graficoEscrita->graph(1)->addData(key/5, this->sinalCalculado);
 
     // make key axis range scroll with the data (at a constant range size of 8):
+=======
+    ui->canal_0->isChecked();
+
+    ui->lb_tensaoEscrita->setText(str_sinalEnviado);
+    ui->lb_tensaoCalculada->setText(str_sinalCalculado);
+
+    ui->graficoEscrita->graph(0)->addData(key/5, sinalEscrita);
+    ui->graficoEscrita->graph(1)->addData(key/5, sinalCalculado);
+>>>>>>> control
     ui->graficoEscrita->xAxis->setRange((key + 0.25)/5, 10, Qt::AlignRight);
 
     ui->graficoEscrita->replot();
@@ -439,6 +513,7 @@ void MainWindow::receiveData()
 {
     double key = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
 
+<<<<<<< HEAD
     double temp = quanser->readAD(canalLeitura); // volts
 
     if(tipoMalha == 0)
@@ -473,5 +548,42 @@ void MainWindow::receiveData()
     ui->graficoLeitura->xAxis->setRange((key+0.25)/5, 8, Qt::AlignRight);
     ui->graficoLeitura->replot();
 }
+=======
+    control->receiveSigal();
 
+    int canalLeitura = control->getCanalEscrita();
+    int tipoMalha = control->getTipoMalha();
 
+    double sinalLeitura = 0;
+
+    for(int i=0; i<NUMB_CAN_READ; i++)
+    {
+        if(canalLeituraVec[i])
+        {
+            double value = control->getCanalValue(i);
+            ui->graficoLeitura->graph(i+2)->addData(key/5,value);
+
+            if(i==canalLeitura)
+            {
+                sinalLeitura = value;
+                if(tipoMalha == M_FECHADA) // Malha fechada
+                {
+                    double erro = control->getErro();
+                    double setPoint = control->getAmplitude();
+
+                    ui->lb_erro->setText("Erro = " + QString::number(erro) + " cm");
+
+                    ui->graficoLeitura->graph(0)->addData(key/5,erro);
+                    ui->graficoLeitura->graph(1)->addData(key/5,setPoint);
+                }
+            }
+        }
+    }
+>>>>>>> control
+
+    QString str_sinalLeitura = "Nível do tanque = " + QString::number(sinalLeitura) + " cm";
+    ui->lb_sinalLido->setText(str_sinalLeitura);
+
+    ui->graficoLeitura->xAxis->setRange((key+0.25)/5, 8, Qt::AlignRight);
+    ui->graficoLeitura->replot();
+}
