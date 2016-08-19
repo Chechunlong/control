@@ -4,6 +4,7 @@
 #include <cmath>
 #include <time.h>
 
+
 class Signal
 {
 private:
