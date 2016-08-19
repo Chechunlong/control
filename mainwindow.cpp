@@ -277,6 +277,8 @@ void MainWindow::connectServer()
     {
         ui->labelStatus->setText("Conexão Falhou!");
         ui->labelStatus->setStyleSheet("QLabel { color : red; }");
+
+        QMessageBox::critical(this,tr("Conexão Falhou!"),tr("Verifique o IP e/ou porta do servidor!"));
     }
 }
 

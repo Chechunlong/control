@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QMessageBox>
 #include "qthread.h"
 #include "qcustomplot.h"
 #include "control.h"
