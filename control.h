@@ -3,6 +3,7 @@
 
 #include "quanser.h"
 #include "signal.h"
+#include "controller.h"
 
 #define MAX_VOLTAGE 4
 #define MIN_VOLTAGE -4
@@ -64,6 +65,9 @@ public:
     void setTipoSinal(int value);
 
 
+    void getTipoControler(int tipoControler);
+
+
     bool connectionStatus();
 
     int levelControl(int value);
@@ -79,6 +83,7 @@ public:
 private:
     Quanser *quanser;
     Signal *signal;
+    Controller *controllerPID;
 
     int tipoMalha = 1; /* 0 -> fechada, 1 -> aberto*/
 
@@ -97,12 +102,16 @@ private:
     double auxForRand;
 
     // Malha fechada function: _receiveData()
-    double erro;
+    double erro, erroAnt; // erros
 
     int canalEscrita;
     int canalLeitura;
 
     double canaisLeitura_value[NUMB_CAN_READ] = {0};
+
+    int tipoControler; // tipo de controle PI, PD, PID
+    double Kp, Ki, Kd; // controladores do PID
+
 };
 
 #endif // CONTROL_H

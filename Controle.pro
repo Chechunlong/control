@@ -15,13 +15,15 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     qcustomplot.cpp \
     signal.cpp \
-    control.cpp
+    control.cpp \
+    controller.cpp
 
 HEADERS  += mainwindow.h \
     quanser.h \
     qcustomplot.h \
     signal.h \
-    control.h
+    control.h \
+    controller.h
 
 FORMS    += mainwindow.ui
 

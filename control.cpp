@@ -117,6 +117,11 @@ void Control::setTipoSinal(int value)
 
 }
 
+void Control::getTipoControler(int tipoControler)
+{
+    this->tipoControler = tipo;
+}
+
 bool Control::connectionStatus()
 {
     return quanser->getStatus();
@@ -182,7 +187,8 @@ void Control::sendSignal()
 
     if(tipoMalha == M_FECHADA)
     {
-        tensao = erro;
+        //tensao = erro;
+        tensao = controllerPID->atualizaController(tipoControler, Kp, Ki, Kd, erro, erroAnt);
     }
 
     travel();
@@ -206,6 +212,7 @@ void Control::receiveSigal()
             sinalLeitura = canaisLeitura_value[canal]; // cm
             if(tipoMalha == M_FECHADA)
             {
+                erroAnt = erro;
                 erro = amplitude - sinalLeitura; // cm
             }
         }
