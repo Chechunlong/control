@@ -3,7 +3,6 @@
 
 #include "quanser.h"
 #include "signal.h"
-#include "controller.h"
 
 #define MAX_VOLTAGE 4
 #define MIN_VOLTAGE -4
@@ -29,32 +28,32 @@ class Control
 public:
     Control();
 
-    double getAmplitude();
+    double  getAmplitude();
 
-    int getCanalEscrita();
+    int     getCanalEscrita();
 
-    int getCanalLeitura();
+    int     getCanalLeitura();
 
-    double getCanalValue(int value);
+    double  getCanalValue(int value);
 
-    double getErro();
+    double  getErro();
 
-    int getTipoMalha();
+    int     getTipoMalha();
 
-    double getSinalCalculado();
+    double  getSinalCalculado();
 
-    double getSinalEnviado();
+    double  getSinalEnviado();
 
-    double getSinalLeitura();
+    double  getSinalLeitura();
 
 
-    void setAmplitude(double value);
+    void setAmplitude(double amplitude);
 
-    void setAuxForRand(double value);
+    void setAuxForRand(double auxForRand);
 
     void setOffSet(double value);
 
-    void setCanalEscrita(int value);
+    void setCanalEscrita(int canalEscrita);
 
     void setPeriodo(double value);
 
@@ -65,30 +64,26 @@ public:
     void setTipoSinal(int value);
 
 
-    void getTipoControler(int tipoControler);
+    bool    connectionStatus();
 
+    int     levelControl(int value);
 
-    bool connectionStatus();
+    double  voltageControl(double value);
 
-    int levelControl(int value);
+    void    travel();
 
-    double voltageControl(double value);
+    void    sendSignal();
 
-    void travel();
-
-    void sendSignal();
-
-    void receiveSigal();
+    void    receiveSigal();
 
 private:
     Quanser *quanser;
     Signal *signal;
-    Controller *controllerPID;
 
-    int tipoMalha = 1; /* 0 -> fechada, 1 -> aberto*/
+    int tipoMalha = 1;  /* 0 -> fechada, 1 -> aberto*/
 
     double timeAux;
-    int tipoSinal; /* 0 = Degrau | 1 = Quadrada | 2 = Senoidal | 3 = Dente de Serra | 4 = Aleatório */
+    int tipoSinal;      /* 0 = Degrau | 1 = Quadrada | 2 = Senoidal | 3 = Dente de Serra | 4 = Aleatório */
 
     double sinalEscrita;
     double sinalLeitura;
@@ -102,16 +97,12 @@ private:
     double auxForRand;
 
     // Malha fechada function: _receiveData()
-    double erro, erroAnt; // erros
+    double erro;
 
     int canalEscrita;
     int canalLeitura;
 
     double canaisLeitura_value[NUMB_CAN_READ] = {0};
-
-    int tipoControler; // tipo de controle PI, PD, PID
-    double Kp, Ki, Kd; // controladores do PID
-
 };
 
 #endif // CONTROL_H

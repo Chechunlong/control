@@ -6,6 +6,7 @@
 #include "qthread.h"
 #include "qcustomplot.h"
 #include "control.h"
+#include "configuracao.h"
 
 namespace Ui {
     class MainWindow;
@@ -23,8 +24,6 @@ private slots:
     void UI_configGraphWrite();
 
     void UI_configGraphRead();
-
-    void UI_canalReadSelect();
 
     void UI_configPanel();
 
@@ -44,6 +43,8 @@ private slots:
 
     void receiveData();
 
+    void JB_dataConfig();
+
 private:
     Ui::MainWindow *ui;
 
@@ -55,7 +56,10 @@ private:
     QThread *threadEscrita;
     QThread *threadLeitura;
 
+    Configuracao *config = new Configuracao();
+
     bool canalLeituraVec[NUMB_CAN_READ];
+    int canalEscrita = 0;
 
 };
 
