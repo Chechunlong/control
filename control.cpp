@@ -1,4 +1,5 @@
 #include "control.h"
+#include "controller.h"
 
 Control::Control()
 {
@@ -119,7 +120,6 @@ void Control::setTipoSinal(int value)
 
 }
 
-
 void Control::setTipoControler(int tipoControler){
     this->tipoControler = tipoControler;
 }
@@ -197,7 +197,8 @@ void Control::sendSignal()
         if(getTipoControler() < 0) {//verifica se algum controlador foi selecionado
             tensao = erro;
         }else{
-            //tensao = new controller()->atualizaController(tipoControler, Kp, Ki, Kd, erro, erroAnt);
+            Controller *controlerPID = new Controller();
+            tensao = controlerPID->atualizaController(tipoControler, Kp, Ki, Kd, erro, erroAnt);
         }
     }
 

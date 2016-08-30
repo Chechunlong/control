@@ -8,11 +8,15 @@
 #define ControllerPIDer 4;
 
 
-class controller
+class Controller
 {
     public:
-        controller();
-        double atualizaController(int tipo);
+        Controller();
+        /*
+        * @param tipo
+        * @param
+        */
+        double atualizaController(int tipo,double kp, double ki, double kd,double erro, double erroAnt);
 
     private:
         double P;
