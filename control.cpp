@@ -197,7 +197,7 @@ void Control::sendSignal()
         if(getTipoControler() < 0) {//verifica se algum controlador foi selecionado
             tensao = erro;
         }else{
-            tensao = new controlleratualizaController(tipoControler, Kp, Ki, Kd, erro, erroAnt);
+            //tensao = new controller()->atualizaController(tipoControler, Kp, Ki, Kd, erro, erroAnt);
         }
     }
 
