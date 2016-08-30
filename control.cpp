@@ -1,5 +1,4 @@
 #include "control.h"
-#include "controller.h"
 
 Control::Control()
 {
@@ -7,6 +6,7 @@ Control::Control()
     {
         quanser = new Quanser("10.13.99.69",20081);
         signal = new Signal();
+        controllerPID = new Controller();
     }
     catch(int e)
     {
@@ -197,8 +197,7 @@ void Control::sendSignal()
         if(getTipoControler() < 0) {//verifica se algum controlador foi selecionado
             tensao = erro;
         }else{
-            Controller *controlerPID = new Controller();
-            tensao = controlerPID->atualizaController(tipoControler, Kp, Ki, Kd, erro, erroAnt);
+            tensao = controllerPID->atualizaController(tipoControler, Kp, Ki, Kd, erro, erroAnt);
         }
     }
 

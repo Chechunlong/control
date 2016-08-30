@@ -1,13 +1,13 @@
 #include "controller.h"
 
-Controller::controller()
+Controller::Controller()
 {
     P = 0;
     I = 0;
     D = 0;
 }
 
-Controller::atualizaController(int tipo,double kp, double ki, double kd,double erro, double erroAnt){
+double Controller::atualizaController(int tipo,double kp, double ki, double kd,double erro, double erroAnt){
 
     switch(tipo){
 
