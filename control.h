@@ -64,8 +64,9 @@ public:
 
     void setTipoSinal(int value);
 
+    void setTipoControler(int tipoControler);
 
-    void getTipoControler(int tipoControler);
+    int getTipoControler();
 
 
     bool connectionStatus();

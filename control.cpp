@@ -117,9 +117,13 @@ void Control::setTipoSinal(int value)
 
 }
 
-void Control::getTipoControler(int tipoControler)
+void Control::setTipoControler(int tipoControler){
+    this->tipoControler = tipoControler;
+}
+
+int Control::getTipoControler()
 {
-    this->tipoControler = tipo;
+    return tipoControler;
 }
 
 bool Control::connectionStatus()
@@ -187,8 +191,11 @@ void Control::sendSignal()
 
     if(tipoMalha == M_FECHADA)
     {
-        //tensao = erro;
-        tensao = controllerPID->atualizaController(tipoControler, Kp, Ki, Kd, erro, erroAnt);
+        if(getTipoControler() < 0) {//verifica se algum controlador foi selecionado
+            tensao = erro;
+        }else{
+            tensao = controllerPID->atualizaController(tipoControler, Kp, Ki, Kd, erro, erroAnt);
+        }
     }
 
     travel();

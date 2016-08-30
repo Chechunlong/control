@@ -289,6 +289,7 @@ void MainWindow::data()
     double offSet = ui->dSpinOffSet->value();
     int canalEscrita = ui->comboCanalEscrita->currentIndex();
     int tipoSinal = ui->comboTipoSinal->currentIndex();
+    int tipoControler = -1; //pega o tipo do controlador
 
     if(ui->radioAberta->isChecked())
     {
@@ -312,6 +313,7 @@ void MainWindow::data()
     control->setPeriodo(periodo);
     control->setOffSet(offSet);
     control->setTipoSinal(tipoSinal);
+    control->setTipoControler(tipoControler);
 }
 
 void MainWindow::sendData()
