@@ -81,6 +81,8 @@ private:
     }
 
     string receiveData() {
+        return "0";
+
         char  ch = ' ';
         string _received = "";
         int _count = 0;
@@ -94,6 +96,9 @@ private:
     }
 
     int sendData(string _toSend) {
+        return 0;
+
+
         int _tamanho = _toSend.length();
         write(this->sockfd,_toSend.c_str(),_tamanho);
         return 0;
@@ -103,7 +108,7 @@ public:
     Quanser (char* _server, int _tcpPort) {
         this->tcpPort = _tcpPort;
         this->server = _server;
-        this->connectServer();
+        //this->connectServer();
     }
 
     ~Quanser(void){

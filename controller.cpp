@@ -1,17 +1,15 @@
 #include "controller.h"
 
-Controller::Controller()
+controller::controller()
 {
     P = 0;
     I = 0;
     D = 0;
 }
 
-Controller::atualizaController(int tipo,double kp, double ki, double kd,double erro, double erroAnt)
-{
+controller::atualizaController(int tipo,double kp, double ki, double kd,double erro, double erroAnt){
 
-    switch(tipo)
-    {
+    switch(tipo){
 
         case ControllerP:
             P = erro * kp;

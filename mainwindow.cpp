@@ -8,7 +8,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     timerLeitura = new QTimer(0);
-    timerEscrita= new QTimer(0);
+    timerEscrita = new QTimer(0);
 
     threadLeitura = new QThread(this);
     threadEscrita = new QThread(this);
@@ -33,14 +33,17 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->dSpinOffSet,    SIGNAL(valueChanged(double)), this, SLOT(UI_limitRandInput()));
     connect(ui->dSpinAux,       SIGNAL(valueChanged(double)), this, SLOT(UI_limitRandInput()));
 
-    connect(ui->canal_0, SIGNAL(stateChanged(int)),this, SLOT(UI_canalReadSelect()));
-    connect(ui->canal_1, SIGNAL(stateChanged(int)),this, SLOT(UI_canalReadSelect()));
-    connect(ui->canal_2, SIGNAL(stateChanged(int)),this, SLOT(UI_canalReadSelect()));
-    connect(ui->canal_3, SIGNAL(stateChanged(int)),this, SLOT(UI_canalReadSelect()));
-    connect(ui->canal_4, SIGNAL(stateChanged(int)),this, SLOT(UI_canalReadSelect()));
-    connect(ui->canal_5, SIGNAL(stateChanged(int)),this, SLOT(UI_canalReadSelect()));
-    connect(ui->canal_6, SIGNAL(stateChanged(int)),this, SLOT(UI_canalReadSelect()));
-    connect(ui->canal_7, SIGNAL(stateChanged(int)),this, SLOT(UI_canalReadSelect()));
+    connect(ui->actionCanal,SIGNAL(triggered(bool)), config, SLOT(show()));
+    connect(config,         SIGNAL(accepted()), this, SLOT(JB_dataConfig()));
+
+//    connect(ui->canal_0, SIGNAL(stateChanged(int)),this, SLOT(UI_canalReadSelect()));
+//    connect(ui->canal_1, SIGNAL(stateChanged(int)),this, SLOT(UI_canalReadSelect()));
+//    connect(ui->canal_2, SIGNAL(stateChanged(int)),this, SLOT(UI_canalReadSelect()));
+//    connect(ui->canal_3, SIGNAL(stateChanged(int)),this, SLOT(UI_canalReadSelect()));
+//    connect(ui->canal_4, SIGNAL(stateChanged(int)),this, SLOT(UI_canalReadSelect()));
+//    connect(ui->canal_5, SIGNAL(stateChanged(int)),this, SLOT(UI_canalReadSelect()));
+//    connect(ui->canal_6, SIGNAL(stateChanged(int)),this, SLOT(UI_canalReadSelect()));
+//    connect(ui->canal_7, SIGNAL(stateChanged(int)),this, SLOT(UI_canalReadSelect()));
 
     UI_configPanel();
     UI_configGraphWrite();
@@ -126,39 +129,35 @@ void MainWindow::UI_configGraphRead()
     ui->graficoLeitura->yAxis->setLabel("Nivel do tanque (Cm) ");
 }
 
-void MainWindow::UI_canalReadSelect()
-{
-    canalLeituraVec[0] = ui->canal_0->isChecked();
-    canalLeituraVec[1] = ui->canal_1->isChecked();
-    canalLeituraVec[2] = ui->canal_2->isChecked();
-    canalLeituraVec[3] = ui->canal_3->isChecked();
-    canalLeituraVec[4] = ui->canal_4->isChecked();
-    canalLeituraVec[5] = ui->canal_5->isChecked();
-    canalLeituraVec[6] = ui->canal_6->isChecked();
-    canalLeituraVec[7] = ui->canal_7->isChecked();
+//void MainWindow::UI_canalReadSelect()
+//{
+//    canalLeituraVec[0] = ui->canal_0->isChecked();
+//    canalLeituraVec[1] = ui->canal_1->isChecked();
+//    canalLeituraVec[2] = ui->canal_2->isChecked();
+//    canalLeituraVec[3] = ui->canal_3->isChecked();
+//    canalLeituraVec[4] = ui->canal_4->isChecked();
+//    canalLeituraVec[5] = ui->canal_5->isChecked();
+//    canalLeituraVec[6] = ui->canal_6->isChecked();
+//    canalLeituraVec[7] = ui->canal_7->isChecked();
 
-    for(int i=0; i<NUMB_CAN_READ; i++)
-    {
-        if(canalLeituraVec[i])
-        {
-            ui->graficoLeitura->graph(i+2)->addToLegend();
-            ui->graficoLeitura->graph(i+2)->setVisible(true);
-        }
-        else
-        {
-            ui->graficoLeitura->graph(i+2)->removeFromLegend();
-            ui->graficoLeitura->graph(i+2)->setVisible(false);
-        }
-    }
-}
+//    for(int i=0; i<NUMB_CAN_READ; i++)
+//    {
+//        if(canalLeituraVec[i])
+//        {
+//            ui->graficoLeitura->graph(i+2)->addToLegend();
+//            ui->graficoLeitura->graph(i+2)->setVisible(true);
+//        }
+//        else
+//        {
+//            ui->graficoLeitura->graph(i+2)->removeFromLegend();
+//            ui->graficoLeitura->graph(i+2)->setVisible(false);
+//        }
+//    }
+//}
 
 void MainWindow::UI_configPanel()
 {
-    // Criando canais de escrita
-    for(int i=0; i<4; i++) ui->comboCanalEscrita->addItem("Canal " + QString::number(i),QVariant(i));
-
-    ui->groupConf->setDisabled(true);
-    ui->groupCanalLeitura->setDisabled(true);
+    //ui->groupConf->setDisabled(true);
 
     // Sinais gerados
     ui->comboTipoSinal->addItem("Degrau",QVariant(0));
@@ -268,7 +267,7 @@ void MainWindow::connectServer()
         ui->buttonConectar->setDisabled(true);
 
         ui->groupConf->setDisabled(false);
-        ui->groupCanalLeitura->setDisabled(false);
+        //ui->groupCanalLeitura->setDisabled(false);
 
         threadEscrita->start();
         threadLeitura->start();
@@ -287,7 +286,7 @@ void MainWindow::data()
     double amplitude = ui->dSpinAmp->value();
     double periodo = ui->dSpinPeriodo->value();
     double offSet = ui->dSpinOffSet->value();
-    int canalEscrita = ui->comboCanalEscrita->currentIndex();
+    int canalEscrita = config->getCanalEscrita();
     int tipoSinal = ui->comboTipoSinal->currentIndex();
     int tipoControler = -1; //pega o tipo do controlador
 
@@ -320,7 +319,6 @@ void MainWindow::sendData()
 {
     double key = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
 
-
     control->sendSignal();
 
     double sinalEscrita = control->getSinalEnviado();
@@ -329,8 +327,7 @@ void MainWindow::sendData()
     QString str_sinalEnviado = "Sinal enviado = " + QString::number(sinalEscrita) + " V";
     QString str_sinalCalculado = "Sinal calculado = " + QString::number(sinalCalculado) + " V";
 
-
-    ui->canal_0->isChecked();
+    //ui->canal_0->isChecked(); ????????????
 
     ui->lb_tensaoEscrita->setText(str_sinalEnviado);
     ui->lb_tensaoCalculada->setText(str_sinalCalculado);
@@ -359,7 +356,7 @@ void MainWindow::receiveData()
             double value = control->getCanalValue(i);
             ui->graficoLeitura->graph(i+2)->addData(key/5,value);
 
-            if(i==canalLeitura)
+            if(i == canalLeitura)
             {
                 sinalLeitura = value;
                 if(tipoMalha == M_FECHADA) // Malha fechada
@@ -381,4 +378,22 @@ void MainWindow::receiveData()
 
     ui->graficoLeitura->xAxis->setRange((key+0.25)/5, 8, Qt::AlignRight);
     ui->graficoLeitura->replot();
+}
+void MainWindow::JB_dataConfig()
+{
+    for(int i=0; i<8; i++)
+    {
+        if(config->getCanalLeituraVec(i))
+        {
+            ui->graficoLeitura->graph(i+2)->addToLegend();
+            ui->graficoLeitura->graph(i+2)->setVisible(true);
+        }
+        else
+        {
+            ui->graficoLeitura->graph(i+2)->removeFromLegend();
+            ui->graficoLeitura->graph(i+2)->setVisible(false);
+        }
+        this->canalLeituraVec[i] = config->getCanalLeituraVec(i);
+    }
+    //this->canalEscrita = config->getCanalEscrita();
 }
