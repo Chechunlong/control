@@ -2,26 +2,29 @@
 
 Control::Control()
 {
-    try {
+    try
+    {
         quanser = new Quanser("10.13.99.69",20081);
-
         signal = new Signal();
-    } catch(int e) {
+        controllerPID = new Controller();
+    }
+    catch(int e)
+    {
         qDebug() << "ops " << e;
     }
 
-    timeAux = 0;
-    tipoSinal = 0;
+    timeAux     = 0;
+    tipoSinal   = 0;
 
-    tensao = 0;
-    offSet = 0;
-    periodo = 0;
-    amplitude = 0;
-    auxForRand = 0;
+    tensao      = 0;
+    offSet      = 0;
+    periodo     = 0;
+    amplitude   = 0;
+    auxForRand  = 0;
 
-    sinalEscrita = 0;
-    sinalLeitura = 0;
-    sinalCalculado = 0;
+    sinalEscrita    = 0;
+    sinalLeitura    = 0;
+    sinalCalculado  = 0;
 
     erro = 0;
 
@@ -76,19 +79,19 @@ double Control::getSinalLeitura()
     return sinalLeitura;
 }
 
-void Control::setAmplitude(double value)
+void Control::setAmplitude(double amplitude)
 {
-    amplitude = value;
+    this->amplitude = amplitude;
 }
 
-void Control::setAuxForRand(double value)
+void Control::setAuxForRand(double auxForRand)
 {
-    auxForRand = value;
+    this->auxForRand = auxForRand;
 }
 
-void Control::setCanalEscrita(int value)
+void Control::setCanalEscrita(int canalEscrita)
 {
-    canalEscrita = canalLeitura = value;
+    this->canalEscrita = this->canalLeitura = canalEscrita;
 }
 
 void Control::setOffSet(double value)
@@ -115,6 +118,15 @@ void Control::setTipoSinal(int value)
 {
     tipoSinal = value;
 
+}
+
+void Control::setTipoControler(int tipoControler){
+    this->tipoControler = tipoControler;
+}
+
+int Control::getTipoControler()
+{
+    return tipoControler;
 }
 
 bool Control::connectionStatus()
@@ -182,7 +194,11 @@ void Control::sendSignal()
 
     if(tipoMalha == M_FECHADA)
     {
-        tensao = erro;
+        if(getTipoControler() < 0) {//verifica se algum controlador foi selecionado
+            tensao = erro;
+        }else{
+            tensao = controllerPID->atualizaController(tipoControler, Kp, Ki, Kd, erro, erroAnt);
+        }
     }
 
     travel();
