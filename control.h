@@ -24,6 +24,15 @@
 #define M_FECHADA 0
 #define M_ABERTA 1
 
+#define CONTROLE_CONST_TEMP 0
+#define CONTROLE_GANHO 1
+
+#define CONTROLER_P 0
+#define CONTROLER_PD 1
+#define CONTROLER_PI 2
+#define CONTROLER_PID 3
+#define CONTROLER_PI_D 4
+
 class Control
 {
 public:
@@ -48,6 +57,29 @@ public:
     double  getSinalLeitura();
 
 
+    // Controle
+    int getModeControle() const;
+    void setModeControle(int modeControle);
+
+    int getTipoControler();
+    void setTipoControler(int tipoControler);
+
+    double getKp() const;
+    void setKp(double value);
+
+    double getKi() const;
+    void setKi(double value);
+
+    double getKd() const;
+    void setKd(double value);
+
+    double getTempoIntegrativo() const;
+    void setTempoIntegrativo(double value);
+
+    double getTempoDerivativo() const;
+    void setTempoDerivativo(double value);
+
+
     void setAmplitude(double amplitude);
 
     void setAuxForRand(double auxForRand);
@@ -64,9 +96,8 @@ public:
 
     void setTipoSinal(int value);
 
-    void setTipoControler(int tipoControler);
 
-    int getTipoControler();
+
 
     bool    connectionStatus();
 
@@ -80,10 +111,11 @@ public:
 
     void    receiveSigal();
 
+
 private:
     Quanser *quanser;
     Signal *signal;
-    Controller *controllerPID;
+    Controller *controller;
 
     int tipoMalha = 1;  /* 0 -> fechada, 1 -> aberto*/
 
@@ -100,8 +132,6 @@ private:
     double periodo;
     double amplitude;
     double auxForRand;
-    int tipoControler = -1;
-    double Kp,Ki,Kd;
 
     // Malha fechada function: _receiveData()
     double erro, erroAnt;
@@ -110,6 +140,16 @@ private:
     int canalLeitura;
 
     double canaisLeitura_value[NUMB_CAN_READ] = {0};
+
+    // Controlador
+    int tipoControler;
+    int modeControle;
+    double Kp;
+    double Ki;
+    double Kd;
+    double tempoIntegrativo;
+    double tempoDerivativo;
+
 };
 
 #endif // CONTROL_H

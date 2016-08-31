@@ -2,16 +2,10 @@
 
 Control::Control()
 {
-    try
-    {
-        quanser = new Quanser("10.13.99.69",20081);
-        signal = new Signal();
-        controllerPID = new Controller();
-    }
-    catch(int e)
-    {
-        qDebug() << "ops " << e;
-    }
+    quanser = new Quanser("10.13.99.69",20081);
+    signal = new Signal();
+    controller = new Controller();
+
 
     timeAux     = 0;
     tipoSinal   = 0;
@@ -26,10 +20,20 @@ Control::Control()
     sinalLeitura    = 0;
     sinalCalculado  = 0;
 
-    erro = 0;
+    erro    = 0;
+    erroAnt = 0;
 
     canalEscrita = 0;
     canalLeitura = 0;
+
+    // Controlador
+    Kp = 0;
+    Ki = 0;
+    Kd = 0;
+    tempoDerivativo = 0;
+    tempoIntegrativo = 0;
+    tipoControler = 0;
+    modeControle = 0;
 }
 
 double Control::getAmplitude()
@@ -120,13 +124,71 @@ void Control::setTipoSinal(int value)
 
 }
 
-void Control::setTipoControler(int tipoControler){
-    this->tipoControler = tipoControler;
+
+double Control::getKp() const
+{
+    return Kp;
 }
+
+void Control::setKp(double value)
+{
+    Kp = value;
+}
+
+double Control::getKi() const
+{
+    return Ki;
+}
+
+void Control::setKi(double value)
+{
+    Ki = value;
+}
+
+double Control::getKd() const
+{
+    return Kd;
+}
+
+void Control::setKd(double value)
+{
+    Kd = value;
+}
+
+double Control::getTempoIntegrativo() const
+{
+    return tempoIntegrativo;
+}
+
+void Control::setTempoIntegrativo(double value)
+{
+    tempoIntegrativo = value;
+}
+
+double Control::getTempoDerivativo() const
+{
+    return tempoDerivativo;
+}
+
+void Control::setTempoDerivativo(double value)
+{
+    tempoDerivativo = value;
+}
+
+int Control::getModeControle() const
+{
+    return modeControle;
+}
+
 
 int Control::getTipoControler()
 {
     return tipoControler;
+}
+
+void Control::setTipoControler(int tipoControler)
+{
+    this->tipoControler = tipoControler;
 }
 
 bool Control::connectionStatus()
@@ -163,6 +225,17 @@ void Control::sendSignal()
 {
     if(timeAux > periodo) timeAux = 0;
 
+    if(tipoMalha == M_FECHADA)
+    {
+        if(modeControle == CONTROLE_CONST_TEMP)
+        {
+           Ki = Kp / tempoIntegrativo;
+           Kd = Kp * tempoDerivativo;
+        }
+
+        tensao = controller->atualizaController(tipoControler, Kp, Ki, Kd, erro, erroAnt);
+    }
+
     switch (tipoSinal)
     {
     case DEGRAU:
@@ -192,15 +265,6 @@ void Control::sendSignal()
 
     sinalEscrita = sinalCalculado;
 
-    if(tipoMalha == M_FECHADA)
-    {
-        if(getTipoControler() < 0) {//verifica se algum controlador foi selecionado
-            tensao = erro;
-        }else{
-            tensao = controllerPID->atualizaController(tipoControler, Kp, Ki, Kd, erro, erroAnt);
-        }
-    }
-
     travel();
 
     quanser->writeDA(canalEscrita,sinalEscrita);
@@ -222,8 +286,11 @@ void Control::receiveSigal()
             sinalLeitura = canaisLeitura_value[canal]; // cm
             if(tipoMalha == M_FECHADA)
             {
+                erroAnt = erro;
                 erro = amplitude - sinalLeitura; // cm
             }
         }
     }
 }
+
+

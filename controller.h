@@ -5,7 +5,7 @@
 #define ControllerPI 1
 #define ControllerPD 2
 #define ControllerPID 3
-#define ControllerPIDer 4;
+#define ControllerPIDer 4
 
 
 class Controller
