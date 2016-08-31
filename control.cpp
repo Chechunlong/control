@@ -232,8 +232,6 @@ void Control::sendSignal()
 
     if(tipoMalha == M_FECHADA)
     {
-        qDebug() << "malha fechada";
-
         if(modeControle == CONTROLE_CONST_TEMP)
         {
            Ki = Kp / tempoIntegrativo;
@@ -296,9 +294,9 @@ void Control::sendSignal()
     qDebug() << "tipoControler " << tipoControler;
     qDebug() << "tensao " << tensao;
     qDebug() << "erro " << erro;*/
-    //qDebug() << "kp " << Kp;
-    //qDebug() << "ki " << Ki;
-    //qDebug() << "kd " << Kd;
+    qDebug() << "kp " << Kp;
+    qDebug() << "ki " << Ki;
+    qDebug() << "kd " << Kd;
 
 
     quanser->writeDA(canalEscrita,sinalEscrita);

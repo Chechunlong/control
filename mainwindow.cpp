@@ -31,7 +31,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->tipoControlador, SIGNAL(currentIndexChanged(int)),this,SLOT(UI_configControlador()));
 
     connect(ui->buttonConectar, SIGNAL(clicked(bool)),this,SLOT(connectServer()));
+
     connect(ui->buttonAtualizar,SIGNAL(clicked(bool)),this,SLOT(data()));
+
     connect(ui->radioAberta,    SIGNAL(clicked(bool)),this,SLOT(UI_openLoop()));
     connect(ui->radioFechada,   SIGNAL(clicked(bool)),this,SLOT(UI_closedLoop()));
     connect(ui->comboTipoSinal, SIGNAL(currentIndexChanged(int)),this,SLOT(UI_configSignal()));
@@ -323,9 +325,6 @@ void MainWindow::data()
     double Kp = ui->sp_kp->value();
     double Ki_ti = ui->sp_ki_ti->value();
     double Kd_td = ui->sp_kd_td->value();
-
-    qDebug() << Kp << "##################";
-
 
     int tipoControler = ui->tipoControlador->currentIndex();
 
