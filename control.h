@@ -27,11 +27,6 @@
 #define CONTROLE_CONST_TEMP 0
 #define CONTROLE_GANHO 1
 
-#define CONTROLER_P 0
-#define CONTROLER_PD 1
-#define CONTROLER_PI 2
-#define CONTROLER_PID 3
-#define CONTROLER_PI_D 4
 
 class Control
 {

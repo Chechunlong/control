@@ -30,4 +30,5 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui \
     configuracao.ui
 
-DISTFILES +=
+DISTFILES += \
+    gg

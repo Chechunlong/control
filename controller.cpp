@@ -1,55 +1,53 @@
 #include "controller.h"
 
+
+
 Controller::Controller()
 {
-    P = 0;
-    I = 0;
-    D = 0;
+    erroAnt = 0;
+    integrador = 0;
 }
 
-double Controller::atualizaController(int tipo,double kp, double ki, double kd,double erro, double erroAnt){
+double Controller::ganhoKp(double Kp, double erro)
+{
+    return erro * Kp;
+}
 
-    switch(tipo){
+double Controller::ganhoKi(double Ki, double erro)
+{
+    this->integrador += erro * Ki * TEMPO_AMOSTRAGEM;
 
-        case ControllerP:
-            P = erro * kp;
-            I = 0;
-            D = 0;
-            break;
+    return this->integrador;
+}
 
-        case ControllerPI:
-            P = erro * kp;
-            I += erro * ki * 0.1;
-            D = 0;
-            break;
+double Controller::ganhoKd(double Kd, double erro)
+{
+    double derivador = (Kd*(erro-this->erroAnt))/TEMPO_AMOSTRAGEM;
+    this->erroAnt = erro;
+    return derivador;
+}
 
-        case ControllerPD:
-            P = erro * kp;
-            I = 0;
-            D = (erro - erroAnt) * kd/0.1;
-            erroAnt = erro;
-            break;
+double Controller::controlerP(double Kp, double erro)
+{
+    return ganhoKp(Kp, erro);
+}
 
-        case ControllerPID:
-            P = erro * kp;
-            I += erro * ki * 0.1;
-            D = (erro - erroAnt) * kd/0.1;
-            erroAnt = erro;
-            break;
+double Controller::controlerPI(double Kp, double Ki, double erro)
+{
+    return ganhoKp(Kp, erro) + ganhoKi(Ki, erro);
+}
 
-        case ControllerPIDer:
-            P = erro * kp;
-            I += erro * ki * 0.1;
-            D = 0; //TODO
-            break;
+double Controller::controlerPD(double Kp, double Kd, double erro)
+{
+    return ganhoKp(Kp, erro) + ganhoKd(Kd, erro);
+}
 
-        default:
-            P = 0;
-            I = 0;
-            D = 0;
-            break;
+double Controller::controlerPID(double Kp, double Ki, double Kd, double erro)
+{
+    return ganhoKp(Kp, erro) + ganhoKi(Ki, erro) + ganhoKd(Kd, erro);
+}
 
-    }
-
-    return (P+I+D);
+double Controller::controlerPI_D(double Kp, double Ki, double Kd, double erro, double amplitude)
+{
+    return ganhoKp(Kp, erro) + ganhoKi(Ki, erro) + ganhoKd(Kd, amplitude);
 }

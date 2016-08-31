@@ -1,6 +1,9 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#define TAB_SINAL 0
+#define TAB_CONTROLE 1
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -22,6 +25,11 @@ MainWindow::MainWindow(QWidget *parent) :
     timerEscrita->moveToThread(threadEscrita);
     connect(timerEscrita, SIGNAL(timeout()), this, SLOT(sendData()));
 
+    //connect(ui->rb_constTempo, SIGNAL(toggled(bool)), ui->lb_ki_ti, SLOT(setText(QString::new("Ti"))));
+    connect(ui->rb_constGanho,    SIGNAL(toggled(bool)),this,SLOT(UI_configControlador()));
+    connect(ui->rb_constTempo,   SIGNAL(toggled(bool)),this,SLOT(UI_configControlador()));
+    connect(ui->tipoControlador, SIGNAL(currentIndexChanged(int)),this,SLOT(UI_configControlador()));
+
     connect(ui->buttonConectar, SIGNAL(clicked(bool)),this,SLOT(connectServer()));
     connect(ui->buttonAtualizar,SIGNAL(clicked(bool)),this,SLOT(data()));
     connect(ui->radioAberta,    SIGNAL(clicked(bool)),this,SLOT(UI_openLoop()));
@@ -36,18 +44,14 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionCanal,SIGNAL(triggered(bool)), config, SLOT(show()));
     connect(config,         SIGNAL(accepted()), this, SLOT(JB_dataConfig()));
 
-//    connect(ui->canal_0, SIGNAL(stateChanged(int)),this, SLOT(UI_canalReadSelect()));
-//    connect(ui->canal_1, SIGNAL(stateChanged(int)),this, SLOT(UI_canalReadSelect()));
-//    connect(ui->canal_2, SIGNAL(stateChanged(int)),this, SLOT(UI_canalReadSelect()));
-//    connect(ui->canal_3, SIGNAL(stateChanged(int)),this, SLOT(UI_canalReadSelect()));
-//    connect(ui->canal_4, SIGNAL(stateChanged(int)),this, SLOT(UI_canalReadSelect()));
-//    connect(ui->canal_5, SIGNAL(stateChanged(int)),this, SLOT(UI_canalReadSelect()));
-//    connect(ui->canal_6, SIGNAL(stateChanged(int)),this, SLOT(UI_canalReadSelect()));
-//    connect(ui->canal_7, SIGNAL(stateChanged(int)),this, SLOT(UI_canalReadSelect()));
+    connect(ui->radioFechada, SIGNAL(toggled(bool)), ui->tab_sinal_controle->widget(TAB_CONTROLE), SLOT(setEnabled(bool)));
+    connect(ui->radioAberta, SIGNAL(toggled(bool)), ui->tab_sinal_controle->widget(TAB_CONTROLE), SLOT(setDisabled(bool)));
 
     UI_configPanel();
+
     UI_configGraphWrite();
     UI_configGraphRead();
+    UI_configControlador();
 }
 
 MainWindow::~MainWindow()
@@ -55,6 +59,46 @@ MainWindow::~MainWindow()
     threadEscrita->terminate();
     threadLeitura->terminate();
     delete ui;
+}
+
+void MainWindow::UI_configControlador()
+{
+    if(ui->rb_constGanho->isChecked())
+    {
+        ui->lb_kd_td->setText("Kd = ");
+        ui->lb_ki_ti->setText("Ki = ");
+    }
+    else if(ui->rb_constTempo->isChecked())
+    {
+        ui->lb_kd_td->setText("Td = ");
+        ui->lb_ki_ti->setText("Ti = ");
+    }
+
+    int tipoControler = ui->tipoControlador->currentIndex();
+
+    switch (tipoControler) {
+    case CONTROLER_P:
+        ui->sp_kd_td->setDisabled(true);
+        ui->sp_ki_ti->setDisabled(true);
+        break;
+    case CONTROLER_PD:
+        ui->sp_kd_td->setDisabled(false);
+        ui->sp_ki_ti->setDisabled(true);
+        break;
+    case CONTROLER_PI:
+        ui->sp_kd_td->setDisabled(true);
+        ui->sp_ki_ti->setDisabled(false);
+        break;
+    case CONTROLER_PID:
+        ui->sp_kd_td->setDisabled(false);
+        ui->sp_ki_ti->setDisabled(false);
+        break;
+    case CONTROLER_PI_D:
+        ui->sp_kd_td->setDisabled(false);
+        ui->sp_ki_ti->setDisabled(false);
+        break;
+    }
+
 }
 
 void MainWindow::UI_configGraphWrite()
@@ -129,35 +173,14 @@ void MainWindow::UI_configGraphRead()
     ui->graficoLeitura->yAxis->setLabel("Nivel do tanque (Cm) ");
 }
 
-//void MainWindow::UI_canalReadSelect()
-//{
-//    canalLeituraVec[0] = ui->canal_0->isChecked();
-//    canalLeituraVec[1] = ui->canal_1->isChecked();
-//    canalLeituraVec[2] = ui->canal_2->isChecked();
-//    canalLeituraVec[3] = ui->canal_3->isChecked();
-//    canalLeituraVec[4] = ui->canal_4->isChecked();
-//    canalLeituraVec[5] = ui->canal_5->isChecked();
-//    canalLeituraVec[6] = ui->canal_6->isChecked();
-//    canalLeituraVec[7] = ui->canal_7->isChecked();
-
-//    for(int i=0; i<NUMB_CAN_READ; i++)
-//    {
-//        if(canalLeituraVec[i])
-//        {
-//            ui->graficoLeitura->graph(i+2)->addToLegend();
-//            ui->graficoLeitura->graph(i+2)->setVisible(true);
-//        }
-//        else
-//        {
-//            ui->graficoLeitura->graph(i+2)->removeFromLegend();
-//            ui->graficoLeitura->graph(i+2)->setVisible(false);
-//        }
-//    }
-//}
-
 void MainWindow::UI_configPanel()
 {
-    //ui->groupConf->setDisabled(true);
+    // Controladores
+    ui->tipoControlador->addItem("P",QVariant(CONTROLER_P));
+    ui->tipoControlador->addItem("PD",QVariant(CONTROLER_PD));
+    ui->tipoControlador->addItem("PI",QVariant(CONTROLER_PI));
+    ui->tipoControlador->addItem("PID",QVariant(CONTROLER_PID));
+    ui->tipoControlador->addItem("PI-D",QVariant(CONTROLER_PI_D));
 
     // Sinais gerados
     ui->comboTipoSinal->addItem("Degrau",QVariant(0));
@@ -209,6 +232,7 @@ void MainWindow::UI_closedLoop()
     int sinalSelecionado = ui->comboTipoSinal->currentIndex();
     ui->dSpinAmp->setRange(MIN_LEVEL,MAX_LEVEL); // Limita nivel
     ui->dSpinOffSet->setRange(MIN_LEVEL,MAX_LEVEL); // Limita nivel
+    //ui->tab_sinal_controle->widget(TAB_CONTROLE)->setDisabled(false);
 
     if(sinalSelecionado == ALEATORIO)
     {
@@ -230,6 +254,7 @@ void MainWindow::UI_openLoop()
     int sinalSelecionado = ui->comboTipoSinal->currentIndex();
     ui->dSpinAmp->setRange(MIN_VOLTAGE,MAX_VOLTAGE); // Limita a tensão entre -4V e 4V
     ui->dSpinOffSet->setRange(MIN_VOLTAGE,MAX_VOLTAGE); // Limita a tensão entre -4V e 4V
+    //ui->tab_sinal_controle->widget(TAB_CONTROLE)-;
 
     if(sinalSelecionado == ALEATORIO)
     {
@@ -281,6 +306,9 @@ void MainWindow::connectServer()
     }
 }
 
+
+
+
 void MainWindow::data()
 {
     double amplitude = ui->dSpinAmp->value();
@@ -289,18 +317,17 @@ void MainWindow::data()
     int canalEscrita = config->getCanalEscrita();
     int tipoSinal = ui->comboTipoSinal->currentIndex();
 
-    int Kp, Ki, Kd, tempoDerivativo, tempoIntegrativo;
+    bool controlerGanho = ui->rb_constGanho->isChecked();
+    bool controlerTempo = ui->rb_constTempo->isChecked();
 
-    bool controlerGanho = true; // TODO
-    bool controlerTempo = true; // TODO
+    double Kp = ui->sp_kp->value();
+    double Ki_ti = ui->sp_ki_ti->value();
+    double Kd_td = ui->sp_kd_td->value();
 
-    Kp = 0; // TODO
-    Ki = 0; // TODO
-    Kd = 0; // TODO
-    tempoDerivativo = 0; // TODO
-    tempoIntegrativo = 0; // TODO
+    qDebug() << Kp << "##################";
 
-    int tipoControler = 0; // TODO
+
+    int tipoControler = ui->tipoControlador->currentIndex();
 
     if(ui->radioAberta->isChecked())
     {
@@ -316,18 +343,20 @@ void MainWindow::data()
 
         // Controlador
         control->setTipoControler(tipoControler);
-        control->setModeControle(modeControler);
+
+        if(controlerGanho) control->setModeControle(CONTROLE_GANHO);
+        if(controlerTempo) control->setModeControle(CONTROLE_CONST_TEMP);
 
         control->setKp(Kp);
         if(controlerGanho)
         {
-            control->setKi(Ki);
-            control->setKd(Kd);
+            control->setKi(Ki_ti);
+            control->setKd(Kd_td);
         }
         else if(controlerTempo)
         {
-            control->setTempoDerivativo(tempoDerivativo);
-            control->setTempoIntegrativo(tempoIntegrativo);
+            control->setTempoDerivativo(Kd_td);
+            control->setTempoIntegrativo(Ki_ti);
         }
     }
 
@@ -337,14 +366,11 @@ void MainWindow::data()
         control->setAuxForRand(auxForRand);
     }
 
-
     control->setCanalEscrita(canalEscrita);
     control->setPeriodo(periodo);
     control->setOffSet(offSet);
     control->setTipoSinal(tipoSinal);
     control->setTipoControler(tipoControler);
-
-
 }
 
 void MainWindow::sendData()
@@ -358,8 +384,6 @@ void MainWindow::sendData()
 
     QString str_sinalEnviado = "Sinal enviado = " + QString::number(sinalEscrita) + " V";
     QString str_sinalCalculado = "Sinal calculado = " + QString::number(sinalCalculado) + " V";
-
-    //ui->canal_0->isChecked(); ????????????
 
     ui->lb_tensaoEscrita->setText(str_sinalEnviado);
     ui->lb_tensaoCalculada->setText(str_sinalCalculado);

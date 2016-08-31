@@ -21,6 +21,9 @@ public:
     ~MainWindow();
 
 private slots:
+
+    void UI_configControlador();
+
     void UI_configGraphWrite();
 
     void UI_configGraphRead();

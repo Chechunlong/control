@@ -180,6 +180,11 @@ int Control::getModeControle() const
     return modeControle;
 }
 
+void Control::setModeControle(int modeControle)
+{
+    this->modeControle = modeControle;
+}
+
 
 int Control::getTipoControler()
 {
@@ -227,13 +232,31 @@ void Control::sendSignal()
 
     if(tipoMalha == M_FECHADA)
     {
+        qDebug() << "malha fechada";
+
         if(modeControle == CONTROLE_CONST_TEMP)
         {
            Ki = Kp / tempoIntegrativo;
            Kd = Kp * tempoDerivativo;
         }
 
-        tensao = controller->atualizaController(tipoControler, Kp, Ki, Kd, erro, erroAnt);
+        switch (tipoControler) {
+        case CONTROLER_P:
+            tensao = controller->controlerP(Kp, erro);
+            break;
+        case CONTROLER_PI:
+            tensao = controller->controlerPI(Kp, Ki, erro);
+            break;
+        case CONTROLER_PD:
+            tensao = controller->controlerPD(Kp,Kd, erro);
+            break;
+        case CONTROLER_PID:
+            tensao = controller->controlerPID(Kp,Ki,Kd,erro);
+            break;
+        case CONTROLER_PI_D:
+            tensao = controller->controlerPI_D(Kp, Ki, Kd, erro, sinalLeitura);
+            break;
+        }
     }
 
     switch (tipoSinal)
@@ -267,6 +290,17 @@ void Control::sendSignal()
 
     travel();
 
+    /*qDebug() << "sinalEscrita " << sinalEscrita;
+    qDebug() << "sinalLeitura " << sinalLeitura;
+    qDebug() << "sinalCalculado " << sinalCalculado;
+    qDebug() << "tipoControler " << tipoControler;
+    qDebug() << "tensao " << tensao;
+    qDebug() << "erro " << erro;*/
+    //qDebug() << "kp " << Kp;
+    //qDebug() << "ki " << Ki;
+    //qDebug() << "kd " << Kd;
+
+
     quanser->writeDA(canalEscrita,sinalEscrita);
 
     timeAux += 0.1;
@@ -286,7 +320,6 @@ void Control::receiveSigal()
             sinalLeitura = canaisLeitura_value[canal]; // cm
             if(tipoMalha == M_FECHADA)
             {
-                erroAnt = erro;
                 erro = amplitude - sinalLeitura; // cm
             }
         }

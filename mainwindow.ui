@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1319</width>
+    <width>1322</width>
     <height>709</height>
    </rect>
   </property>
@@ -88,8 +88,6 @@
       </item>
      </layout>
     </widget>
-    <zorder>layoutWidget</zorder>
-    <zorder>groupBox_4</zorder>
    </widget>
    <widget class="QCustomPlot" name="graficoLeitura" native="true">
     <property name="geometry">
@@ -127,14 +125,17 @@
      </layout>
     </widget>
    </widget>
-   <widget class="QTabWidget" name="tabWidget">
+   <widget class="QTabWidget" name="tab_sinal_controle">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>80</y>
       <width>301</width>
-      <height>341</height>
+      <height>371</height>
      </rect>
+    </property>
+    <property name="layoutDirection">
+     <enum>Qt::RightToLeft</enum>
     </property>
     <property name="currentIndex">
      <number>1</number>
@@ -143,142 +144,6 @@
      <attribute name="title">
       <string>Sinal</string>
      </attribute>
-     <widget class="QDoubleSpinBox" name="dSpinAux">
-      <property name="geometry">
-       <rect>
-        <x>150</x>
-        <y>200</y>
-        <width>68</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="singleStep">
-       <double>0.500000000000000</double>
-      </property>
-     </widget>
-     <widget class="QLabel" name="labelPeriodo">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>170</y>
-        <width>131</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Período</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-      </property>
-     </widget>
-     <widget class="QComboBox" name="comboTipoSinal">
-      <property name="geometry">
-       <rect>
-        <x>70</x>
-        <y>60</y>
-        <width>141</width>
-        <height>31</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="labelAmp">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>110</y>
-        <width>131</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Amplitude</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-      </property>
-     </widget>
-     <widget class="QDoubleSpinBox" name="dSpinPeriodo">
-      <property name="geometry">
-       <rect>
-        <x>150</x>
-        <y>170</y>
-        <width>68</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="singleStep">
-       <double>0.500000000000000</double>
-      </property>
-     </widget>
-     <widget class="QLabel" name="labelTipoSinal">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>60</y>
-        <width>59</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Tipo:</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="labelOffSet">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>140</y>
-        <width>131</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Off-set</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-      </property>
-     </widget>
-     <widget class="QDoubleSpinBox" name="dSpinOffSet">
-      <property name="geometry">
-       <rect>
-        <x>150</x>
-        <y>140</y>
-        <width>68</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="singleStep">
-       <double>0.500000000000000</double>
-      </property>
-     </widget>
-     <widget class="QDoubleSpinBox" name="dSpinAmp">
-      <property name="geometry">
-       <rect>
-        <x>150</x>
-        <y>110</y>
-        <width>68</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="singleStep">
-       <double>0.500000000000000</double>
-      </property>
-     </widget>
-     <widget class="QLabel" name="labelAux">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>200</y>
-        <width>59</width>
-        <height>14</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
      <widget class="QGroupBox" name="groupBox_2">
       <property name="geometry">
        <rect>
@@ -288,16 +153,19 @@
         <height>51</height>
        </rect>
       </property>
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
+      </property>
       <property name="title">
-       <string>Controle</string>
+       <string/>
       </property>
       <widget class="QRadioButton" name="radioAberta">
        <property name="geometry">
         <rect>
-         <x>10</x>
+         <x>20</x>
          <y>20</y>
          <width>102</width>
-         <height>20</height>
+         <height>30</height>
         </rect>
        </property>
        <property name="text">
@@ -310,7 +178,7 @@
          <x>130</x>
          <y>20</y>
          <width>121</width>
-         <height>20</height>
+         <height>30</height>
         </rect>
        </property>
        <property name="text">
@@ -318,10 +186,175 @@
        </property>
       </widget>
      </widget>
+     <widget class="QGroupBox" name="groupBox_4">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>70</y>
+        <width>271</width>
+        <height>211</height>
+       </rect>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
+      </property>
+      <property name="title">
+       <string>Parâmentros</string>
+      </property>
+      <widget class="QLabel" name="labelAmp">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>80</y>
+         <width>131</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Amplitude</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+      <widget class="QLabel" name="labelAux">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>170</y>
+         <width>120</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QDoubleSpinBox" name="dSpinAux">
+       <property name="geometry">
+        <rect>
+         <x>150</x>
+         <y>170</y>
+         <width>90</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="singleStep">
+        <double>0.500000000000000</double>
+       </property>
+      </widget>
+      <widget class="QDoubleSpinBox" name="dSpinPeriodo">
+       <property name="geometry">
+        <rect>
+         <x>150</x>
+         <y>140</y>
+         <width>90</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="singleStep">
+        <double>0.500000000000000</double>
+       </property>
+      </widget>
+      <widget class="QComboBox" name="comboTipoSinal">
+       <property name="geometry">
+        <rect>
+         <x>80</x>
+         <y>30</y>
+         <width>162</width>
+         <height>31</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="labelTipoSinal">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>30</y>
+         <width>59</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Tipo:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="labelPeriodo">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>140</y>
+         <width>131</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Período</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+      <widget class="QDoubleSpinBox" name="dSpinAmp">
+       <property name="geometry">
+        <rect>
+         <x>150</x>
+         <y>80</y>
+         <width>90</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="singleStep">
+        <double>0.500000000000000</double>
+       </property>
+      </widget>
+      <widget class="QLabel" name="labelOffSet">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>110</y>
+         <width>131</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Off-set</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+      <widget class="QDoubleSpinBox" name="dSpinOffSet">
+       <property name="geometry">
+        <rect>
+         <x>150</x>
+         <y>110</y>
+         <width>90</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="singleStep">
+        <double>0.500000000000000</double>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QPushButton" name="buttonAtualizar">
+      <property name="geometry">
+       <rect>
+        <x>70</x>
+        <y>300</y>
+        <width>151</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Atualizar dados</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="tab_controle">
      <attribute name="title">
-      <string>PID</string>
+      <string>Controle</string>
      </attribute>
      <widget class="QGroupBox" name="groupBox">
       <property name="geometry">
@@ -329,33 +362,68 @@
         <x>10</x>
         <y>10</y>
         <width>271</width>
-        <height>80</height>
+        <height>131</height>
        </rect>
       </property>
       <property name="title">
        <string>Modo</string>
       </property>
-      <widget class="QRadioButton" name="radioButton_2">
+      <widget class="QRadioButton" name="rb_constGanho">
        <property name="geometry">
         <rect>
-         <x>10</x>
-         <y>50</y>
+         <x>20</x>
+         <y>20</y>
          <width>231</width>
          <height>20</height>
         </rect>
        </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
        <property name="text">
         <string>Constantes de ganho</string>
        </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
       </widget>
-      <widget class="QRadioButton" name="radioButton">
+      <widget class="QComboBox" name="tipoControlador">
        <property name="geometry">
         <rect>
-         <x>10</x>
-         <y>20</y>
-         <width>241</width>
-         <height>20</height>
+         <x>160</x>
+         <y>80</y>
+         <width>71</width>
+         <height>31</height>
         </rect>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+      </widget>
+      <widget class="QLabel" name="lb_tipoControlador">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>80</y>
+         <width>131</width>
+         <height>30</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Tipo de Controlador:</string>
+       </property>
+      </widget>
+      <widget class="QRadioButton" name="rb_constTempo">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>40</y>
+         <width>160</width>
+         <height>30</height>
+        </rect>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
        </property>
        <property name="text">
         <string>Constantes de tempo</string>
@@ -371,111 +439,115 @@
         <height>121</height>
        </rect>
       </property>
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
+      </property>
       <property name="title">
        <string>Ajustes</string>
       </property>
-      <widget class="QWidget" name="">
+      <widget class="QDoubleSpinBox" name="sp_ki_ti">
        <property name="geometry">
         <rect>
-         <x>10</x>
-         <y>30</y>
-         <width>181</width>
-         <height>83</height>
+         <x>60</x>
+         <y>59</y>
+         <width>66</width>
+         <height>23</height>
         </rect>
        </property>
-       <layout class="QGridLayout" name="gridLayout_3">
-        <item row="0" column="0">
-         <widget class="QLabel" name="lb_kp">
-          <property name="text">
-           <string>Kp</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QDoubleSpinBox" name="sp_kp"/>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="lb_ki_ti">
-          <property name="text">
-           <string>Ki</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QDoubleSpinBox" name="sp_ki_ti"/>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="lb_kd_td">
-          <property name="text">
-           <string>Kd</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QDoubleSpinBox" name="sp_kd_td"/>
-        </item>
-       </layout>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
       </widget>
-      <zorder>lb_kp</zorder>
-      <zorder>lb_kd_td</zorder>
-      <zorder>lb_ki_ti</zorder>
-      <zorder>lb_kd_td</zorder>
-      <zorder>lb_ki_ti</zorder>
-      <zorder>lb_kp</zorder>
-      <zorder>sp_kp</zorder>
-      <zorder>sp_ki_ti</zorder>
-      <zorder>sp_kd_td</zorder>
+      <widget class="QDoubleSpinBox" name="sp_kp">
+       <property name="geometry">
+        <rect>
+         <x>60</x>
+         <y>30</y>
+         <width>66</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+      </widget>
+      <widget class="QLabel" name="lb_kp">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>32</y>
+         <width>30</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="text">
+        <string>Kp =</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="lb_ki_ti">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>61</y>
+         <width>30</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="text">
+        <string>Ki =</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="lb_kd_td">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>90</y>
+         <width>30</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="text">
+        <string>Kd =</string>
+       </property>
+      </widget>
+      <widget class="QDoubleSpinBox" name="sp_kd_td">
+       <property name="geometry">
+        <rect>
+         <x>60</x>
+         <y>88</y>
+         <width>66</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+      </widget>
      </widget>
-     <widget class="QComboBox" name="comboBox">
+     <widget class="QPushButton" name="buttonAtualizar2">
       <property name="geometry">
        <rect>
-        <x>170</x>
-        <y>110</y>
-        <width>111</width>
+        <x>70</x>
+        <y>300</y>
+        <width>151</width>
         <height>31</height>
        </rect>
       </property>
-     </widget>
-     <widget class="QLabel" name="label">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>110</y>
-        <width>131</width>
-        <height>21</height>
-       </rect>
-      </property>
       <property name="text">
-       <string>Estilo de operação</string>
+       <string>Atualizar dados</string>
       </property>
      </widget>
     </widget>
    </widget>
-   <widget class="QPushButton" name="buttonAtualizar">
-    <property name="geometry">
-     <rect>
-      <x>80</x>
-      <y>430</y>
-      <width>151</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Atualizar dados</string>
-    </property>
-   </widget>
-   <zorder>groupConectar</zorder>
-   <zorder>graficoEscrita</zorder>
-   <zorder>graficoLeitura</zorder>
-   <zorder>lb_kd_td</zorder>
-   <zorder>le_kd_td</zorder>
-   <zorder>lb_kp</zorder>
-   <zorder>le_kp</zorder>
-   <zorder>le_ki_ti</zorder>
-   <zorder>lb_ki_ti</zorder>
-   <zorder>buttonAtualizar</zorder>
-   <zorder>tabWidget</zorder>
-   <zorder>buttonAtualizar</zorder>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QMenuBar" name="menuBar">
@@ -483,7 +555,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1319</width>
+     <width>1322</width>
      <height>19</height>
     </rect>
    </property>
