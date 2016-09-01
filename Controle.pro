@@ -16,7 +16,6 @@ SOURCES += main.cpp\
     qcustomplot.cpp \
     signal.cpp \
     control.cpp \
-    configuracao.cpp \
     controller.cpp
 
 HEADERS  += mainwindow.h \
@@ -24,11 +23,8 @@ HEADERS  += mainwindow.h \
     qcustomplot.h \
     signal.h \
     control.h \
-    configuracao.h \
     controller.h
 
-FORMS    += mainwindow.ui \
-    configuracao.ui
+FORMS    += mainwindow.ui
 
-DISTFILES += \
-    gg
+DISTFILES +=

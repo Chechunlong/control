@@ -121,7 +121,6 @@ void Control::setTipoMalha(int value)
 void Control::setTipoSinal(int value)
 {
     tipoSinal = value;
-
 }
 
 
@@ -287,17 +286,6 @@ void Control::sendSignal()
     sinalEscrita = sinalCalculado;
 
     travel();
-
-    /*qDebug() << "sinalEscrita " << sinalEscrita;
-    qDebug() << "sinalLeitura " << sinalLeitura;
-    qDebug() << "sinalCalculado " << sinalCalculado;
-    qDebug() << "tipoControler " << tipoControler;
-    qDebug() << "tensao " << tensao;
-    qDebug() << "erro " << erro;*/
-    qDebug() << "kp " << Kp;
-    qDebug() << "ki " << Ki;
-    qDebug() << "kd " << Kd;
-
 
     quanser->writeDA(canalEscrita,sinalEscrita);
 

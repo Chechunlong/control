@@ -6,7 +6,6 @@
 #include "qthread.h"
 #include "qcustomplot.h"
 #include "control.h"
-#include "configuracao.h"
 
 namespace Ui {
     class MainWindow;
@@ -20,25 +19,39 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-private slots:
 
-    void UI_configControlador();
+private slots:
 
     void UI_configGraphWrite();
 
     void UI_configGraphRead();
 
+
     void UI_configPanel();
+
+    int UI_getTipoMalha();
+
+    void UI_configCanais();
 
     void UI_configSignal();
 
-    void UI_closedLoop();
+    void UI_malhaFechada();
 
-    void UI_openLoop();
+    void UI_malhaAberta();
+
+    void UI_configMalha();
+
+    void UI_configControlador();
 
     void UI_limitRandInput();
 
+
+
     void connectServer();
+
+    void stopAll();
+
+    void controladorPID();
 
     void data();
 
@@ -46,7 +59,6 @@ private slots:
 
     void receiveData();
 
-    void JB_dataConfig();
 
 private:
     Ui::MainWindow *ui;
@@ -58,8 +70,6 @@ private:
 
     QThread *threadEscrita;
     QThread *threadLeitura;
-
-    Configuracao *config = new Configuracao();
 
     bool canalLeituraVec[NUMB_CAN_READ];
     int canalEscrita = 0;
