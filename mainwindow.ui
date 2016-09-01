@@ -86,8 +86,6 @@
       </item>
      </layout>
     </widget>
-    <zorder>layoutWidget</zorder>
-    <zorder>verticalSpacer_2</zorder>
    </widget>
    <widget class="QGroupBox" name="gb_tanques">
     <property name="geometry">
@@ -95,7 +93,7 @@
       <x>10</x>
       <y>480</y>
       <width>321</width>
-      <height>141</height>
+      <height>151</height>
      </rect>
     </property>
     <property name="title">
@@ -104,14 +102,39 @@
     <widget class="QProgressBar" name="pb_tanque1">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>80</x>
        <y>30</y>
-       <width>281</width>
-       <height>41</height>
+       <width>81</width>
+       <height>111</height>
       </rect>
+     </property>
+     <property name="maximum">
+      <number>30</number>
      </property>
      <property name="value">
       <number>0</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+    </widget>
+    <widget class="QProgressBar" name="pb_tanque2">
+     <property name="geometry">
+      <rect>
+       <x>220</x>
+       <y>30</y>
+       <width>81</width>
+       <height>111</height>
+      </rect>
+     </property>
+     <property name="maximum">
+      <number>30</number>
+     </property>
+     <property name="value">
+      <number>0</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
      </property>
     </widget>
    </widget>
@@ -572,122 +595,86 @@
          <x>10</x>
          <y>20</y>
          <width>271</width>
-         <height>131</height>
+         <height>161</height>
         </rect>
        </property>
        <property name="title">
         <string>Canais de Leitura</string>
        </property>
-       <widget class="QCheckBox" name="canal_l0">
+       <widget class="QWidget" name="">
         <property name="geometry">
          <rect>
-          <x>10</x>
+          <x>30</x>
           <y>30</y>
-          <width>71</width>
-          <height>20</height>
+          <width>210</width>
+          <height>121</height>
          </rect>
         </property>
-        <property name="text">
-         <string>Canal 0</string>
-        </property>
-       </widget>
-       <widget class="QCheckBox" name="canal_l1">
-        <property name="geometry">
-         <rect>
-          <x>86</x>
-          <y>30</y>
-          <width>85</width>
-          <height>20</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Canal 1</string>
-        </property>
-       </widget>
-       <widget class="QCheckBox" name="canal_l3">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>60</y>
-          <width>71</width>
-          <height>20</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Canal 3</string>
-        </property>
-       </widget>
-       <widget class="QCheckBox" name="canal_l6">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>90</y>
-          <width>71</width>
-          <height>20</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Canal 6</string>
-        </property>
-       </widget>
-       <widget class="QCheckBox" name="canal_l4">
-        <property name="geometry">
-         <rect>
-          <x>86</x>
-          <y>60</y>
-          <width>85</width>
-          <height>20</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Canal 4</string>
-        </property>
-       </widget>
-       <widget class="QCheckBox" name="canal_l5">
-        <property name="geometry">
-         <rect>
-          <x>176</x>
-          <y>60</y>
-          <width>85</width>
-          <height>20</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Canal 5</string>
-        </property>
-       </widget>
-       <widget class="QCheckBox" name="canal_l7">
-        <property name="geometry">
-         <rect>
-          <x>86</x>
-          <y>90</y>
-          <width>85</width>
-          <height>20</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Canal 7</string>
-        </property>
-       </widget>
-       <widget class="QCheckBox" name="canal_l2">
-        <property name="geometry">
-         <rect>
-          <x>176</x>
-          <y>30</y>
-          <width>85</width>
-          <height>20</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Canal 2</string>
-        </property>
+        <layout class="QGridLayout" name="gridLayout_3">
+         <item row="0" column="0">
+          <widget class="QCheckBox" name="canal_l1">
+           <property name="text">
+            <string>Tanque 2</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QCheckBox" name="canal_l0">
+           <property name="text">
+            <string>Tanque 1</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QCheckBox" name="canal_l3">
+           <property name="text">
+            <string>Canal 3</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QCheckBox" name="canal_l2">
+           <property name="text">
+            <string>Canal 2</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QCheckBox" name="canal_l5">
+           <property name="text">
+            <string>Canal 5</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QCheckBox" name="canal_l4">
+           <property name="text">
+            <string>Canal 4</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QCheckBox" name="canal_l7">
+           <property name="text">
+            <string>Canal 7</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QCheckBox" name="canal_l6">
+           <property name="text">
+            <string>Canal 6</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </widget>
       <widget class="QGroupBox" name="gp_canalEscrita">
        <property name="geometry">
         <rect>
          <x>140</x>
-         <y>170</y>
+         <y>200</y>
          <width>141</width>
          <height>80</height>
         </rect>

@@ -115,6 +115,9 @@ public:
         this->tcpPort = _tcpPort;
         this->server = _server;
         //this->connectServer();
+
+        if(_tcpPort == 20081) status = true;
+        else status = false;
     }
 
     ~Quanser(void){

@@ -128,13 +128,17 @@ void MainWindow::UI_configGraphRead()
     ui->graficoLeitura->graph(1)->setVisible(true);
     ui->graficoLeitura->graph(1)->setName("Set Point");
 
-
+    QString nomeCanal;
     for(int i=0; i<8; i++)
     {
+        if(i < 2) nomeCanal = "Tanque " + QString::number(i+1);
+        else nomeCanal = "Canal " + QString::number(i);
+
         ui->graficoLeitura->addGraph();
         ui->graficoLeitura->graph(i+2)->setPen(QPen(QColor(rand()%200+10,rand()%200+10,rand()%200+10,255)));
         ui->graficoLeitura->graph(i+2)->setAntialiasedFill(false);
-        ui->graficoLeitura->graph(i+2)->setName("Canal " + QString::number(i));
+
+        ui->graficoLeitura->graph(i+2)->setName(nomeCanal);
         ui->graficoLeitura->graph(i+2)->setVisible(false);
         ui->graficoLeitura->graph(i+2)->removeFromLegend();
     }
