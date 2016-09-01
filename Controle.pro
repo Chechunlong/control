@@ -16,15 +16,18 @@ SOURCES += main.cpp\
     qcustomplot.cpp \
     signal.cpp \
     control.cpp \
-    controller.cpp
+    controller.cpp \
+    conectar.cpp
 
 HEADERS  += mainwindow.h \
     quanser.h \
     qcustomplot.h \
     signal.h \
     control.h \
-    controller.h
+    controller.h \
+    conectar.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    conectar.ui
 
 DISTFILES +=

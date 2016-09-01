@@ -52,9 +52,11 @@ private:
 
       if (result == -1)  {
          perror ("Houve erro no cliente");
+         status = false;
          return 1;
       }
       else {
+          status = true;
          return 0;
       }
    }
@@ -106,6 +108,10 @@ private:
 
 public:
     Quanser (char* _server, int _tcpPort) {
+
+        //qDebug() << _server;
+        //qDebug() << _tcpPort;
+
         this->tcpPort = _tcpPort;
         this->server = _server;
         //this->connectServer();

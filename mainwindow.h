@@ -7,6 +7,8 @@
 #include "qcustomplot.h"
 #include "control.h"
 
+#include "conectar.h"
+
 namespace Ui {
     class MainWindow;
 }
@@ -49,7 +51,7 @@ private slots:
 
     void connectServer();
 
-    void stopAll();
+    void zerarSinal();
 
     void controladorPID();
 
@@ -64,6 +66,8 @@ private:
     Ui::MainWindow *ui;
 
     Control *control;
+
+    Conectar *conectar;
 
     QTimer *timerEscrita;
     QTimer *timerLeitura;

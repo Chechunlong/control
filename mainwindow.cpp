@@ -8,7 +8,15 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+
+    conectar = new Conectar();
+    conectar->show();
+
+
+    connect(conectar, SIGNAL(accepted()), this, SLOT(connectServer()));
+
     ui->setupUi(this);
+
 
     timerLeitura = new QTimer(0);
     timerEscrita = new QTimer(0);
@@ -45,9 +53,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     // Botões
-    connect(ui->buttonConectar, SIGNAL(clicked(bool)),this,SLOT(connectServer()));
+    //connect(ui->buttonConectar, SIGNAL(clicked(bool)),this,SLOT(connectServer()));
     connect(ui->buttonAtualizar,SIGNAL(clicked(bool)),this,SLOT(data()));
-    connect(ui->buttonStop,     SIGNAL(clicked(bool)),this,SLOT(stopAll()));
+    connect(ui->buttonStop,     SIGNAL(clicked(bool)),this,SLOT(zerarSinal()));
 
     // Tipo de Malha
     connect(ui->radioAberta,    SIGNAL(clicked(bool)),this,SLOT(UI_configMalha()));
@@ -154,7 +162,7 @@ void MainWindow::UI_configPanel()
 
 
 
-    ui->buttonAtualizar->setStyleSheet("background-color: blue");
+    //ui->buttonAtualizar->setStyleSheet("background-color: blue");
     ui->buttonStop->setStyleSheet("background-color: red");
     ui->pb_tanque1->setValue(0);
 
@@ -356,13 +364,19 @@ void MainWindow::UI_limitRandInput()
 
 void MainWindow::connectServer()
 {
-    control = new Control();
+    int port =  conectar->getPort();
+    QString enderecoIP =  conectar->getIpAdress();
+
+    control = new Control(port,enderecoIP);
 
     if(control->connectionStatus())
     {
-        ui->labelStatus->setText("Conectado!");
+        this->show();
+
+        QString mensagem = "Conectado em " + enderecoIP + ":" + QString::number(port);
+        ui->labelStatus->setText(mensagem);
         ui->labelStatus->setStyleSheet("QLabel { color : green; }");
-        ui->buttonConectar->setDisabled(true);
+        //ui->buttonConectar->setDisabled(true);
 
         threadEscrita->start();
         threadLeitura->start();
@@ -372,14 +386,17 @@ void MainWindow::connectServer()
     }
     else
     {
-        ui->labelStatus->setText("Conexão Falhou!");
-        ui->labelStatus->setStyleSheet("QLabel { color : red; }");
+        //ui->labelStatus->setText("Conexão Falhou!");
+        //ui->labelStatus->setStyleSheet("QLabel { color : red; }");
 
-        QMessageBox::critical(this,tr("Conexão Falhou!"),tr("Verifique o IP e/ou porta do servidor!"));
+        QMessageBox::critical(this,tr("Control Quanser - Conexão Falhou!"),tr("Verifique o IP e/ou porta do servidor!"));
+
+        conectar->show();
+
     }
 }
 
-void MainWindow::stopAll()
+void MainWindow::zerarSinal()
 {
 
     QMessageBox::StandardButton reply;

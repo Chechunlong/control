@@ -31,7 +31,7 @@
 class Control
 {
 public:
-    Control();
+    Control(int port, QString ip);
 
     double  getAmplitude();
 

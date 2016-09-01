@@ -1,8 +1,9 @@
 #include "control.h"
 
-Control::Control()
+Control::Control(int port, QString ip)
 {
-    quanser = new Quanser("10.13.99.69",20081);
+    quanser = new Quanser(ip.toLatin1().data(),port);
+
     signal = new Signal();
     controller = new Controller();
 
