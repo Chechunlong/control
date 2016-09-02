@@ -4,10 +4,11 @@
 #include <cmath>
 #include <time.h>
 
+#define PI 3.14159265359
+
 class Signal
 {
 private:
-    const double PI = 3.14159265359;
 
 public:
     Signal();

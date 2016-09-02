@@ -22,8 +22,9 @@ double Controller::ganhoKi(double Ki, double erro)
 
 double Controller::ganhoKd(double Kd, double erro)
 {
-    double derivador = (Kd*(erro-this->erroAnt))/TEMPO_AMOSTRAGEM;
+    double derivador = Kd * (erro-this->erroAnt) / TEMPO_AMOSTRAGEM;
     this->erroAnt = erro;
+
     return derivador;
 }
 

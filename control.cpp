@@ -226,6 +226,21 @@ double Control::voltageControl(double value)
     return value;
 }
 
+void Control::zerarSinal()
+{
+    delete controller;
+    delete signal;
+
+    controller = new Controller();
+    signal = new Signal();
+
+    tipoMalha = M_ABERTA;
+    tensao = 0;
+    sinalCalculado = 0;
+    sinalEscrita = 0;
+    timeAux = 0;
+}
+
 void Control::travel()
 {
     sinalEscrita = voltageControl(sinalEscrita);

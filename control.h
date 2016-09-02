@@ -103,6 +103,8 @@ public:
 
     double  voltageControl(double value);
 
+    void    zerarSinal();
+
     void    travel();
 
     void    sendSignal();

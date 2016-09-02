@@ -16,6 +16,9 @@ Conectar::Conectar(QWidget *parent) :
     connect(ui->buttonConectar, SIGNAL(clicked(bool)), this, SLOT(accept()));
     connect(ui->buttonCancelar, SIGNAL(clicked(bool)), this, SLOT(reject()));
 
+    ui->buttonCancelar->setStyleSheet("background-color: red");
+    ui->buttonConectar->setStyleSheet("background-color: blue");
+
     ui->spinBoxPort->setValue(PORT_S);
     ui->lineIpAdress->setText(IP_S);
 

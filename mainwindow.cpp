@@ -39,6 +39,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->tipoControlador, SIGNAL(currentIndexChanged(int)),this,SLOT(UI_configControlador()));
     connect(ui->radioFechada, SIGNAL(toggled(bool)), ui->tab_sinal_controle->widget(TAB_CONTROLE), SLOT(setEnabled(bool)));
     connect(ui->radioAberta,  SIGNAL(toggled(bool)), ui->tab_sinal_controle->widget(TAB_CONTROLE), SLOT(setDisabled(bool)));
+    connect(ui->rb_constTempo, SIGNAL(clicked(bool)),this,SLOT(UI_configConsControle()));
+    connect(ui->rb_constGanho, SIGNAL(clicked(bool)),this,SLOT(UI_configConsControle()));
 
     // Canais de Leitura e Escrita
     connect(ui->canal_l0, SIGNAL(clicked(bool)), this, SLOT(UI_configCanais()));
@@ -62,9 +64,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->radioFechada,   SIGNAL(clicked(bool)),this,SLOT(UI_configMalha()));
 
     connect(ui->comboTipoSinal, SIGNAL(currentIndexChanged(int)),this,SLOT(UI_configSignal()));
-
-    connect(ui->rb_constTempo, SIGNAL(clicked(bool)),this,SLOT(UI_configConsControle()));
-    connect(ui->rb_constGanho, SIGNAL(clicked(bool)),this,SLOT(UI_configConsControle()));
 
     // Controlar o limite das entradas
     connect(ui->dSpinAmp,       SIGNAL(valueChanged(double)), this, SLOT(UI_limitRandInput()));
@@ -166,7 +165,6 @@ void MainWindow::UI_configPanel()
 
     // Criando canais de escrita
     for(int i=0; i<4; i++) ui->cb_canalEscrita->addItem("Canal " + QString::number(i),QVariant(i));
-
 
 
     //ui->buttonAtualizar->setStyleSheet("background-color: blue");
@@ -458,23 +456,17 @@ void MainWindow::zerarSinal()
 
     QMessageBox::StandardButton reply;
 
-    reply = QMessageBox::critical(this, "Confirmação", "Você realmente deseja parar a planta?",
+    reply = QMessageBox::critical(this, "Confirmação", "Você realmente deseja zerar o sinal da planta?",
                                     QMessageBox::Yes|QMessageBox::No);
 
     if (reply == QMessageBox::Yes)
     {
-        control->setTensao(0);
-        control->setTipoMalha(M_ABERTA);
+        //control->setTensao(0);
+        //control->setTipoMalha(M_ABERTA);
         //QApplication::quit();
+        control->zerarSinal();
+        QMessageBox::about(this, "Confirmação", "O sinal de envio foi zerado!");
     }
-
-
-    /*
-
-        Zerar o integrador!!!
-
-
-    */
 }
 
 void MainWindow::controladorPID()
