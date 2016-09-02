@@ -43,6 +43,10 @@ private slots:
 
     void UI_configMalha();
 
+    void UI_updateConsControle(double kd_td, double ki_ti);
+
+    void UI_configConsControle();
+
     void UI_configControlador();
 
     void UI_limitRandInput();

@@ -199,7 +199,7 @@
       <enum>Qt::RightToLeft</enum>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab_sinal">
       <attribute name="title">
@@ -501,12 +501,18 @@
          <rect>
           <x>60</x>
           <y>59</y>
-          <width>66</width>
+          <width>81</width>
           <height>23</height>
          </rect>
         </property>
         <property name="layoutDirection">
          <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="decimals">
+         <number>4</number>
+        </property>
+        <property name="singleStep">
+         <double>0.050000000000000</double>
         </property>
        </widget>
        <widget class="QDoubleSpinBox" name="sp_kp">
@@ -514,12 +520,18 @@
          <rect>
           <x>60</x>
           <y>30</y>
-          <width>66</width>
+          <width>81</width>
           <height>23</height>
          </rect>
         </property>
         <property name="layoutDirection">
          <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="decimals">
+         <number>4</number>
+        </property>
+        <property name="singleStep">
+         <double>0.050000000000000</double>
         </property>
        </widget>
        <widget class="QLabel" name="lb_kp">
@@ -575,12 +587,18 @@
          <rect>
           <x>60</x>
           <y>88</y>
-          <width>66</width>
+          <width>81</width>
           <height>23</height>
          </rect>
         </property>
         <property name="layoutDirection">
          <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="decimals">
+         <number>4</number>
+        </property>
+        <property name="singleStep">
+         <double>0.050000000000000</double>
         </property>
        </widget>
       </widget>
@@ -601,7 +619,7 @@
        <property name="title">
         <string>Canais de Leitura</string>
        </property>
-       <widget class="QWidget" name="">
+       <widget class="QWidget" name="layoutWidget">
         <property name="geometry">
          <rect>
           <x>30</x>

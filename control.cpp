@@ -155,6 +155,15 @@ void Control::setKd(double value)
     Kd = value;
 }
 
+double Control::getTi() const
+{
+    return this->tempoIntegrativo;
+}
+double Control::getTd() const
+{
+    return this->tempoDerivativo;
+}
+
 double Control::getTempoIntegrativo() const
 {
     return tempoIntegrativo;
@@ -237,6 +246,12 @@ void Control::sendSignal()
            Ki = Kp / tempoIntegrativo;
            Kd = Kp * tempoDerivativo;
         }
+        else
+        {
+            tempoDerivativo = Kd/ Kp;
+            tempoIntegrativo = Kp / Ki;
+        }
+
 
         switch (tipoControler) {
         case CONTROLER_P:

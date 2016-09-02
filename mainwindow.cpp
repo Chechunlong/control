@@ -63,6 +63,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->comboTipoSinal, SIGNAL(currentIndexChanged(int)),this,SLOT(UI_configSignal()));
 
+    connect(ui->rb_constTempo, SIGNAL(clicked(bool)),this,SLOT(UI_configConsControle()));
+    connect(ui->rb_constGanho, SIGNAL(clicked(bool)),this,SLOT(UI_configConsControle()));
+
     // Controlar o limite das entradas
     connect(ui->dSpinAmp,       SIGNAL(valueChanged(double)), this, SLOT(UI_limitRandInput()));
     connect(ui->dSpinPeriodo,   SIGNAL(valueChanged(double)), this, SLOT(UI_limitRandInput()));
@@ -229,6 +232,51 @@ void MainWindow::UI_configCanais()
     }
 }
 
+void MainWindow::UI_updateConsControle(double kd_td, double ki_ti)
+{
+    int tipoControlador = ui->tipoControlador->currentIndex();
+
+    if(tipoControlador == CONTROLER_PD)
+    {
+        ui->sp_kd_td->setValue(kd_td);
+    }
+    else if(tipoControlador == CONTROLER_PID || tipoControlador == CONTROLER_PI_D)
+    {
+        ui->sp_kd_td->setValue(kd_td);
+        ui->sp_ki_ti->setValue(ki_ti);
+    }
+    else if(tipoControlador == CONTROLER_PI)
+    {
+        ui->sp_ki_ti->setValue(ki_ti);
+    }
+}
+
+void MainWindow::UI_configConsControle()
+{
+    bool constTempo = ui->rb_constTempo->isChecked();
+    bool constGanho = ui->rb_constGanho->isChecked();
+
+    double kp = ui->sp_kp->value();
+    double kd_td = ui->sp_kd_td->value();
+    double ki_ti = ui->sp_ki_ti->value();
+
+    if(constTempo)
+    {
+
+        double td = kd_td / kp;
+        double ti = kp / ki_ti;
+
+        UI_updateConsControle(td, ti);
+
+    }
+    else if(constGanho)
+    {
+        double kd = kp * kd_td;
+        double ki = kp / ki_ti;
+        UI_updateConsControle(kd, ki);
+    }
+}
+
 
 void MainWindow::UI_configControlador()
 {
@@ -357,10 +405,15 @@ void MainWindow::UI_configMalha()
 
 void MainWindow::UI_limitRandInput()
 {
-    ui->dSpinOffSet->setMaximum(ui->dSpinAmp->value());
-    ui->dSpinAux->setMaximum(ui->dSpinPeriodo->value());
-    ui->dSpinAmp->setMinimum(ui->dSpinOffSet->value());
-    ui->dSpinPeriodo->setMinimum(ui->dSpinAux->value());
+    int tipoMalha = UI_getTipoMalha();
+
+    if(tipoMalha == M_ABERTA)
+    {
+        ui->dSpinOffSet->setMaximum(ui->dSpinAmp->value());
+        ui->dSpinAux->setMaximum(ui->dSpinPeriodo->value());
+        ui->dSpinAmp->setMinimum(ui->dSpinOffSet->value());
+        ui->dSpinPeriodo->setMinimum(ui->dSpinAux->value());
+    }
 }
 
 
@@ -414,6 +467,14 @@ void MainWindow::zerarSinal()
         control->setTipoMalha(M_ABERTA);
         //QApplication::quit();
     }
+
+
+    /*
+
+        Zerar o integrador!!!
+
+
+    */
 }
 
 void MainWindow::controladorPID()

@@ -68,6 +68,9 @@ public:
     double getKd() const;
     void setKd(double value);
 
+    double getTi() const;
+    double getTd() const;
+
     double getTempoIntegrativo() const;
     void setTempoIntegrativo(double value);
 
@@ -142,6 +145,8 @@ private:
     double Kp;
     double Ki;
     double Kd;
+    double Ti;
+    double Td;
     double tempoIntegrativo;
     double tempoDerivativo;
 
