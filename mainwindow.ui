@@ -65,8 +65,8 @@
       <rect>
        <x>70</x>
        <y>20</y>
-       <width>201</width>
-       <height>51</height>
+       <width>221</width>
+       <height>71</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout">
@@ -79,6 +79,13 @@
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="lb_tensaoCalculada">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="lb_canalEscrita">
         <property name="text">
          <string/>
         </property>
@@ -199,7 +206,7 @@
       <enum>Qt::RightToLeft</enum>
      </property>
      <property name="currentIndex">
-      <number>3</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab_sinal">
       <attribute name="title">
@@ -533,6 +540,9 @@
         <property name="singleStep">
          <double>0.050000000000000</double>
         </property>
+        <property name="value">
+         <double>1.000000000000000</double>
+        </property>
        </widget>
        <widget class="QLabel" name="lb_kp">
         <property name="geometry">
@@ -716,23 +726,23 @@
       <attribute name="title">
        <string>Gráficos</string>
       </attribute>
-      <widget class="QGroupBox" name="groupBox_5">
+      <widget class="QGroupBox" name="gp_graf_pid">
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>100</y>
+         <y>190</y>
          <width>271</width>
-         <height>181</height>
+         <height>81</height>
         </rect>
        </property>
        <property name="title">
-        <string>Sinais de Leitura</string>
+        <string>Controlador</string>
        </property>
        <widget class="QCheckBox" name="checkBox">
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>30</y>
+          <y>20</y>
           <width>111</width>
           <height>20</height>
          </rect>
@@ -741,14 +751,14 @@
          <string>Set point</string>
         </property>
         <property name="checked">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
        </widget>
        <widget class="QCheckBox" name="checkBox_2">
         <property name="geometry">
          <rect>
           <x>140</x>
-          <y>30</y>
+          <y>20</y>
           <width>111</width>
           <height>20</height>
          </rect>
@@ -757,14 +767,14 @@
          <string>Erro</string>
         </property>
         <property name="checked">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
        </widget>
        <widget class="QCheckBox" name="checkBox_3">
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>60</y>
+          <y>40</y>
           <width>111</width>
           <height>20</height>
          </rect>
@@ -777,7 +787,7 @@
         <property name="geometry">
          <rect>
           <x>140</x>
-          <y>60</y>
+          <y>40</y>
           <width>111</width>
           <height>20</height>
          </rect>
@@ -786,24 +796,11 @@
          <string>I</string>
         </property>
        </widget>
-       <widget class="QCheckBox" name="checkBox_7">
-        <property name="geometry">
-         <rect>
-          <x>140</x>
-          <y>90</y>
-          <width>111</width>
-          <height>20</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>P-I-D</string>
-        </property>
-       </widget>
        <widget class="QCheckBox" name="checkBox_8">
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>90</y>
+          <y>60</y>
           <width>111</width>
           <height>20</height>
          </rect>
@@ -813,19 +810,19 @@
         </property>
        </widget>
       </widget>
-      <widget class="QGroupBox" name="groupBox_6">
+      <widget class="QGroupBox" name="gp_graf_se">
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>20</y>
+         <y>10</y>
          <width>271</width>
-         <height>61</height>
+         <height>41</height>
         </rect>
        </property>
        <property name="title">
         <string>Sinais de Escrita</string>
        </property>
-       <widget class="QCheckBox" name="checkBox_5">
+       <widget class="QCheckBox" name="cb_graf_sinalEnviado">
         <property name="geometry">
          <rect>
           <x>10</x>
@@ -841,7 +838,36 @@
          <bool>true</bool>
         </property>
        </widget>
-       <widget class="QCheckBox" name="checkBox_6">
+       <widget class="QCheckBox" name="cb_graf_sinalCalculado">
+        <property name="geometry">
+         <rect>
+          <x>130</x>
+          <y>20</y>
+          <width>121</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Sinal Calculado</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QGroupBox" name="gp_graf_sl">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>70</y>
+         <width>271</width>
+         <height>101</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Sinal de Leitura</string>
+       </property>
+       <widget class="QCheckBox" name="checkBox_7">
         <property name="geometry">
          <rect>
           <x>140</x>
@@ -851,13 +877,129 @@
          </rect>
         </property>
         <property name="text">
-         <string>Sinal saturado</string>
+         <string>Canal 1</string>
         </property>
         <property name="checked">
-         <bool>true</bool>
+         <bool>false</bool>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="checkBox_9">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>20</y>
+          <width>111</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Canal 0</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="checkBox_10">
+        <property name="geometry">
+         <rect>
+          <x>140</x>
+          <y>40</y>
+          <width>111</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Canal 3</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="checkBox_11">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>40</y>
+          <width>111</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Canal 2</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="checkBox_13">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>60</y>
+          <width>111</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Canal 4</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="checkBox_12">
+        <property name="geometry">
+         <rect>
+          <x>140</x>
+          <y>60</y>
+          <width>111</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Canal 5</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="checkBox_14">
+        <property name="geometry">
+         <rect>
+          <x>140</x>
+          <y>80</y>
+          <width>111</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Canal 7</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="checkBox_15">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>80</y>
+          <width>111</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Canal 6</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
         </property>
        </widget>
       </widget>
+      <zorder>gp_graf_pid</zorder>
+      <zorder>gp_graf_se</zorder>
+      <zorder>gp_graf_sl</zorder>
+      <zorder>cb_graf_sinalCalculado</zorder>
      </widget>
     </widget>
     <widget class="QPushButton" name="buttonStop">

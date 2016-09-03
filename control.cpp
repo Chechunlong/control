@@ -24,8 +24,8 @@ Control::Control(int port, QString ip)
     erro    = 0;
     erroAnt = 0;
 
-    canalEscrita = 0;
-    canalLeitura = 0;
+    canalEscrita = -1;
+    canalLeitura = -1;
 
     // Controlador
     Kp = 0;

@@ -9,6 +9,8 @@
 
 #include "conectar.h"
 
+#define PLOT_ESCRITA 2
+
 namespace Ui {
     class MainWindow;
 }
@@ -27,6 +29,8 @@ private slots:
     void UI_configGraphWrite();
 
     void UI_configGraphRead();
+
+    void UI_configPlotGraficos();
 
 
     void UI_configPanel();
@@ -80,6 +84,7 @@ private:
     QThread *threadLeitura;
 
     bool canalLeituraVec[NUMB_CAN_READ];
+    bool sinalPlotEscrita[PLOT_ESCRITA];
     int canalEscrita = 0;
 
 };

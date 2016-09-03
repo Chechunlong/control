@@ -54,6 +54,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->cb_canalEscrita, SIGNAL(activated(int)), this, SLOT(UI_configCanais()));
 
 
+    // Grafico
+    connect(ui->cb_graf_sinalCalculado, SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficos()));
+    connect(ui->cb_graf_sinalEnviado, SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficos()));
+
     // Botões
     //connect(ui->buttonConectar, SIGNAL(clicked(bool)),this,SLOT(connectServer()));
     connect(ui->buttonAtualizar,SIGNAL(clicked(bool)),this,SLOT(data()));
@@ -157,6 +161,27 @@ void MainWindow::UI_configGraphRead()
     ui->graficoLeitura->yAxis->setRange(0,30);
     ui->graficoLeitura->yAxis->setNumberPrecision(2);
     ui->graficoLeitura->yAxis->setLabel("Nivel do tanque (Cm) ");
+}
+
+void MainWindow::UI_configPlotGraficos()
+{
+
+    sinalPlotEscrita[1] = ui->cb_graf_sinalCalculado->isChecked();
+    sinalPlotEscrita[0] = ui->cb_graf_sinalEnviado->isChecked();
+
+    for(int i=0; i<PLOT_ESCRITA; i++)
+    {
+        if(sinalPlotEscrita[i])
+        {
+            ui->graficoEscrita->graph(i)->addToLegend();
+            ui->graficoEscrita->graph(i)->setVisible(true);
+        }
+        else
+        {
+            ui->graficoEscrita->graph(i)->removeFromLegend();
+            ui->graficoEscrita->graph(i)->setVisible(false);
+        }
+    }
 }
 
 
@@ -545,12 +570,18 @@ void MainWindow::sendData()
 
     double sinalEscrita   = control->getSinalEnviado();
     double sinalCalculado = control->getSinalCalculado();
+    int canalEscrita = control->getCanalEscrita();
+
+    QString str_canalEscrita;
+    if(canalEscrita < 0) str_canalEscrita = "Nenhum canal selecionado";
+    else str_canalEscrita = "Escrevendo em canal" + QString::number(canalEscrita);
 
     QString str_sinalEnviado   = "Sinal enviado = " + QString::number(sinalEscrita) + " V";
     QString str_sinalCalculado = "Sinal calculado = " + QString::number(sinalCalculado) + " V";
 
     ui->lb_tensaoEscrita->setText(str_sinalEnviado);
     ui->lb_tensaoCalculada->setText(str_sinalCalculado);
+    ui->lb_canalEscrita->setText(str_canalEscrita);
 
     ui->graficoEscrita->graph(0)->addData(key/5, sinalEscrita);
     ui->graficoEscrita->graph(1)->addData(key/5, sinalCalculado);
@@ -574,12 +605,16 @@ void MainWindow::receiveData()
     {
         if(canalLeituraVec[i])
         {
-            double value = control->getCanalValue(i);
-            ui->graficoLeitura->graph(i+2)->addData(key/5,value);
+            sinalLeitura = control->getCanalValue(i);
+            ui->graficoLeitura->graph(i+2)->addData(key/5,sinalLeitura);
 
+
+            /*
+                Se o canal de leitura for igual ao canal de escrita, deve ser
+                obtido dados em relaçao ao sinal enviado, como o erro, etc.
+            */
             if(i == canalLeitura)
             {
-                sinalLeitura = value;
                 if(tipoMalha == M_FECHADA) // Malha fechada
                 {
                     double erro = control->getErro();
@@ -589,13 +624,13 @@ void MainWindow::receiveData()
 
                     ui->graficoLeitura->graph(0)->addData(key/5,erro);
                     ui->graficoLeitura->graph(1)->addData(key/5,setPoint);
+
                 }
+                QString str_sinalLeitura = "Nível do tanque = " + QString::number(sinalLeitura) + " cm";
+                ui->lb_sinalLido->setText(str_sinalLeitura);
             }
         }
     }
-
-    QString str_sinalLeitura = "Nível do tanque = " + QString::number(sinalLeitura) + " cm";
-    ui->lb_sinalLido->setText(str_sinalLeitura);
 
     ui->graficoLeitura->xAxis->setRange((key+0.25)/5, 8, Qt::AlignRight);
     ui->graficoLeitura->replot();
