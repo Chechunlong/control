@@ -53,10 +53,14 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->canal_l7, SIGNAL(clicked(bool)), this, SLOT(UI_configCanais()));
     connect(ui->cb_canalEscrita, SIGNAL(activated(int)), this, SLOT(UI_configCanais()));
 
-
     // Grafico
-    connect(ui->cb_graf_sinalCalculado, SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficos()));
-    connect(ui->cb_graf_sinalEnviado, SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficos()));
+    connect(ui->cb_plot_erro, SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
+    connect(ui->cb_plot_setPoint, SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
+    connect(ui->cb_plot_p, SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
+    connect(ui->cb_plot_i, SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
+    connect(ui->cb_plot_d, SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
+    connect(ui->cb_graf_sinalCalculado, SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosE()));
+    connect(ui->cb_graf_sinalEnviado, SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosE()));
 
     // Botões
     //connect(ui->buttonConectar, SIGNAL(clicked(bool)),this,SLOT(connectServer()));
@@ -125,14 +129,17 @@ void MainWindow::UI_configGraphRead()
     // Erro
     ui->graficoLeitura->addGraph(); // red line
     ui->graficoLeitura->graph(0)->setPen(QPen(Qt::red));
+    ui->graficoLeitura->graph(0)->setVisible(false);
     ui->graficoLeitura->graph(0)->setAntialiasedFill(false);
     ui->graficoLeitura->graph(0)->setName("Erro");
+    ui->graficoLeitura->graph(0)->removeFromLegend();
 
     // Set Point
     ui->graficoLeitura->addGraph();
     ui->graficoLeitura->graph(1)->setPen(QPen(Qt::black));
-    ui->graficoLeitura->graph(1)->setVisible(true);
+    ui->graficoLeitura->graph(1)->setVisible(false);
     ui->graficoLeitura->graph(1)->setName("Set Point");
+    ui->graficoLeitura->graph(1)->removeFromLegend();
 
     QString nomeCanal;
     for(int i=0; i<8; i++)
@@ -163,7 +170,7 @@ void MainWindow::UI_configGraphRead()
     ui->graficoLeitura->yAxis->setLabel("Nivel do tanque (Cm) ");
 }
 
-void MainWindow::UI_configPlotGraficos()
+void MainWindow::UI_configPlotGraficosE()
 {
 
     sinalPlotEscrita[1] = ui->cb_graf_sinalCalculado->isChecked();
@@ -182,14 +189,41 @@ void MainWindow::UI_configPlotGraficos()
             ui->graficoEscrita->graph(i)->setVisible(false);
         }
     }
+
+
+
 }
 
+void MainWindow::UI_configPlotGraficosL()
+{
+    vectorGrafLeitura[0] = ui->cb_plot_erro->isChecked();
+    vectorGrafLeitura[1] = ui->cb_plot_setPoint->isChecked();
+    vectorGrafLeitura[2] = ui->cb_plot_p->isChecked();
+    vectorGrafLeitura[3] = ui->cb_plot_i->isChecked();
+    vectorGrafLeitura[4] = ui->cb_plot_d->isChecked();
+
+    for(int i=0; i<2; i++)
+    {
+        if(vectorGrafLeitura[i])
+        {
+            ui->graficoLeitura->graph(i)->addToLegend();
+            ui->graficoLeitura->graph(i)->setVisible(true);
+        }
+        else
+        {
+            ui->graficoLeitura->graph(i)->removeFromLegend();
+            ui->graficoLeitura->graph(i)->setVisible(false);
+        }
+    }
+}
 
 void MainWindow::UI_configPanel()
 {
 
     // Criando canais de escrita
     for(int i=0; i<4; i++) ui->cb_canalEscrita->addItem("Canal " + QString::number(i),QVariant(i));
+
+
 
 
     //ui->buttonAtualizar->setStyleSheet("background-color: blue");
@@ -215,6 +249,10 @@ void MainWindow::UI_configPanel()
 
     UI_malhaAberta();
     UI_configControlador();
+
+    UI_canaisLeituraPlot();
+
+
 }
 
 int MainWindow::UI_getTipoMalha()
@@ -225,6 +263,19 @@ int MainWindow::UI_getTipoMalha()
     if(ui->radioFechada->isChecked()) tipoMalha = M_FECHADA;
 
     return tipoMalha;
+}
+
+void MainWindow::UI_canaisLeituraPlot()
+{
+    ui->cb_plot_canal0->setDisabled(!ui->canal_l0->isChecked());
+    ui->cb_plot_canal1->setDisabled(!ui->canal_l1->isChecked());
+    ui->cb_plot_canal2->setDisabled(!ui->canal_l2->isChecked());
+    ui->cb_plot_canal3->setDisabled(!ui->canal_l3->isChecked());
+    ui->cb_plot_canal4->setDisabled(!ui->canal_l4->isChecked());
+    ui->cb_plot_canal5->setDisabled(!ui->canal_l5->isChecked());
+    ui->cb_plot_canal6->setDisabled(!ui->canal_l6->isChecked());
+    ui->cb_plot_canal7->setDisabled(!ui->canal_l7->isChecked());
+
 }
 
 void MainWindow::UI_configCanais()
@@ -238,6 +289,9 @@ void MainWindow::UI_configCanais()
     canalLeituraVec[6] = ui->canal_l6->isChecked();
     canalLeituraVec[7] = ui->canal_l7->isChecked();
 
+
+    UI_canaisLeituraPlot();
+
     canalEscrita = ui->cb_canalEscrita->currentIndex();
 
     for(int i=0; i<NUMB_CAN_READ; i++)
@@ -246,6 +300,7 @@ void MainWindow::UI_configCanais()
         {
             ui->graficoLeitura->graph(i+2)->addToLegend();
             ui->graficoLeitura->graph(i+2)->setVisible(true);
+
         }
         else
         {
@@ -323,22 +378,37 @@ void MainWindow::UI_configControlador()
     case CONTROLER_P:
         ui->sp_kd_td->setDisabled(true);
         ui->sp_ki_ti->setDisabled(true);
+
+        ui->cb_plot_i->setDisabled(true);
+        ui->cb_plot_d->setDisabled(true);
         break;
     case CONTROLER_PD:
         ui->sp_kd_td->setDisabled(false);
         ui->sp_ki_ti->setDisabled(true);
+
+        ui->cb_plot_i->setDisabled(true);
+        ui->cb_plot_d->setDisabled(false);
         break;
     case CONTROLER_PI:
         ui->sp_kd_td->setDisabled(true);
         ui->sp_ki_ti->setDisabled(false);
+
+        ui->cb_plot_i->setDisabled(false);
+        ui->cb_plot_d->setDisabled(true);
         break;
     case CONTROLER_PID:
         ui->sp_kd_td->setDisabled(false);
         ui->sp_ki_ti->setDisabled(false);
+
+        ui->cb_plot_i->setDisabled(false);
+        ui->cb_plot_d->setDisabled(false);
         break;
     case CONTROLER_PI_D:
         ui->sp_kd_td->setDisabled(false);
         ui->sp_ki_ti->setDisabled(false);
+
+        ui->cb_plot_i->setDisabled(false);
+        ui->cb_plot_d->setDisabled(false);
         break;
     }
 }
@@ -382,6 +452,19 @@ void MainWindow::UI_malhaFechada()
     ui->dSpinAmp->setRange(MIN_LEVEL,MAX_LEVEL); // Limita nivel
     ui->dSpinOffSet->setRange(MIN_LEVEL,MAX_LEVEL); // Limita nivel
 
+
+    ui->cb_plot_p->setDisabled(false);
+    ui->cb_plot_setPoint->setDisabled(false);
+    ui->cb_plot_erro->setDisabled(false);
+
+    ui->tipoControlador->setDisabled(false);
+
+    ui->gp_modoControle->setDisabled(false);
+    ui->gp_parametrosControle->setDisabled(false);
+    ui->gp_graf_pid->setDisabled(false);
+
+    ui->tipoControlador->setCurrentIndex(0);
+
     if(sinalSelecionado == ALEATORIO)
     {
         ui->labelAmp->setText("Amplitude MAX (cm):");
@@ -402,6 +485,16 @@ void MainWindow::UI_malhaAberta()
     int sinalSelecionado = ui->comboTipoSinal->currentIndex();
     ui->dSpinAmp->setRange(MIN_VOLTAGE,MAX_VOLTAGE); // Limita a tensão entre -4V e 4V
     ui->dSpinOffSet->setRange(MIN_VOLTAGE,MAX_VOLTAGE); // Limita a tensão entre -4V e 4V
+
+    ui->cb_plot_p->setDisabled(true);
+    ui->cb_plot_setPoint->setDisabled(true);
+    ui->cb_plot_erro->setDisabled(true);
+
+    ui->tipoControlador->setDisabled(true);
+    ui->gp_modoControle->setDisabled(true);
+    ui->gp_parametrosControle->setDisabled(true);
+
+    ui->gp_graf_pid->setDisabled(true);
 
     if(sinalSelecionado == ALEATORIO)
     {
@@ -637,3 +730,4 @@ void MainWindow::receiveData()
 
     ui->pb_tanque1->setValue(MAX_LEVEL/sinalLeitura);
 }
+

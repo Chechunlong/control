@@ -151,7 +151,7 @@ public:
     *Le o valor de tensao que esta no canal AD especificado
     */
     double readAD(int _channel) {
-        return 0;
+        return 3;
         string _toSend = "READ ";
         _toSend.append(itoa(_channel));
         _toSend.append("\n");

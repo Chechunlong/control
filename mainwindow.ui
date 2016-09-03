@@ -414,44 +414,25 @@
       <attribute name="title">
        <string>Controle</string>
       </attribute>
-      <widget class="QGroupBox" name="groupBox">
+      <widget class="QGroupBox" name="gp_modoControle">
        <property name="geometry">
         <rect>
          <x>10</x>
          <y>10</y>
          <width>271</width>
-         <height>131</height>
+         <height>141</height>
         </rect>
        </property>
        <property name="title">
         <string>Modo</string>
        </property>
-       <widget class="QRadioButton" name="rb_constGanho">
-        <property name="geometry">
-         <rect>
-          <x>20</x>
-          <y>20</y>
-          <width>231</width>
-          <height>20</height>
-         </rect>
-        </property>
-        <property name="layoutDirection">
-         <enum>Qt::LeftToRight</enum>
-        </property>
-        <property name="text">
-         <string>Constantes de ganho</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
        <widget class="QComboBox" name="tipoControlador">
         <property name="geometry">
          <rect>
-          <x>160</x>
-          <y>80</y>
-          <width>71</width>
-          <height>31</height>
+          <x>180</x>
+          <y>110</y>
+          <width>61</width>
+          <height>21</height>
          </rect>
         </property>
         <property name="layoutDirection">
@@ -462,33 +443,52 @@
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>80</y>
+          <y>100</y>
           <width>131</width>
-          <height>30</height>
+          <height>41</height>
          </rect>
         </property>
         <property name="text">
          <string>Tipo de Controlador:</string>
         </property>
        </widget>
-       <widget class="QRadioButton" name="rb_constTempo">
+       <widget class="QWidget" name="">
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>40</y>
-          <width>160</width>
-          <height>30</height>
+          <y>30</y>
+          <width>221</width>
+          <height>61</height>
          </rect>
         </property>
-        <property name="layoutDirection">
-         <enum>Qt::LeftToRight</enum>
-        </property>
-        <property name="text">
-         <string>Constantes de tempo</string>
-        </property>
+        <layout class="QGridLayout" name="gridLayout_4">
+         <item row="0" column="0">
+          <widget class="QRadioButton" name="rb_constGanho">
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+           <property name="text">
+            <string>Constantes de ganho</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QRadioButton" name="rb_constTempo">
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+           <property name="text">
+            <string>Constantes de tempo</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </widget>
-      <widget class="QGroupBox" name="groupBox_3">
+      <widget class="QGroupBox" name="gp_parametrosControle">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -613,7 +613,7 @@
        </widget>
       </widget>
      </widget>
-     <widget class="QWidget" name="tab">
+     <widget class="QWidget" name="tab_canais">
       <attribute name="title">
        <string>Canais</string>
       </attribute>
@@ -722,7 +722,7 @@
        </widget>
       </widget>
      </widget>
-     <widget class="QWidget" name="tab_2">
+     <widget class="QWidget" name="tab_graficos">
       <attribute name="title">
        <string>Gráficos</string>
       </attribute>
@@ -738,7 +738,10 @@
        <property name="title">
         <string>Controlador</string>
        </property>
-       <widget class="QCheckBox" name="checkBox">
+       <widget class="QCheckBox" name="cb_plot_setPoint">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>10</x>
@@ -754,7 +757,10 @@
          <bool>false</bool>
         </property>
        </widget>
-       <widget class="QCheckBox" name="checkBox_2">
+       <widget class="QCheckBox" name="cb_plot_erro">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>140</x>
@@ -770,7 +776,10 @@
          <bool>false</bool>
         </property>
        </widget>
-       <widget class="QCheckBox" name="checkBox_3">
+       <widget class="QCheckBox" name="cb_plot_p">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>10</x>
@@ -783,7 +792,10 @@
          <string>P</string>
         </property>
        </widget>
-       <widget class="QCheckBox" name="checkBox_4">
+       <widget class="QCheckBox" name="cb_plot_i">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>140</x>
@@ -796,7 +808,10 @@
          <string>I</string>
         </property>
        </widget>
-       <widget class="QCheckBox" name="checkBox_8">
+       <widget class="QCheckBox" name="cb_plot_d">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>10</x>
@@ -867,7 +882,10 @@
        <property name="title">
         <string>Sinal de Leitura</string>
        </property>
-       <widget class="QCheckBox" name="checkBox_7">
+       <widget class="QCheckBox" name="cb_plot_canal1">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>140</x>
@@ -883,7 +901,10 @@
          <bool>false</bool>
         </property>
        </widget>
-       <widget class="QCheckBox" name="checkBox_9">
+       <widget class="QCheckBox" name="cb_plot_canal0">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>10</x>
@@ -899,7 +920,10 @@
          <bool>false</bool>
         </property>
        </widget>
-       <widget class="QCheckBox" name="checkBox_10">
+       <widget class="QCheckBox" name="cb_plot_canal3">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>140</x>
@@ -915,7 +939,10 @@
          <bool>false</bool>
         </property>
        </widget>
-       <widget class="QCheckBox" name="checkBox_11">
+       <widget class="QCheckBox" name="cb_plot_canal2">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>10</x>
@@ -931,7 +958,10 @@
          <bool>false</bool>
         </property>
        </widget>
-       <widget class="QCheckBox" name="checkBox_13">
+       <widget class="QCheckBox" name="cb_plot_canal4">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>10</x>
@@ -947,7 +977,10 @@
          <bool>false</bool>
         </property>
        </widget>
-       <widget class="QCheckBox" name="checkBox_12">
+       <widget class="QCheckBox" name="cb_plot_canal5">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>140</x>
@@ -963,7 +996,10 @@
          <bool>false</bool>
         </property>
        </widget>
-       <widget class="QCheckBox" name="checkBox_14">
+       <widget class="QCheckBox" name="cb_plot_canal7">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>140</x>
@@ -979,7 +1015,10 @@
          <bool>false</bool>
         </property>
        </widget>
-       <widget class="QCheckBox" name="checkBox_15">
+       <widget class="QCheckBox" name="cb_plot_canal6">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>10</x>
@@ -996,10 +1035,6 @@
         </property>
        </widget>
       </widget>
-      <zorder>gp_graf_pid</zorder>
-      <zorder>gp_graf_se</zorder>
-      <zorder>gp_graf_sl</zorder>
-      <zorder>cb_graf_sinalCalculado</zorder>
      </widget>
     </widget>
     <widget class="QPushButton" name="buttonStop">
