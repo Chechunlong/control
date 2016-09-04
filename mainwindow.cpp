@@ -51,7 +51,16 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->canal_l5, SIGNAL(clicked(bool)), this, SLOT(UI_configCanais()));
     connect(ui->canal_l6, SIGNAL(clicked(bool)), this, SLOT(UI_configCanais()));
     connect(ui->canal_l7, SIGNAL(clicked(bool)), this, SLOT(UI_configCanais()));
-    connect(ui->cb_canalEscrita, SIGNAL(activated(int)), this, SLOT(UI_configCanais()));
+    //connect(ui->cb_canalEscrita, SIGNAL(activated(int)), this, SLOT(UI_configCanais()));
+
+    connect(ui->cb_plot_canal0, SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
+    connect(ui->cb_plot_canal1, SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
+    connect(ui->cb_plot_canal2, SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
+    connect(ui->cb_plot_canal3, SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
+    connect(ui->cb_plot_canal4, SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
+    connect(ui->cb_plot_canal5, SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
+    connect(ui->cb_plot_canal6, SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
+    connect(ui->cb_plot_canal7, SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
 
     // Grafico
     connect(ui->cb_plot_erro, SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
@@ -189,9 +198,6 @@ void MainWindow::UI_configPlotGraficosE()
             ui->graficoEscrita->graph(i)->setVisible(false);
         }
     }
-
-
-
 }
 
 void MainWindow::UI_configPlotGraficosL()
@@ -215,6 +221,41 @@ void MainWindow::UI_configPlotGraficosL()
             ui->graficoLeitura->graph(i)->setVisible(false);
         }
     }
+
+
+    /*if(!ui->canal_l0->isChecked()) ui->cb_plot_canal0->setChecked(false);
+    if(!ui->canal_l1->isChecked()) ui->cb_plot_canal1->setChecked(false);
+    if(!ui->canal_l2->isChecked()) ui->cb_plot_canal2->setChecked(false);
+    if(!ui->canal_l3->isChecked()) ui->cb_plot_canal3->setChecked(false);
+    if(!ui->canal_l4->isChecked()) ui->cb_plot_canal4->setChecked(false);
+    if(!ui->canal_l5->isChecked()) ui->cb_plot_canal5->setChecked(false);
+    if(!ui->canal_l6->isChecked()) ui->cb_plot_canal6->setChecked(false);
+    if(!ui->canal_l7->isChecked()) ui->cb_plot_canal7->setChecked(false);*/
+
+    canalLeituraPlotVec[0] = ui->cb_plot_canal0->isChecked();
+    canalLeituraPlotVec[1] = ui->cb_plot_canal1->isChecked();
+    canalLeituraPlotVec[2] = ui->cb_plot_canal2->isChecked();
+    canalLeituraPlotVec[3] = ui->cb_plot_canal3->isChecked();
+    canalLeituraPlotVec[4] = ui->cb_plot_canal4->isChecked();
+    canalLeituraPlotVec[5] = ui->cb_plot_canal5->isChecked();
+    canalLeituraPlotVec[6] = ui->cb_plot_canal6->isChecked();
+    canalLeituraPlotVec[7] = ui->cb_plot_canal7->isChecked();
+
+
+    for(int i=0; i<NUMB_CAN_READ; i++)
+    {
+        if(canalLeituraPlotVec[i] && canalLeituraVec[i])
+        {
+            ui->graficoLeitura->graph(i+2)->addToLegend();
+            ui->graficoLeitura->graph(i+2)->setVisible(true);
+
+        }
+        else
+        {
+            ui->graficoLeitura->graph(i+2)->removeFromLegend();
+            ui->graficoLeitura->graph(i+2)->setVisible(false);
+        }
+    }
 }
 
 void MainWindow::UI_configPanel()
@@ -222,9 +263,6 @@ void MainWindow::UI_configPanel()
 
     // Criando canais de escrita
     for(int i=0; i<4; i++) ui->cb_canalEscrita->addItem("Canal " + QString::number(i),QVariant(i));
-
-
-
 
     //ui->buttonAtualizar->setStyleSheet("background-color: blue");
     ui->buttonStop->setStyleSheet("background-color: red");
@@ -250,7 +288,7 @@ void MainWindow::UI_configPanel()
     UI_malhaAberta();
     UI_configControlador();
 
-    UI_canaisLeituraPlot();
+    //UI_canaisLeituraPlot();
 
 
 }
@@ -267,14 +305,7 @@ int MainWindow::UI_getTipoMalha()
 
 void MainWindow::UI_canaisLeituraPlot()
 {
-    ui->cb_plot_canal0->setDisabled(!ui->canal_l0->isChecked());
-    ui->cb_plot_canal1->setDisabled(!ui->canal_l1->isChecked());
-    ui->cb_plot_canal2->setDisabled(!ui->canal_l2->isChecked());
-    ui->cb_plot_canal3->setDisabled(!ui->canal_l3->isChecked());
-    ui->cb_plot_canal4->setDisabled(!ui->canal_l4->isChecked());
-    ui->cb_plot_canal5->setDisabled(!ui->canal_l5->isChecked());
-    ui->cb_plot_canal6->setDisabled(!ui->canal_l6->isChecked());
-    ui->cb_plot_canal7->setDisabled(!ui->canal_l7->isChecked());
+
 
 }
 
@@ -289,25 +320,16 @@ void MainWindow::UI_configCanais()
     canalLeituraVec[6] = ui->canal_l6->isChecked();
     canalLeituraVec[7] = ui->canal_l7->isChecked();
 
+    ui->cb_plot_canal0->setDisabled((!ui->canal_l0->isChecked()));
+    ui->cb_plot_canal1->setDisabled(!ui->canal_l1->isChecked());
+    ui->cb_plot_canal2->setDisabled(!ui->canal_l2->isChecked());
+    ui->cb_plot_canal3->setDisabled(!ui->canal_l3->isChecked());
+    ui->cb_plot_canal4->setDisabled(!ui->canal_l4->isChecked());
+    ui->cb_plot_canal5->setDisabled(!ui->canal_l5->isChecked());
+    ui->cb_plot_canal6->setDisabled(!ui->canal_l6->isChecked());
+    ui->cb_plot_canal7->setDisabled(!ui->canal_l7->isChecked());
 
-    UI_canaisLeituraPlot();
-
-    canalEscrita = ui->cb_canalEscrita->currentIndex();
-
-    for(int i=0; i<NUMB_CAN_READ; i++)
-    {
-        if(canalLeituraVec[i])
-        {
-            ui->graficoLeitura->graph(i+2)->addToLegend();
-            ui->graficoLeitura->graph(i+2)->setVisible(true);
-
-        }
-        else
-        {
-            ui->graficoLeitura->graph(i+2)->removeFromLegend();
-            ui->graficoLeitura->graph(i+2)->setVisible(false);
-        }
-    }
+    UI_configPlotGraficosL();
 }
 
 void MainWindow::UI_updateConsControle(double kd_td, double ki_ti)

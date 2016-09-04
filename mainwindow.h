@@ -116,6 +116,7 @@ private:
     QThread *threadLeitura;
 
     bool canalLeituraVec[NUMB_CAN_READ];
+    bool canalLeituraPlotVec[NUMB_CAN_READ];
     bool vectorGrafLeitura[5];
     bool sinalPlotEscrita[PLOT_ESCRITA];
     int canalEscrita = 0;
