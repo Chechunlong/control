@@ -344,13 +344,53 @@ void Control::receiveSigal()
         readVoltage = quanser->readAD(canalLeitura);
         canaisLeitura_value[canal] = readVoltage * FATOR_CONVERSAO;
 
-        if(canal==canalEscrita)
+        if(canal==canalLeitura)
         {
             sinalLeitura = canaisLeitura_value[canal]; // cm
             if(tipoMalha == M_FECHADA)
             {
                 erro = amplitude - sinalLeitura; // cm
+
+
+                /*
+
+                    Implementação do filtro
+
+                */
+
+                if(ordemSistema ==  SISTEMA_ORDEM_2)
+                {
+                    if(setPointUP)
+                    {
+                        if(sinalLeitura >= amplitude) // Calculo de tr
+                        {
+                            // Faz o calculo doidao do TR
+                        }
+
+                    }
+                    else if(!setPointUP)
+                    {
+
+                        if(sinalLeitura <= amplitude)
+                        {
+
+                        }
+
+
+                    }
+
+                    if(sinalLeitura <= sinalLeitura_old )
+                    {
+                        // mp =
+                    }
+
+
+
+
+                }
+
             }
+
         }
     }
 }

@@ -128,7 +128,7 @@ private:
 
     double sinalEscrita;
     double sinalLeitura;
-    double sinalLeitura_o2;
+    double sinalLeitura_old;
     double sinalCalculado;
 
     // Update data function: _data()
@@ -157,8 +157,14 @@ private:
     double tempoIntegrativo;
     double tempoDerivativo;
 
-
     int ordemSistema;
+
+    double tr;
+    double mp;
+    double tp;
+    double ts;
+
+    bool setPointUP;
 };
 
 #endif // CONTROL_H
