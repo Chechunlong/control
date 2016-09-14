@@ -651,6 +651,10 @@ void MainWindow::data()
     bool malhaAberta  = ui->radioAberta->isChecked();
     bool malhaFechada = ui->radioFechada->isChecked();
 
+    bool primeiraOrdem = ui->rbSistemaO1->isChecked();
+    bool segundaOrdem = ui->rbSistemaO2->isChecked();
+
+
     if(malhaAberta)
     {
         control->setTensao(amplitude);
@@ -663,6 +667,12 @@ void MainWindow::data()
         control->setTipoMalha(M_FECHADA);
 
         controladorPID();
+
+        if(primeiraOrdem) {
+            control->setTipoOrdemSistema(SISTEMA_ORDEM_1);
+        } else if(segundaOrdem) {
+            control->setTipoOrdemSistema(SISTEMA_ORDEM_2);
+        }
     }
 
     if(tipoSinal == ALEATORIO)

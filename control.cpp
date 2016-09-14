@@ -205,6 +205,17 @@ void Control::setTipoControler(int tipoControler)
     this->tipoControler = tipoControler;
 }
 
+void Control::setTipoOrdemSistema(int ordemSistema)
+{
+    this->ordemSistema = ordemSistema;
+
+    if(SISTEMA_ORDEM_1 == ordemSistema) {
+        canalLeitura = 0;
+    } else if(SISTEMA_ORDEM_2 == ordemSistema) {
+        canalLeitura = 1;
+    }
+}
+
 bool Control::connectionStatus()
 {
     return quanser->getStatus();
@@ -326,6 +337,7 @@ void Control::sendSignal()
 void Control::receiveSigal()
 {
     double readVoltage;
+
 
     for(int canal=0; canal<NUMB_CAN_READ; canal++)
     {

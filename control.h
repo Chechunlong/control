@@ -27,6 +27,8 @@
 #define CONTROLE_CONST_TEMP 0
 #define CONTROLE_GANHO 1
 
+#define SISTEMA_ORDEM_1 1
+#define SISTEMA_ORDEM_2 2
 
 class Control
 {
@@ -58,6 +60,8 @@ public:
 
     int getTipoControler();
     void setTipoControler(int tipoControler);
+
+    void setTipoOrdemSistema(int ordemSistema);
 
     double getKp() const;
     void setKp(double value);
@@ -124,6 +128,7 @@ private:
 
     double sinalEscrita;
     double sinalLeitura;
+    double sinalLeitura_o2;
     double sinalCalculado;
 
     // Update data function: _data()
@@ -152,6 +157,8 @@ private:
     double tempoIntegrativo;
     double tempoDerivativo;
 
+
+    int ordemSistema;
 };
 
 #endif // CONTROL_H

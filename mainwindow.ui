@@ -206,7 +206,7 @@
       <enum>Qt::RightToLeft</enum>
      </property>
      <property name="currentIndex">
-      <number>3</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab_sinal">
       <attribute name="title">
@@ -216,7 +216,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>10</y>
+         <y>0</y>
          <width>271</width>
          <height>51</height>
         </rect>
@@ -261,9 +261,9 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>70</y>
+         <y>100</y>
          <width>271</width>
-         <height>211</height>
+         <height>191</height>
         </rect>
        </property>
        <property name="layoutDirection">
@@ -276,7 +276,7 @@
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>80</y>
+          <y>70</y>
           <width>131</width>
           <height>21</height>
          </rect>
@@ -305,7 +305,7 @@
         <property name="geometry">
          <rect>
           <x>150</x>
-          <y>170</y>
+          <y>160</y>
           <width>90</width>
           <height>23</height>
          </rect>
@@ -318,7 +318,7 @@
         <property name="geometry">
          <rect>
           <x>150</x>
-          <y>140</y>
+          <y>130</y>
           <width>90</width>
           <height>23</height>
          </rect>
@@ -354,7 +354,7 @@
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>140</y>
+          <y>130</y>
           <width>131</width>
           <height>21</height>
          </rect>
@@ -370,7 +370,7 @@
         <property name="geometry">
          <rect>
           <x>150</x>
-          <y>80</y>
+          <y>70</y>
           <width>90</width>
           <height>23</height>
          </rect>
@@ -383,7 +383,7 @@
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>110</y>
+          <y>100</y>
           <width>131</width>
           <height>21</height>
          </rect>
@@ -399,13 +399,58 @@
         <property name="geometry">
          <rect>
           <x>150</x>
-          <y>110</y>
+          <y>100</y>
           <width>90</width>
           <height>23</height>
          </rect>
         </property>
         <property name="singleStep">
          <double>0.500000000000000</double>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QGroupBox" name="groupBox_3">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>40</y>
+         <width>271</width>
+         <height>51</height>
+        </rect>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="title">
+        <string/>
+       </property>
+       <widget class="QRadioButton" name="rbSistemaO1">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>20</y>
+          <width>102</width>
+          <height>30</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>1ª Orgem</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QRadioButton" name="rbSistemaO2">
+        <property name="geometry">
+         <rect>
+          <x>130</x>
+          <y>20</y>
+          <width>121</width>
+          <height>30</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>2ª Orgem</string>
         </property>
        </widget>
       </widget>
