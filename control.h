@@ -100,6 +100,11 @@ public:
 
 
 
+    void calculaTPico();
+
+    void zeraControlOrdem2();
+
+    void calculaSinal();
 
     bool    connectionStatus();
 
@@ -164,6 +169,8 @@ private:
     double tp;
     double ts;
 
+    bool tp_control;
+    bool tr_control;
     bool setPointUP;
 };
 

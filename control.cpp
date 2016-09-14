@@ -86,7 +86,17 @@ double Control::getSinalLeitura()
 
 void Control::setAmplitude(double amplitude)
 {
+    if(this->amplitude <= amplitude)
+    {
+        setPointUP = true;
+    }
+    else
+    {
+        setPointUP = false;
+    }
+
     this->amplitude = amplitude;
+
 }
 
 void Control::setAuxForRand(double auxForRand)
@@ -216,52 +226,40 @@ void Control::setTipoOrdemSistema(int ordemSistema)
     }
 }
 
-bool Control::connectionStatus()
+void Control::calculaTPico()
 {
-    return quanser->getStatus();
+    /*
+     * Enquanto nao cruzar o valor, ira incrementar
+     * e tp_control recebe false
+     */
+    if(!tp_control) {
+        tp += 0.1;
+        mp = abs(sinalLeitura - amplitude);
+    }
+
+    if(!tr_control) {
+        tr += 0.1;
+    }
+
+    if(setPointUP) // o setPoint escolhido eh maior que o valor atual de amplitude
+    {
+        sinalLeitura_old<=sinalLeitura ? tp_control = false : tp_control = true;
+        amplitude>=sinalLeitura ? tr_control = false : tr_control = true;
+    }
+    else // O valor de setPoint escolhido eh menor que o atual de amplitude
+    {
+        sinalLeitura_old>=sinalLeitura ? tp_control = false : tp_control = true;
+        amplitude<=sinalLeitura ? tr_control = false : tr_control = true;
+    }
+
 }
 
-int Control::levelControl(int value)
+void Control::zeraControlOrdem2()
 {
-    if(value>MAX_LEVEL) value = MAX_LEVEL;
-    else if (value<MIN_LEVEL) value = MIN_LEVEL;
-
-    return value;
+    tp = 0;
 }
 
-double Control::voltageControl(double value)
-{
-    if(value>=MAX_VOLTAGE) value = MAX_VOLTAGE;
-    else if (value<=MIN_VOLTAGE) value = MIN_VOLTAGE;
-
-    return value;
-}
-
-void Control::zerarSinal()
-{
-    delete controller;
-    delete signal;
-
-    controller = new Controller();
-    signal = new Signal();
-
-    tipoMalha = M_ABERTA;
-    tensao = 0;
-    sinalCalculado = 0;
-    sinalEscrita = 0;
-    timeAux = 0;
-}
-
-void Control::travel()
-{
-    sinalEscrita = voltageControl(sinalEscrita);
-
-    if(sinalLeitura<=3 && sinalEscrita<0) sinalEscrita = 0;
-
-    if(sinalLeitura>=28 && sinalEscrita>0) sinalEscrita = 0;
-}
-
-void Control::sendSignal()
+void Control::calculaSinal()
 {
     if(timeAux > periodo) timeAux = 0;
 
@@ -325,13 +323,63 @@ void Control::sendSignal()
         break;
     }
 
+    timeAux += 0.1;
+}
+
+bool Control::connectionStatus()
+{
+    return quanser->getStatus();
+}
+
+int Control::levelControl(int value)
+{
+    if(value>MAX_LEVEL) value = MAX_LEVEL;
+    else if (value<MIN_LEVEL) value = MIN_LEVEL;
+
+    return value;
+}
+
+double Control::voltageControl(double value)
+{
+    if(value>=MAX_VOLTAGE) value = MAX_VOLTAGE;
+    else if (value<=MIN_VOLTAGE) value = MIN_VOLTAGE;
+
+    return value;
+}
+
+void Control::zerarSinal()
+{
+    delete controller;
+    delete signal;
+
+    controller = new Controller();
+    signal = new Signal();
+
+    tipoMalha = M_ABERTA;
+    tensao = 0;
+    sinalCalculado = 0;
+    sinalEscrita = 0;
+    timeAux = 0;
+}
+
+void Control::travel()
+{
+    sinalEscrita = voltageControl(sinalEscrita);
+
+    if(sinalLeitura<=3 && sinalEscrita<0) sinalEscrita = 0;
+
+    if(sinalLeitura>=28 && sinalEscrita>0) sinalEscrita = 0;
+}
+
+void Control::sendSignal()
+{
+    calculaSinal();
+
     sinalEscrita = sinalCalculado;
 
     travel();
 
     quanser->writeDA(canalEscrita,sinalEscrita);
-
-    timeAux += 0.1;
 }
 
 void Control::receiveSigal()
@@ -346,11 +394,11 @@ void Control::receiveSigal()
 
         if(canal==canalLeitura)
         {
+            sinalLeitura_old = sinalLeitura;
             sinalLeitura = canaisLeitura_value[canal]; // cm
             if(tipoMalha == M_FECHADA)
             {
                 erro = amplitude - sinalLeitura; // cm
-
 
                 /*
 
@@ -360,32 +408,13 @@ void Control::receiveSigal()
 
                 if(ordemSistema ==  SISTEMA_ORDEM_2)
                 {
-                    if(setPointUP)
-                    {
-                        if(sinalLeitura >= amplitude) // Calculo de tr
-                        {
-                            // Faz o calculo doidao do TR
-                        }
+                    /*
+                        Enquanto nao tiver o tp, ele sera falso
+                        que eh o valor de tp_control
 
-                    }
-                    else if(!setPointUP)
-                    {
-
-                        if(sinalLeitura <= amplitude)
-                        {
-
-                        }
-
-
-                    }
-
-                    if(sinalLeitura <= sinalLeitura_old )
-                    {
-                        // mp =
-                    }
-
-
-
+                        calculaTPico() gera o valor de tr, tp e Mp
+                    */
+                    if(!tp_control) calculaTPico();
 
                 }
 
