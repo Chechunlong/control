@@ -1,7 +1,5 @@
 #include "controller.h"
 
-
-
 Controller::Controller()
 {
     erroAnt = 0;

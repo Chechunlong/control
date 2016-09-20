@@ -17,7 +17,8 @@ SOURCES += main.cpp\
     signal.cpp \
     control.cpp \
     controller.cpp \
-    conectar.cpp
+    conectar.cpp \
+    sistemao2.cpp
 
 HEADERS  += mainwindow.h \
     quanser.h \
@@ -25,7 +26,8 @@ HEADERS  += mainwindow.h \
     signal.h \
     control.h \
     controller.h \
-    conectar.h
+    conectar.h \
+    sistemaO2.h
 
 FORMS    += mainwindow.ui \
     conectar.ui

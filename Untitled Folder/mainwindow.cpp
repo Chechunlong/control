@@ -4,25 +4,19 @@
 #define TAB_SINAL 0
 #define TAB_CONTROLE 1
 
-
-//ADCIONADOS POR JOAO B
-#define ABS 0
-#define PICOm 1
-
-#define Tr100 0
-#define Tr95 1
-#define Tr90 2
-
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+
     conectar = new Conectar();
     conectar->show();
+
 
     connect(conectar, SIGNAL(accepted()), this, SLOT(connectServer()));
 
     ui->setupUi(this);
+
 
     timerLeitura = new QTimer(0);
     timerEscrita = new QTimer(0);
@@ -45,21 +39,20 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->tipoControlador, SIGNAL(currentIndexChanged(int)),this,SLOT(UI_configControlador()));
     connect(ui->radioFechada, SIGNAL(toggled(bool)), ui->tab_sinal_controle->widget(TAB_CONTROLE), SLOT(setEnabled(bool)));
     connect(ui->radioAberta,  SIGNAL(toggled(bool)), ui->tab_sinal_controle->widget(TAB_CONTROLE), SLOT(setDisabled(bool)));
-    connect(ui->rb_constTempo, SIGNAL(toggled(bool)),this,SLOT(UI_configConsControle()));
-    connect(ui->rb_constGanho, SIGNAL(toggled(bool)),this,SLOT(UI_configConsControle()));
+    connect(ui->rb_constTempo, SIGNAL(clicked(bool)),this,SLOT(UI_configConsControle()));
+    connect(ui->rb_constGanho, SIGNAL(clicked(bool)),this,SLOT(UI_configConsControle()));
 
     // Canais de Leitura e Escrita
-    //connect(ui->canal_l0, SIGNAL(clicked(bool)), this, SLOT(UI_configCanais()));
-    //connect(ui->canal_l1, SIGNAL(clicked(bool)), this, SLOT(UI_configCanais()));
-    //connect(ui->canal_l2, SIGNAL(clicked(bool)), this, SLOT(UI_configCanais()));
-    //connect(ui->canal_l3, SIGNAL(clicked(bool)), this, SLOT(UI_configCanais()));
-    //connect(ui->canal_l4, SIGNAL(clicked(bool)), this, SLOT(UI_configCanais()));
-    //connect(ui->canal_l5, SIGNAL(clicked(bool)), this, SLOT(UI_configCanais()));
-    //connect(ui->canal_l6, SIGNAL(clicked(bool)), this, SLOT(UI_configCanais()));
-    //connect(ui->canal_l7, SIGNAL(clicked(bool)), this, SLOT(UI_configCanais()));
+    connect(ui->canal_l0, SIGNAL(clicked(bool)), this, SLOT(UI_configCanais()));
+    connect(ui->canal_l1, SIGNAL(clicked(bool)), this, SLOT(UI_configCanais()));
+    connect(ui->canal_l2, SIGNAL(clicked(bool)), this, SLOT(UI_configCanais()));
+    connect(ui->canal_l3, SIGNAL(clicked(bool)), this, SLOT(UI_configCanais()));
+    connect(ui->canal_l4, SIGNAL(clicked(bool)), this, SLOT(UI_configCanais()));
+    connect(ui->canal_l5, SIGNAL(clicked(bool)), this, SLOT(UI_configCanais()));
+    connect(ui->canal_l6, SIGNAL(clicked(bool)), this, SLOT(UI_configCanais()));
+    connect(ui->canal_l7, SIGNAL(clicked(bool)), this, SLOT(UI_configCanais()));
     //connect(ui->cb_canalEscrita, SIGNAL(activated(int)), this, SLOT(UI_configCanais()));
 
-    //Grafico e Canais
     connect(ui->cb_plot_canal0, SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
     connect(ui->cb_plot_canal1, SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
     connect(ui->cb_plot_canal2, SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
@@ -69,14 +62,14 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->cb_plot_canal6, SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
     connect(ui->cb_plot_canal7, SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
 
-    // Grafico e Variavéis
-    connect(ui->cb_plot_erro,           SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
-    connect(ui->cb_plot_setPoint,       SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
-    connect(ui->cb_plot_p,              SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
-    connect(ui->cb_plot_i,              SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
-    connect(ui->cb_plot_d,              SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
+    // Grafico
+    connect(ui->cb_plot_erro, SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
+    connect(ui->cb_plot_setPoint, SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
+    connect(ui->cb_plot_p, SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
+    connect(ui->cb_plot_i, SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
+    connect(ui->cb_plot_d, SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
     connect(ui->cb_graf_sinalCalculado, SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosE()));
-    connect(ui->cb_graf_sinalEnviado,   SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosE()));
+    connect(ui->cb_graf_sinalEnviado, SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosE()));
 
     // Botões
     //connect(ui->buttonConectar, SIGNAL(clicked(bool)),this,SLOT(connectServer()));
@@ -95,30 +88,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->dSpinOffSet,    SIGNAL(valueChanged(double)), this, SLOT(UI_limitRandInput()));
     connect(ui->dSpinAux,       SIGNAL(valueChanged(double)), this, SLOT(UI_limitRandInput()));
 
-    // Habilitar mostrar ou não o gráfico ao selecionar os canais
-    connect(ui->canal_l0, SIGNAL(toggled(bool)), ui->cb_plot_canal0, SLOT(setEnabled(bool)));
-    connect(ui->canal_l1, SIGNAL(toggled(bool)), ui->cb_plot_canal1, SLOT(setEnabled(bool)));
-    connect(ui->canal_l2, SIGNAL(toggled(bool)), ui->cb_plot_canal2, SLOT(setEnabled(bool)));
-    connect(ui->canal_l3, SIGNAL(toggled(bool)), ui->cb_plot_canal3, SLOT(setEnabled(bool)));
-    connect(ui->canal_l4, SIGNAL(toggled(bool)), ui->cb_plot_canal4, SLOT(setEnabled(bool)));
-    connect(ui->canal_l5, SIGNAL(toggled(bool)), ui->cb_plot_canal5, SLOT(setEnabled(bool)));
-    connect(ui->canal_l6, SIGNAL(toggled(bool)), ui->cb_plot_canal6, SLOT(setEnabled(bool)));
-    connect(ui->canal_l7, SIGNAL(toggled(bool)), ui->cb_plot_canal7, SLOT(setEnabled(bool)));
-
-    ///Ordem do Sistema e comportamento do sistema
-    connect(ui->radioFechada, SIGNAL(toggled(bool)), ui->group_Ordem, SLOT(setEnabled(bool)));
-    connect(ui->radioAberta, SIGNAL(toggled(bool)), ui->group_Ordem, SLOT(setDisabled(bool)));
-    connect(ui->rbSistemaO1, SIGNAL(toggled(bool)), ui->combo_Mp, SLOT(setDisabled(bool)));
-    connect(ui->rbSistemaO1, SIGNAL(toggled(bool)), ui->combo_Tr, SLOT(setDisabled(bool)));
-    connect(ui->rbSistemaO1, SIGNAL(toggled(bool)), ui->combo_Ts, SLOT(setDisabled(bool)));
-    connect(ui->rbSistemaO2, SIGNAL(toggled(bool)), ui->combo_Mp, SLOT(setEnabled(bool)));
-    connect(ui->rbSistemaO2, SIGNAL(toggled(bool)), ui->combo_Tr, SLOT(setEnabled(bool)));
-    connect(ui->rbSistemaO2, SIGNAL(toggled(bool)), ui->combo_Ts, SLOT(setEnabled(bool)));
-    connect(ui->rbSistemaO2, SIGNAL(toggled(bool)), ui->canal_l1, SLOT(setChecked(bool)));
-    connect(ui->rbSistemaO1, SIGNAL(toggled(bool)), ui->canal_l0, SLOT(setChecked(bool)));
-
-    //connect(ui->cb_plot_canal0, SLOT(setDisabled(bool)), ui->cb_plot_canal0, SLOT(setChecked(bool)));
-
     UI_configPanel(); /* Método principal para setar o INIT da UI */
 }
 
@@ -129,11 +98,14 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+
+
 void MainWindow::UI_configGraphWrite()
 {
     // Legenda
     ui->graficoEscrita->legend->setVisible(true);
     ui->graficoEscrita->axisRect()->insetLayout()->setInsetAlignment(0,Qt::AlignLeft|Qt::AlignBottom);
+    //ui->graficoEscrita->axisRect()->setupFullAxesBox();
 
     // sinal enviado
     ui->graficoEscrita->addGraph(); // blue line
@@ -156,6 +128,9 @@ void MainWindow::UI_configGraphWrite()
     ui->graficoEscrita->yAxis->setRange(-4.5,4.5);
     ui->graficoEscrita->yAxis->setNumberPrecision(2);
     ui->graficoEscrita->yAxis->setLabel("Tensão (V) ");
+
+    //connect(ui->graficoEscrita->xAxis, SIGNAL(rangeChanged(QCPRange)), ui->graficoEscrita->xAxis2, SLOT(setRange(QCPRange)));
+    //connect(ui->graficoEscrita->yAxis, SIGNAL(rangeChanged(QCPRange)), ui->graficoEscrita->yAxis2, SLOT(setRange(QCPRange)));
 }
 
 void MainWindow::UI_configGraphRead()
@@ -206,6 +181,7 @@ void MainWindow::UI_configGraphRead()
 
 void MainWindow::UI_configPlotGraficosE()
 {
+
     sinalPlotEscrita[1] = ui->cb_graf_sinalCalculado->isChecked();
     sinalPlotEscrita[0] = ui->cb_graf_sinalEnviado->isChecked();
 
@@ -225,7 +201,7 @@ void MainWindow::UI_configPlotGraficosE()
 }
 
 void MainWindow::UI_configPlotGraficosL()
-{    
+{
     vectorGrafLeitura[0] = ui->cb_plot_erro->isChecked();
     vectorGrafLeitura[1] = ui->cb_plot_setPoint->isChecked();
     vectorGrafLeitura[2] = ui->cb_plot_p->isChecked();
@@ -300,21 +276,11 @@ void MainWindow::UI_configPanel()
     ui->tipoControlador->addItem("PI-D",QVariant(CONTROLER_PI_D));
 
     // Sinais gerados
-    ui->comboTipoSinal->addItem("Degrau",QVariant(DEGRAU));
-    ui->comboTipoSinal->addItem("Quadrada",QVariant(QUADRADA));
-    ui->comboTipoSinal->addItem("Senoidal",QVariant(SENOIDAL));
-    ui->comboTipoSinal->addItem("Dente de Serra",QVariant(DENTE_DE_SERRA));
-    ui->comboTipoSinal->addItem("Aleatório",QVariant(ALEATORIO));
-
-    ///Comportamento do Sistema
-    ui->combo_Mp->addItem("ABS",QVariant(ABS));
-    ui->combo_Mp->addItem("PICOm",QVariant(PICOm));
-    ui->combo_Tr->addItem("0-100%",QVariant(Tr100));
-    ui->combo_Tr->addItem("5-95%",QVariant(Tr95));
-    ui->combo_Tr->addItem("10-90%",QVariant(Tr90));
-    ui->combo_Ts->addItem("2%",QVariant(2));
-    ui->combo_Ts->addItem("7%",QVariant(7));
-    ui->combo_Ts->addItem("10%",QVariant(10));
+    ui->comboTipoSinal->addItem("Degrau",QVariant(0));
+    ui->comboTipoSinal->addItem("Quadrada",QVariant(1));
+    ui->comboTipoSinal->addItem("Senoidal",QVariant(2));
+    ui->comboTipoSinal->addItem("Dente de Serra",QVariant(3));
+    ui->comboTipoSinal->addItem("Aleatório",QVariant(4));
 
     ui->dSpinAux->setVisible(false);
     ui->labelAux->setVisible(false);
@@ -323,6 +289,8 @@ void MainWindow::UI_configPanel()
     UI_configControlador();
 
     //UI_canaisLeituraPlot();
+
+
 }
 
 int MainWindow::UI_getTipoMalha()
@@ -343,7 +311,7 @@ void MainWindow::UI_canaisLeituraPlot()
 
 void MainWindow::UI_configCanais()
 {
-    /* canalLeituraVec[0] = ui->canal_l0->isChecked();
+    canalLeituraVec[0] = ui->canal_l0->isChecked();
     canalLeituraVec[1] = ui->canal_l1->isChecked();
     canalLeituraVec[2] = ui->canal_l2->isChecked();
     canalLeituraVec[3] = ui->canal_l3->isChecked();
@@ -359,7 +327,7 @@ void MainWindow::UI_configCanais()
     ui->cb_plot_canal4->setDisabled(!ui->canal_l4->isChecked());
     ui->cb_plot_canal5->setDisabled(!ui->canal_l5->isChecked());
     ui->cb_plot_canal6->setDisabled(!ui->canal_l6->isChecked());
-    ui->cb_plot_canal7->setDisabled(!ui->canal_l7->isChecked()); //*/
+    ui->cb_plot_canal7->setDisabled(!ui->canal_l7->isChecked());
 
     UI_configPlotGraficosL();
 }
@@ -394,10 +362,12 @@ void MainWindow::UI_configConsControle()
 
     if(constTempo)
     {
+
         double td = kd_td / kp;
         double ti = kp / ki_ti;
 
         UI_updateConsControle(td, ti);
+
     }
     else if(constGanho)
     {
@@ -503,6 +473,7 @@ void MainWindow::UI_malhaFechada()
 
     ui->dSpinAmp->setRange(MIN_LEVEL,MAX_LEVEL); // Limita nivel
     ui->dSpinOffSet->setRange(MIN_LEVEL,MAX_LEVEL); // Limita nivel
+
 
     ui->cb_plot_p->setDisabled(false);
     ui->cb_plot_setPoint->setDisabled(false);
@@ -671,11 +642,11 @@ void MainWindow::controladorPID()
 
 void MainWindow::data()
 {
-    double  amplitude = ui->dSpinAmp->value();
-    double  periodo   = ui->dSpinPeriodo->value();
-    double  offSet    = ui->dSpinOffSet->value();
-    int     canalEscrita = ui->cb_canalEscrita->currentIndex();
-    int     tipoSinal    = ui->comboTipoSinal->currentIndex();
+    double amplitude = ui->dSpinAmp->value();
+    double periodo   = ui->dSpinPeriodo->value();
+    double offSet    = ui->dSpinOffSet->value();
+    int canalEscrita = ui->cb_canalEscrita->currentIndex();
+    int tipoSinal    = ui->comboTipoSinal->currentIndex();
 
     bool malhaAberta  = ui->radioAberta->isChecked();
     bool malhaFechada = ui->radioFechada->isChecked();
@@ -791,3 +762,4 @@ void MainWindow::receiveData()
 
     ui->pb_tanque1->setValue(MAX_LEVEL/sinalLeitura);
 }
+

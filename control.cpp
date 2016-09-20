@@ -7,6 +7,8 @@ Control::Control(int port, QString ip)
     signal = new Signal();
     controller = new Controller();
 
+    sistemaO2 = new SistemaO2();
+
 
     timeAux     = 0;
     tipoSinal   = 0;
@@ -38,19 +40,13 @@ Control::Control(int port, QString ip)
 }
 
 double Control::getAmplitude()
-{
-    return amplitude;
-}
+{ return amplitude; }
 
 int Control::getCanalEscrita()
-{
-    return canalEscrita;
-}
+{ return canalEscrita; }
 
 int Control::getCanalLeitura()
-{
-    return canalEscrita;
-}
+{ return canalEscrita; }
 
 double Control::getCanalValue(int value)
 {
@@ -60,160 +56,94 @@ double Control::getCanalValue(int value)
 }
 
 double Control::getErro()
-{
-    return erro;
-}
+{ return erro; }
 
 int Control::getTipoMalha()
-{
-    return tipoMalha;
-}
+{ return tipoMalha; }
 
 double Control::getSinalCalculado()
-{
-    return sinalCalculado;
-}
+{ return sinalCalculado; }
 
 double Control::getSinalEnviado()
-{
-    return sinalEscrita;
-}
+{ return sinalEscrita; }
 
 double Control::getSinalLeitura()
-{
-    return sinalLeitura;
-}
+{ return sinalLeitura; }
 
 void Control::setAmplitude(double amplitude)
 {
-    if(this->amplitude <= amplitude)
-    {
-        setPointUP = true;
-    }
-    else
-    {
-        setPointUP = false;
-    }
+    this->amplitude <= amplitude ? setPointUP = true : setPointUP = false;
 
     this->amplitude = amplitude;
-
 }
 
 void Control::setAuxForRand(double auxForRand)
-{
-    this->auxForRand = auxForRand;
-}
+{ this->auxForRand = auxForRand; }
 
 void Control::setCanalEscrita(int canalEscrita)
-{
-    this->canalEscrita = this->canalLeitura = canalEscrita;
-}
+{ this->canalEscrita = this->canalLeitura = canalEscrita; }
 
 void Control::setOffSet(double value)
-{
-    offSet = value;
-}
+{ offSet = value; }
 
 void Control::setPeriodo(double value)
-{
-    periodo = value;
-}
+{ periodo = value; }
 
 void Control::setTensao(double value)
-{
-    tensao = value;
-}
+{ tensao = value; }
 
 void Control::setTipoMalha(int value)
-{
-    tipoMalha = value;
-}
+{ tipoMalha = value; }
 
 void Control::setTipoSinal(int value)
-{
-    tipoSinal = value;
-}
-
+{ tipoSinal = value; }
 
 double Control::getKp() const
-{
-    return Kp;
-}
+{ return Kp; }
 
 void Control::setKp(double value)
-{
-    Kp = value;
-}
+{ Kp = value; }
 
 double Control::getKi() const
-{
-    return Ki;
-}
+{ return Ki; }
 
 void Control::setKi(double value)
-{
-    Ki = value;
-}
+{ Ki = value; }
 
 double Control::getKd() const
-{
-    return Kd;
-}
+{ return Kd; }
 
 void Control::setKd(double value)
-{
-    Kd = value;
-}
+{ Kd = value; }
 
 double Control::getTi() const
-{
-    return this->tempoIntegrativo;
-}
+{ return this->tempoIntegrativo; }
 double Control::getTd() const
-{
-    return this->tempoDerivativo;
-}
+{ return this->tempoDerivativo; }
 
 double Control::getTempoIntegrativo() const
-{
-    return tempoIntegrativo;
-}
+{ return tempoIntegrativo; }
 
 void Control::setTempoIntegrativo(double value)
-{
-    tempoIntegrativo = value;
-}
+{ tempoIntegrativo = value; }
 
 double Control::getTempoDerivativo() const
-{
-    return tempoDerivativo;
-}
+{ return tempoDerivativo; }
 
 void Control::setTempoDerivativo(double value)
-{
-    tempoDerivativo = value;
-}
+{ tempoDerivativo = value; }
 
 int Control::getModeControle() const
-{
-    return modeControle;
-}
+{ return modeControle; }
 
 void Control::setModeControle(int modeControle)
-{
-    this->modeControle = modeControle;
-}
-
+{ this->modeControle = modeControle; }
 
 int Control::getTipoControler()
-{
-    return tipoControler;
-}
+{ return tipoControler; }
 
 void Control::setTipoControler(int tipoControler)
-{
-    this->tipoControler = tipoControler;
-}
+{ this->tipoControler = tipoControler; }
 
 void Control::setTipoOrdemSistema(int ordemSistema)
 {
@@ -224,39 +154,6 @@ void Control::setTipoOrdemSistema(int ordemSistema)
     } else if(SISTEMA_ORDEM_2 == ordemSistema) {
         canalLeitura = 1;
     }
-}
-
-void Control::calculaTPico()
-{
-    /*
-     * Enquanto nao cruzar o valor, ira incrementar
-     * e tp_control recebe false
-     */
-    if(!tp_control) {
-        tp += 0.1;
-        mp = abs(sinalLeitura - amplitude);
-    }
-
-    if(!tr_control) {
-        tr += 0.1;
-    }
-
-    if(setPointUP) // o setPoint escolhido eh maior que o valor atual de amplitude
-    {
-        sinalLeitura_old<=sinalLeitura ? tp_control = false : tp_control = true;
-        amplitude>=sinalLeitura ? tr_control = false : tr_control = true;
-    }
-    else // O valor de setPoint escolhido eh menor que o atual de amplitude
-    {
-        sinalLeitura_old>=sinalLeitura ? tp_control = false : tp_control = true;
-        amplitude<=sinalLeitura ? tr_control = false : tr_control = true;
-    }
-
-}
-
-void Control::zeraControlOrdem2()
-{
-    tp = 0;
 }
 
 void Control::calculaSinal()
@@ -408,13 +305,27 @@ void Control::receiveSigal()
 
                 if(ordemSistema ==  SISTEMA_ORDEM_2)
                 {
-                    /*
-                        Enquanto nao tiver o tp, ele sera falso
-                        que eh o valor de tp_control
 
-                        calculaTPico() gera o valor de tr, tp e Mp
-                    */
-                    if(!tp_control) calculaTPico();
+                    statusTr = sistemaO2->getStatusTr();
+                    /*!statusTr ?
+                            sistemaO2->calculaTr(sinalLeitura, amplitude) :
+                            tr = sistemaO2->getTr();*/
+                    /*
+                     * Calcula Tr enquanto o seu status
+                     * for false, que significa que ele ainda nao
+                     * finalizou o calculo :p
+                     */
+
+                    statusTp = sistemaO2->getStatusTp();
+                    statusMp = sistemaO2->getStatusMP();
+
+                    if(!statusTp) {
+                        sistemaO2->calculaTp(sinalLeitura, sinalLeitura_old);
+                    } else {
+                        tp = sistemaO2->getTp();
+                        mp = sistemaO2->getMp();
+                    }
+
 
                 }
 

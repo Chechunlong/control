@@ -4,6 +4,7 @@
 #include "quanser.h"
 #include "signal.h"
 #include "controller.h"
+#include "sistemaO2.h"
 
 #define MAX_VOLTAGE 4
 #define MIN_VOLTAGE -4
@@ -125,6 +126,7 @@ private:
     Quanser *quanser;
     Signal *signal;
     Controller *controller;
+    SistemaO2 *sistemaO2;
 
     int tipoMalha = 1;  /* 0 -> fechada, 1 -> aberto*/
 
@@ -162,12 +164,19 @@ private:
     double tempoIntegrativo;
     double tempoDerivativo;
 
+
+    // Sistema de Ordem 2
     int ordemSistema;
 
-    double tr;
-    double mp;
-    double tp;
-    double ts;
+    double tr,
+           mp,
+           tp,
+           ts;
+
+    bool statusTr,
+         statusMp,
+         statusTp,
+         statusTs;
 
     bool tp_control;
     bool tr_control;
