@@ -48,38 +48,45 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->rb_constTempo, SIGNAL(toggled(bool)),this,SLOT(UI_configConsControle()));
     connect(ui->rb_constGanho, SIGNAL(toggled(bool)),this,SLOT(UI_configConsControle()));
 
-    // Canais de Leitura e Escrita
-    //connect(ui->canal_l0, SIGNAL(clicked(bool)), this, SLOT(UI_configCanais()));
-    //connect(ui->canal_l1, SIGNAL(clicked(bool)), this, SLOT(UI_configCanais()));
-    //connect(ui->canal_l2, SIGNAL(clicked(bool)), this, SLOT(UI_configCanais()));
-    //connect(ui->canal_l3, SIGNAL(clicked(bool)), this, SLOT(UI_configCanais()));
-    //connect(ui->canal_l4, SIGNAL(clicked(bool)), this, SLOT(UI_configCanais()));
-    //connect(ui->canal_l5, SIGNAL(clicked(bool)), this, SLOT(UI_configCanais()));
-    //connect(ui->canal_l6, SIGNAL(clicked(bool)), this, SLOT(UI_configCanais()));
-    //connect(ui->canal_l7, SIGNAL(clicked(bool)), this, SLOT(UI_configCanais()));
-    //connect(ui->cb_canalEscrita, SIGNAL(activated(int)), this, SLOT(UI_configCanais()));
+    /// Habilitar Canais e Mostrar Canais no Gráfico
+    connect(ui->canal_l0, SIGNAL(toggled(bool)), ui->cb_plot_canal0, SLOT(setEnabled(bool)));
+    connect(ui->canal_l1, SIGNAL(toggled(bool)), ui->cb_plot_canal1, SLOT(setEnabled(bool)));
+    connect(ui->canal_l2, SIGNAL(toggled(bool)), ui->cb_plot_canal2, SLOT(setEnabled(bool)));
+    connect(ui->canal_l3, SIGNAL(toggled(bool)), ui->cb_plot_canal3, SLOT(setEnabled(bool)));
+    connect(ui->canal_l4, SIGNAL(toggled(bool)), ui->cb_plot_canal4, SLOT(setEnabled(bool)));
+    connect(ui->canal_l5, SIGNAL(toggled(bool)), ui->cb_plot_canal5, SLOT(setEnabled(bool)));
+    connect(ui->canal_l6, SIGNAL(toggled(bool)), ui->cb_plot_canal6, SLOT(setEnabled(bool)));
+    connect(ui->canal_l7, SIGNAL(toggled(bool)), ui->cb_plot_canal7, SLOT(setEnabled(bool)));
+    connect(ui->canal_l0, SIGNAL(toggled(bool)), ui->cb_plot_canal0, SLOT(setChecked(bool)));
+    connect(ui->canal_l1, SIGNAL(toggled(bool)), ui->cb_plot_canal1, SLOT(setChecked(bool)));
+    connect(ui->canal_l2, SIGNAL(toggled(bool)), ui->cb_plot_canal2, SLOT(setChecked(bool)));
+    connect(ui->canal_l3, SIGNAL(toggled(bool)), ui->cb_plot_canal3, SLOT(setChecked(bool)));
+    connect(ui->canal_l4, SIGNAL(toggled(bool)), ui->cb_plot_canal4, SLOT(setChecked(bool)));
+    connect(ui->canal_l5, SIGNAL(toggled(bool)), ui->cb_plot_canal5, SLOT(setChecked(bool)));
+    connect(ui->canal_l6, SIGNAL(toggled(bool)), ui->cb_plot_canal6, SLOT(setChecked(bool)));
+    connect(ui->canal_l7, SIGNAL(toggled(bool)), ui->cb_plot_canal7, SLOT(setChecked(bool)));
 
     //Grafico e Canais
-    connect(ui->cb_plot_canal0, SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
-    connect(ui->cb_plot_canal1, SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
-    connect(ui->cb_plot_canal2, SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
-    connect(ui->cb_plot_canal3, SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
-    connect(ui->cb_plot_canal4, SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
-    connect(ui->cb_plot_canal5, SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
-    connect(ui->cb_plot_canal6, SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
-    connect(ui->cb_plot_canal7, SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
+    connect(ui->cb_plot_canal0, SIGNAL(toggled(bool)), this, SLOT(UI_configPlotGraficosL()));
+    connect(ui->cb_plot_canal1, SIGNAL(toggled(bool)), this, SLOT(UI_configPlotGraficosL()));
+    connect(ui->cb_plot_canal2, SIGNAL(toggled(bool)), this, SLOT(UI_configPlotGraficosL()));
+    connect(ui->cb_plot_canal3, SIGNAL(toggled(bool)), this, SLOT(UI_configPlotGraficosL()));
+    connect(ui->cb_plot_canal4, SIGNAL(toggled(bool)), this, SLOT(UI_configPlotGraficosL()));
+    connect(ui->cb_plot_canal5, SIGNAL(toggled(bool)), this, SLOT(UI_configPlotGraficosL()));
+    connect(ui->cb_plot_canal6, SIGNAL(toggled(bool)), this, SLOT(UI_configPlotGraficosL()));
+    connect(ui->cb_plot_canal7, SIGNAL(toggled(bool)), this, SLOT(UI_configPlotGraficosL()));
+    connect(ui->cb_canalEscrita, SIGNAL(activated(int)), this, SLOT(UI_configPlotGraficosL()));
 
     // Grafico e Variavéis
-    connect(ui->cb_plot_erro,           SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
-    connect(ui->cb_plot_setPoint,       SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
-    connect(ui->cb_plot_p,              SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
-    connect(ui->cb_plot_i,              SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
-    connect(ui->cb_plot_d,              SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosL()));
-    connect(ui->cb_graf_sinalCalculado, SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosE()));
-    connect(ui->cb_graf_sinalEnviado,   SIGNAL(clicked(bool)), this, SLOT(UI_configPlotGraficosE()));
+    connect(ui->cb_plot_erro,           SIGNAL(toggled(bool)), this, SLOT(UI_configPlotGraficosL()));
+    connect(ui->cb_plot_setPoint,       SIGNAL(toggled(bool)), this, SLOT(UI_configPlotGraficosL()));
+    connect(ui->cb_plot_p,              SIGNAL(toggled(bool)), this, SLOT(UI_configPlotGraficosL()));
+    connect(ui->cb_plot_i,              SIGNAL(toggled(bool)), this, SLOT(UI_configPlotGraficosL()));
+    connect(ui->cb_plot_d,              SIGNAL(toggled(bool)), this, SLOT(UI_configPlotGraficosL()));
+    connect(ui->cb_graf_sinalCalculado, SIGNAL(toggled(bool)), this, SLOT(UI_configPlotGraficosE()));
+    connect(ui->cb_graf_sinalEnviado,   SIGNAL(toggled(bool)), this, SLOT(UI_configPlotGraficosE()));
 
     // Botões
-    //connect(ui->buttonConectar, SIGNAL(clicked(bool)),this,SLOT(connectServer()));
     connect(ui->buttonAtualizar,SIGNAL(clicked(bool)),this,SLOT(data()));
     connect(ui->buttonStop,     SIGNAL(clicked(bool)),this,SLOT(zerarSinal()));
 
@@ -95,16 +102,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->dSpinOffSet,    SIGNAL(valueChanged(double)), this, SLOT(UI_limitRandInput()));
     connect(ui->dSpinAux,       SIGNAL(valueChanged(double)), this, SLOT(UI_limitRandInput()));
 
-    // Habilitar mostrar ou não o gráfico ao selecionar os canais
-    connect(ui->canal_l0, SIGNAL(toggled(bool)), ui->cb_plot_canal0, SLOT(setEnabled(bool)));
-    connect(ui->canal_l1, SIGNAL(toggled(bool)), ui->cb_plot_canal1, SLOT(setEnabled(bool)));
-    connect(ui->canal_l2, SIGNAL(toggled(bool)), ui->cb_plot_canal2, SLOT(setEnabled(bool)));
-    connect(ui->canal_l3, SIGNAL(toggled(bool)), ui->cb_plot_canal3, SLOT(setEnabled(bool)));
-    connect(ui->canal_l4, SIGNAL(toggled(bool)), ui->cb_plot_canal4, SLOT(setEnabled(bool)));
-    connect(ui->canal_l5, SIGNAL(toggled(bool)), ui->cb_plot_canal5, SLOT(setEnabled(bool)));
-    connect(ui->canal_l6, SIGNAL(toggled(bool)), ui->cb_plot_canal6, SLOT(setEnabled(bool)));
-    connect(ui->canal_l7, SIGNAL(toggled(bool)), ui->cb_plot_canal7, SLOT(setEnabled(bool)));
-
     ///Ordem do Sistema e comportamento do sistema
     connect(ui->radioFechada, SIGNAL(toggled(bool)), ui->group_Ordem, SLOT(setEnabled(bool)));
     connect(ui->radioAberta, SIGNAL(toggled(bool)), ui->group_Ordem, SLOT(setDisabled(bool)));
@@ -116,8 +113,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->rbSistemaO2, SIGNAL(toggled(bool)), ui->combo_Ts, SLOT(setEnabled(bool)));
     connect(ui->rbSistemaO2, SIGNAL(toggled(bool)), ui->canal_l1, SLOT(setChecked(bool)));
     connect(ui->rbSistemaO1, SIGNAL(toggled(bool)), ui->canal_l0, SLOT(setChecked(bool)));
-
-    //connect(ui->cb_plot_canal0, SLOT(setDisabled(bool)), ui->cb_plot_canal0, SLOT(setChecked(bool)));
 
     UI_configPanel(); /* Método principal para setar o INIT da UI */
 }
@@ -335,35 +330,6 @@ int MainWindow::UI_getTipoMalha()
     return tipoMalha;
 }
 
-void MainWindow::UI_canaisLeituraPlot()
-{
-
-
-}
-
-void MainWindow::UI_configCanais()
-{
-    /* canalLeituraVec[0] = ui->canal_l0->isChecked();
-    canalLeituraVec[1] = ui->canal_l1->isChecked();
-    canalLeituraVec[2] = ui->canal_l2->isChecked();
-    canalLeituraVec[3] = ui->canal_l3->isChecked();
-    canalLeituraVec[4] = ui->canal_l4->isChecked();
-    canalLeituraVec[5] = ui->canal_l5->isChecked();
-    canalLeituraVec[6] = ui->canal_l6->isChecked();
-    canalLeituraVec[7] = ui->canal_l7->isChecked();
-
-    ui->cb_plot_canal0->setDisabled((!ui->canal_l0->isChecked()));
-    ui->cb_plot_canal1->setDisabled(!ui->canal_l1->isChecked());
-    ui->cb_plot_canal2->setDisabled(!ui->canal_l2->isChecked());
-    ui->cb_plot_canal3->setDisabled(!ui->canal_l3->isChecked());
-    ui->cb_plot_canal4->setDisabled(!ui->canal_l4->isChecked());
-    ui->cb_plot_canal5->setDisabled(!ui->canal_l5->isChecked());
-    ui->cb_plot_canal6->setDisabled(!ui->canal_l6->isChecked());
-    ui->cb_plot_canal7->setDisabled(!ui->canal_l7->isChecked()); //*/
-
-    UI_configPlotGraficosL();
-}
-
 void MainWindow::UI_updateConsControle(double kd_td, double ki_ti)
 {
     int tipoControlador = ui->tipoControlador->currentIndex();
@@ -406,7 +372,6 @@ void MainWindow::UI_configConsControle()
         UI_updateConsControle(kd, ki);
     }
 }
-
 
 void MainWindow::UI_configControlador()
 {
@@ -582,7 +547,6 @@ void MainWindow::UI_limitRandInput()
         ui->dSpinPeriodo->setMinimum(ui->dSpinAux->value());
     }
 }
-
 
 // Control
 

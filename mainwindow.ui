@@ -206,7 +206,7 @@
       <enum>Qt::RightToLeft</enum>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>3</number>
      </property>
      <widget class="QWidget" name="tab_sinal">
       <attribute name="title">
@@ -438,6 +438,9 @@
         </property>
         <property name="text">
          <string>1ª Ordem</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
         </property>
         <property name="checked">
          <bool>true</bool>
@@ -780,6 +783,9 @@
            <property name="text">
             <string>Tanque 1</string>
            </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
            <property name="checked">
             <bool>true</bool>
            </property>
@@ -1039,7 +1045,7 @@
          <string>Tanque 2</string>
         </property>
         <property name="checked">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
        </widget>
        <widget class="QCheckBox" name="cb_plot_canal0">
@@ -1080,7 +1086,7 @@
          <string>Canal 3</string>
         </property>
         <property name="checked">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
        </widget>
        <widget class="QCheckBox" name="cb_plot_canal2">
@@ -1099,7 +1105,7 @@
          <string>Canal 2</string>
         </property>
         <property name="checked">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
        </widget>
        <widget class="QCheckBox" name="cb_plot_canal4">
@@ -1118,7 +1124,7 @@
          <string>Canal 4</string>
         </property>
         <property name="checked">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
        </widget>
        <widget class="QCheckBox" name="cb_plot_canal5">
@@ -1137,7 +1143,7 @@
          <string>Canal 5</string>
         </property>
         <property name="checked">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
        </widget>
        <widget class="QCheckBox" name="cb_plot_canal7">
@@ -1156,7 +1162,7 @@
          <string>Canal 7</string>
         </property>
         <property name="checked">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
        </widget>
        <widget class="QCheckBox" name="cb_plot_canal6">
@@ -1175,7 +1181,7 @@
          <string>Canal 6</string>
         </property>
         <property name="checked">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
        </widget>
       </widget>
