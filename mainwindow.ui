@@ -180,6 +180,46 @@
       </item>
      </layout>
     </widget>
+    <widget class="QWidget" name="">
+     <property name="geometry">
+      <rect>
+       <x>440</x>
+       <y>20</y>
+       <width>181</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <layout class="QGridLayout" name="sistemaO2">
+      <item row="0" column="0">
+       <widget class="QLabel" name="lb_tr">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="lb_tp">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="lb_ts">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLabel" name="lb_mp">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </widget>
    <widget class="QGroupBox" name="gb_configDados">
     <property name="geometry">
@@ -206,7 +246,7 @@
       <enum>Qt::RightToLeft</enum>
      </property>
      <property name="currentIndex">
-      <number>3</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab_sinal">
       <attribute name="title">
@@ -1050,7 +1090,7 @@
        </widget>
        <widget class="QCheckBox" name="cb_plot_canal0">
         <property name="enabled">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="geometry">
          <rect>

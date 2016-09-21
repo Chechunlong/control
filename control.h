@@ -122,6 +122,30 @@ public:
     void    receiveSigal();
 
 
+    double getTr() const;
+
+    double getMp() const;
+
+    double getTp() const;
+
+    double getTs() const;
+
+    bool getStatusTr() const;
+
+    bool getStatusMp() const;
+
+    bool getStatusTp() const;
+
+    bool getStatusTs() const;
+
+    int getOrdemSistema() const;
+
+    void setTipoTr(int value);
+
+    void setTipoTs(int value);
+
+    void setCanalLeitura(int value);
+
 private:
     Quanser *quanser;
     Signal *signal;
@@ -150,6 +174,7 @@ private:
 
     int canalEscrita;
     int canalLeitura;
+    int canalLeituraO2;
 
     double canaisLeitura_value[NUMB_CAN_READ] = {0};
 
@@ -177,6 +202,9 @@ private:
          statusMp,
          statusTp,
          statusTs;
+
+    int tipoTr,
+        tipoTs;
 
     bool tp_control;
     bool tr_control;

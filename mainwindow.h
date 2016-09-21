@@ -63,42 +63,29 @@ private slots:
         do canal que ele escolheu para ler seja mostrado
         ou não
     */
-    void UI_canaisLeituraPlot();
+   // void UI_canaisLeituraPlot();
 
 
     /*
         Configura a exibiçao da
     */
-    void UI_configCanais();
+    //void UI_configCanais();
 
     void UI_configSignal();
-
     void UI_malhaFechada();
-
     void UI_malhaAberta();
-
     void UI_configMalha();
-
     void UI_updateConsControle(double kd_td, double ki_ti);
-
     void UI_configConsControle();
-
     void UI_configControlador();
-
     void UI_limitRandInput();
 
 
-
     void connectServer();
-
     void zerarSinal();
-
     void controladorPID();
-
     void data();
-
     void sendData();
-
     void receiveData();
 
 

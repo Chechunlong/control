@@ -51,22 +51,29 @@ void SistemaO2::configTr(int tipoTr, bool sinalLeitura, bool amplitude)
         trMax = amplitude;
         break;
     case TR95:
-        //trMin =
+        trMin = .05*amplitude;
+        trMax = .95*amplitude;
+        break;
+    case TR90:
+        trMin = .9*amplitude;
+        trMax = .1*amplitude;
         break;
     }
 }
 
 void SistemaO2::calculaTr(bool sinalLeitura, bool amplitude) {
 
-
-
     if(!statusTr) {
         if(tipoAmplitude) {
-            sinalLeitura >= amplitude ?
-                        statusTr = true : tr += TEMPO_AMOSTRAGEM;
+            if(sinalLeitura >= trMin && sinalLeitura <= trMax)
+                statusTr = true;
+            else
+                tr += TEMPO_AMOSTRAGEM;
         } else {
-            sinalLeitura <= amplitude ?
-                        statusTr = true : tr += TEMPO_AMOSTRAGEM;
+            if(sinalLeitura <= trMin && sinalLeitura >= trMax)
+                statusTr = true;
+            else
+                tr += TEMPO_AMOSTRAGEM;
         }
     }
 }

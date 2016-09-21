@@ -615,6 +615,12 @@ void MainWindow::controladorPID()
 
     control->setTipoControler(tipoControler);
 
+    if(ui->rbSistemaO2)  {
+        control->setTipoOrdemSistema(SISTEMA_ORDEM_2);
+    } else {
+        control->setTipoOrdemSistema(SISTEMA_ORDEM_1);
+    }
+
     if(controlerGanho) control->setModeControle(CONTROLE_GANHO);
     if(controlerTempo) control->setModeControle(CONTROLE_CONST_TEMP);
 
@@ -647,7 +653,6 @@ void MainWindow::data()
     bool primeiraOrdem = ui->rbSistemaO1->isChecked();
     bool segundaOrdem = ui->rbSistemaO2->isChecked();
 
-
     if(malhaAberta)
     {
         control->setTensao(amplitude);
@@ -663,8 +668,17 @@ void MainWindow::data()
 
         if(primeiraOrdem) {
             control->setTipoOrdemSistema(SISTEMA_ORDEM_1);
+            control->setCanalLeitura(0);
         } else if(segundaOrdem) {
+            int tipoTr = ui->combo_Tr->currentIndex();
+            int tipoTs = ui->combo_Ts->currentIndex();
+
+            control->setTipoTr(tipoTr);
+            control->setTipoTs(tipoTs);
+
             control->setTipoOrdemSistema(SISTEMA_ORDEM_2);
+            control->setCanalLeitura(1);
+
         }
     }
 
@@ -714,23 +728,28 @@ void MainWindow::receiveData()
 
     control->receiveSigal();
 
-    int canalLeitura = control->getCanalEscrita();
+    int canalLeitura = control->getCanalLeitura();
     int tipoMalha = control->getTipoMalha();
 
     double sinalLeitura = 0;
 
-    for(int i=0; i<NUMB_CAN_READ; i++)
+    for(int i=0; i<2; i++)
     {
         if(canalLeituraVec[i])
         {
             sinalLeitura = control->getCanalValue(i);
             ui->graficoLeitura->graph(i+2)->addData(key/5,sinalLeitura);
 
+            double nivel = MAX_LEVEL/sinalLeitura;
+            if( i == 0) ui->pb_tanque1->setValue(nivel);
+            if( i == 1) ui->pb_tanque2->setValue(nivel);
+
 
             /*
                 Se o canal de leitura for igual ao canal de escrita, deve ser
                 obtido dados em relaçao ao sinal enviado, como o erro, etc.
             */
+            qDebug() << canalLeitura;
             if(i == canalLeitura)
             {
                 if(tipoMalha == M_FECHADA) // Malha fechada
@@ -743,15 +762,44 @@ void MainWindow::receiveData()
                     ui->graficoLeitura->graph(0)->addData(key/5,erro);
                     ui->graficoLeitura->graph(1)->addData(key/5,setPoint);
 
+
+                    int ordem2 = control->getOrdemSistema();
+
+                    if(ordem2 == SISTEMA_ORDEM_2) {
+                        bool statusTr = control->getStatusTr();
+                        bool statusTp = control->getStatusTp();
+                        bool statusMp = control->getStatusMp();
+                        bool statusTs = control->getStatusTs();
+
+                        double tr = control->getTr();
+                        double tp = control->getTp();
+                        double ts = control->getTs();
+                        double mp = control->getMp();
+
+                        if(statusTr) ui->lb_tr->setText("Tr = " + QString::number(tr));
+                        if(statusTp) ui->lb_tp->setText("Tp = " + QString::number(tp));
+                        if(statusTs) ui->lb_ts->setText("Ts = " + QString::number(ts));
+                        if(statusMp) ui->lb_mp->setText("Mp = " + QString::number(mp));
+
+
+                    } else {
+
+                        ui->lb_tr->clear();
+                        ui->lb_tp->clear();
+                        ui->lb_mp->clear();
+                        ui->lb_ts->clear();
+                    }
                 }
                 QString str_sinalLeitura = "Nível do tanque = " + QString::number(sinalLeitura) + " cm";
                 ui->lb_sinalLido->setText(str_sinalLeitura);
             }
         }
+
+
     }
 
     ui->graficoLeitura->xAxis->setRange((key+0.25)/5, 8, Qt::AlignRight);
     ui->graficoLeitura->replot();
 
-    ui->pb_tanque1->setValue(MAX_LEVEL/sinalLeitura);
+
 }

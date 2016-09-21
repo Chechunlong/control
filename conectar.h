@@ -4,7 +4,7 @@
 #include <QDialog>
 
 #define PORT_S 20081
-#define IP_S "192.168.7.2"
+#define IP_S "10.13.99.69"
 
 namespace Ui {
 class Conectar;

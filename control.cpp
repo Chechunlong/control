@@ -26,8 +26,8 @@ Control::Control(int port, QString ip)
     erro    = 0;
     erroAnt = 0;
 
-    canalEscrita = -1;
-    canalLeitura = -1;
+    canalEscrita = 0;
+    canalLeitura = 0;
 
     // Controlador
     Kp = 0;
@@ -46,7 +46,7 @@ int Control::getCanalEscrita()
 { return canalEscrita; }
 
 int Control::getCanalLeitura()
-{ return canalEscrita; }
+{ return canalLeitura; }
 
 double Control::getCanalValue(int value)
 {
@@ -81,7 +81,7 @@ void Control::setAuxForRand(double auxForRand)
 { this->auxForRand = auxForRand; }
 
 void Control::setCanalEscrita(int canalEscrita)
-{ this->canalEscrita = this->canalLeitura = canalEscrita; }
+{ this->canalEscrita = canalEscrita; }
 
 void Control::setOffSet(double value)
 { offSet = value; }
@@ -153,6 +153,8 @@ void Control::setTipoOrdemSistema(int ordemSistema)
         canalLeitura = 0;
     } else if(SISTEMA_ORDEM_2 == ordemSistema) {
         canalLeitura = 1;
+
+        sistemaO2->configTr(tipoTr, sinalLeitura, amplitude);
     }
 }
 
@@ -284,14 +286,20 @@ void Control::receiveSigal()
     double readVoltage;
 
 
-    for(int canal=0; canal<NUMB_CAN_READ; canal++)
+    for(int canal=0; canal<2; canal++)
     {
-        readVoltage = quanser->readAD(canalLeitura);
+        readVoltage = quanser->readAD(canal);
         canaisLeitura_value[canal] = readVoltage * FATOR_CONVERSAO;
+
+
+        double temp = canaisLeitura_value[0];
+        if(temp<=3 && sinalEscrita<0 || temp>=28 && sinalEscrita>0) {
+            sinalEscrita = 0;
+            quanser->writeDA(0,0);
+        }
 
         if(canal==canalLeitura)
         {
-            sinalLeitura_old = sinalLeitura;
             sinalLeitura = canaisLeitura_value[canal]; // cm
             if(tipoMalha == M_FECHADA)
             {
@@ -305,17 +313,7 @@ void Control::receiveSigal()
 
                 if(ordemSistema ==  SISTEMA_ORDEM_2)
                 {
-
                     statusTr = sistemaO2->getStatusTr();
-                    /*!statusTr ?
-                            sistemaO2->calculaTr(sinalLeitura, amplitude) :
-                            tr = sistemaO2->getTr();*/
-                    /*
-                     * Calcula Tr enquanto o seu status
-                     * for false, que significa que ele ainda nao
-                     * finalizou o calculo :p
-                     */
-
                     statusTp = sistemaO2->getStatusTp();
                     statusMp = sistemaO2->getStatusMP();
 
@@ -323,16 +321,85 @@ void Control::receiveSigal()
                         sistemaO2->calculaTp(sinalLeitura, sinalLeitura_old);
                     } else {
                         tp = sistemaO2->getTp();
+                    }
+
+                    if(!statusMp) {
+                        sistemaO2->calculaMp(sinalLeitura,amplitude);
+                    } else {
                         mp = sistemaO2->getMp();
                     }
 
-
+                    if(!statusTr) {
+                        sistemaO2->calculaTr(sinalLeitura, amplitude);
+                    } else {
+                        tr = sistemaO2->getTr();
+                    }
                 }
 
             }
 
         }
     }
+}
+
+double Control::getTr() const
+{
+    return tr;
+}
+
+double Control::getMp() const
+{
+    return mp;
+}
+
+double Control::getTp() const
+{
+    return tp;
+}
+
+double Control::getTs() const
+{
+    return ts;
+}
+
+bool Control::getStatusTr() const
+{
+    return statusTr;
+}
+
+bool Control::getStatusMp() const
+{
+    return statusMp;
+}
+
+bool Control::getStatusTp() const
+{
+    return statusTp;
+}
+
+bool Control::getStatusTs() const
+{
+    return statusTs;
+}
+
+int Control::getOrdemSistema() const
+{
+    return ordemSistema;
+}
+
+void Control::setTipoTr(int value)
+{
+    tipoTr = value;
+}
+
+void Control::setTipoTs(int value)
+{
+    tipoTs = value;
+}
+
+void Control::setCanalLeitura(int value)
+{
+    canalLeitura = value;
 }
 
 
