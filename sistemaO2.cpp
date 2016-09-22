@@ -98,7 +98,7 @@ void SistemaO2::calculaTr(double sinalLeitura, double amplitude) {
     }
 }
 
-void SistemaO2::calculaTp(double sinalLeitura, double sinalLeitAnterior) {
+void SistemaO2::calculaTp(double sinalLeitura, double sinalLeitAnterior, double amplitude) {
 
     if(!statusTp) {
 
@@ -107,15 +107,19 @@ void SistemaO2::calculaTp(double sinalLeitura, double sinalLeitAnterior) {
             if(sinalLeitura >= sinalLeitAnterior) {
                 tempTp += TEMPO_AMOSTRAGEM;
             }
+            qDebug() << sinalLeitura << amplitude;
             if(sinalLeitura < sinalLeitAnterior) {
                 statusTp = true;
                 tp = tempTp/10;
                 tempTp = 0;
+
+                mp = sinalLeitura-amplitude;
+                if(mp<0) mp=-mp;
                 statusMP = true;
-                //exit(-1);
             } else {
 
                 statusTp = false;
+                statusMP = false;
             }
         } else {
             if(sinalLeitura <= sinalLeitAnterior) {
@@ -125,9 +129,13 @@ void SistemaO2::calculaTp(double sinalLeitura, double sinalLeitAnterior) {
                 statusTp = true;
                 tp = tempTp/10;
                 tempTp = 0;
+
+                mp = sinalLeitura-amplitude;
+               if(mp<0) mp=-mp;
                 statusMP = true;
             } else {
                 statusTp = false;
+                statusMP = false;
             }
         }
     }
@@ -135,8 +143,8 @@ void SistemaO2::calculaTp(double sinalLeitura, double sinalLeitAnterior) {
 
 void SistemaO2::calculaMp(double sinalLeitura, double amplitude) {
     if(!statusMP) {
-        mp = abs(sinalLeitura-amplitude);
-        statusMP = false;
+        qDebug() << "calculando mp";
+
     }
 }
 
