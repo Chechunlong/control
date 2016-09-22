@@ -184,6 +184,9 @@ void Control::calculaSinal()
             tempoIntegrativo = Kp / Ki;
         }
 
+        //seta true caso o usuário selecione a opção.
+        controller->setWindUp(true);
+
         switch (tipoControler) {
         case CONTROLER_P:
             tensao = controller->controlerP(Kp, erro);
@@ -203,7 +206,7 @@ void Control::calculaSinal()
             tensao = controller->controlerPI_D(Kp, Ki, Kd, erro, sinalLeitura);
             break;
         }
-
+        //utilizado no calculo do windup
         controller->setTensaoAnt(tensao);
     }
 
@@ -289,6 +292,9 @@ void Control::sendSignal() {
 
     if(simulacao) tanq->acionaBomba(sinalEscrita);
     else quanser->writeDA(canalEscrita,sinalEscrita);
+
+    //utilizado no windup
+    controller->setVPS(sinalEscrita);
 }
 
 void Control::receiveSigal() {
@@ -316,6 +322,13 @@ void Control::receiveSigal() {
 
             if(tipoMalha == M_FECHADA) {
                 erro = amplitude - sinalLeitura;
+
+                if(auxContErro >= 5){
+                    double saidaErro = this->filtroMM(arrayErro);
+                    auxContErro = 0;
+                }
+                arrayErro[auxContErro] = erro;
+                auxContErro++;
 
                 if(getOrdemSistema() ==  SISTEMA_ORDEM_2) {
                     statusTr = sistemaO2->getStatusTr();
