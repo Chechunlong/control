@@ -2,6 +2,7 @@
 #define SISTEMAO2_H
 
 #include <cstdlib>
+#include <qdebug.h>
 
 #define TR100 0
 #define TR95 1
@@ -67,11 +68,13 @@ public:
     void setStatusMP(bool value);
     void setTipoAmplitude(bool value);
 
-    void configTr(int tipoTr, bool sinalLeitura, bool amplitude);
+    void configTr(int tipoTr, double sinalLeitura, double amplitude);
+    void configTs(int tipoTs, double sinalLeitura);
 
-    void calculaTr(bool sinalLeitura, bool amplitude);
-    void calculaTp(bool sinalLeitura, bool sinalLeitAnterior);
-    void calculaMp(bool sinalLeitura, bool amplitude);
+    void calculaTr(double sinalLeitura, double amplitude);
+    void calculaTp(double sinalLeitura, double sinalLeitAnterior);
+    void calculaMp(double sinalLeitura, double amplitude);
+    void calculaTs(double sinalLeitura, double setPoint);
 };
 
 #endif // SISTEMAO2_H

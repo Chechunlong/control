@@ -42,6 +42,9 @@ Control::Control(int port, QString ip)
 
     P = I = D = 0;
 
+    statusMp = statusTp = statusTr = statusTs = false;
+    mp = tr= ts = tp = 0;
+
     setPointUP = true;
 
     tanque1 = 0;
@@ -161,6 +164,7 @@ void Control::setTipoOrdemSistema(int ordemSistema)
         canalLeitura = 1;
 
         sistemaO2->configTr(tipoTr, sinalLeitura, amplitude);
+        sistemaO2->configTs(tipoTs,sinalLeitura);
     }
 }
 
@@ -190,9 +194,9 @@ void Control::calculaSinal()
             tensao = controller->controlerPD(Kp,Kd, erro);
             break;
         case CONTROLER_PID:
-            qDebug() << Kp << Ki << Kd << erro;
+           // qDebug() << Kp << Ki << Kd << erro;
             tensao = controller->controlerPID(Kp,Ki,Kd,erro);
-            qDebug() << tensao;
+           // qDebug() << tensao;
             break;
         case CONTROLER_PI_D:
             tensao = controller->controlerPI_D(Kp, Ki, Kd, erro, sinalLeitura);
@@ -228,7 +232,7 @@ void Control::calculaSinal()
         break;
     }
 
-    qDebug() << sinalCalculado;
+   // qDebug() << sinalCalculado;
 
     timeAux += 0.1;
 }
@@ -326,8 +330,11 @@ void Control::receiveSigal() {
                     if(!statusTr) sistemaO2->calculaTr(sinalLeitura, amplitude);
                     else tr = sistemaO2->getTr();
 
-                    if(!statusTs) qDebug() << "falta ts";
+                    if(!statusTs) sistemaO2->calculaTr(sinalLeitura,amplitude);
                     else ts = sistemaO2->getTs();
+
+                    if(statusTr)
+                        qDebug() << tr;
                 }
 
             }

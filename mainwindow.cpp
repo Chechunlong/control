@@ -700,7 +700,6 @@ void MainWindow::data()
 
             control->setTipoOrdemSistema(SISTEMA_ORDEM_2);
             control->setCanalLeitura(1);
-
         }
     }
 
@@ -794,7 +793,7 @@ void MainWindow::receiveData()
                     ui->lb_pid->setText("P = " + QString::number(pp) + " I = " + QString::number(ii) + " D = " + QString::number(dd));
 
                     if(ordemSistema == SISTEMA_ORDEM_2) {
-                       /* bool statusTr = control->getStatusTr();
+                        bool statusTr = control->getStatusTr();
                         bool statusTp = control->getStatusTp();
                         bool statusMp = control->getStatusMp();
                         bool statusTs = control->getStatusTs();
@@ -808,7 +807,7 @@ void MainWindow::receiveData()
                         if(statusTp) ui->lb_tp->setText("Tp = " + QString::number(tp));
                         if(statusTs) ui->lb_ts->setText("Ts = " + QString::number(ts));
                         if(statusMp) ui->lb_mp->setText("Mp = " + QString::number(mp));
-                        */
+
 
                     } else {
 
