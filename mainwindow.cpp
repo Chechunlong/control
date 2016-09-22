@@ -751,7 +751,7 @@ void MainWindow::receiveData()
             ui->graficoLeitura->graph(0+2)->addData(key/5,tanque1);
             ui->graficoLeitura->graph(1+2)->addData(key/5,tanque2);
 
-            qDebug() << canalLeitura;
+           // qDebug() << canalLeitura;
             if(i == canalLeitura)
             {
                 if(tipoMalha == M_FECHADA) // Malha fechada
