@@ -218,8 +218,6 @@ private:
     int tipoTr,
         tipoTs;
 
-    bool tp_control;
-    bool tr_control;
     bool setPointUP;
 
     double tanque1;

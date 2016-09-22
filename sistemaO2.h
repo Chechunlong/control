@@ -13,18 +13,15 @@
 
 #define TEMPO_AMOSTRAGEM 0.1
 
-#define AMPLITUDE_SUB 0
-#define AMPLITUDE_DESC 1
-
 class SistemaO2 {
 
     bool tipoAmplitude;
     /* Subida eh true, descida eh false */
 
     double mp;
-    double tr;
-    double tp;
-    double ts;
+    double tr, tempTr;
+    double tp, tempTp;
+    double ts, tempTs;
 
     int tipoTr;
     int tipoTs;
@@ -44,6 +41,10 @@ public:
         tr = 0;
         tp = 0;
         ts = 0;
+
+        tempTr = 0;
+        tempTp = 0;
+        tempTs = 0;
 
         statusTp = false;
         statusTr = false;

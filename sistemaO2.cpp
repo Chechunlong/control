@@ -49,16 +49,23 @@ void SistemaO2::configTr(int tipoTr, bool sinalLeitura, bool amplitude) {
 void SistemaO2::calculaTr(bool sinalLeitura, bool amplitude) {
 
     if(!statusTr) {
+        tempTr += TEMPO_AMOSTRAGEM;
         if(tipoAmplitude) {
-            if(sinalLeitura >= trMin && sinalLeitura <= trMax)
+            if(sinalLeitura >= trMin && sinalLeitura <= trMax) {
                 statusTr = true;
-            else
-                tr += TEMPO_AMOSTRAGEM;
+                tr = tempTr;
+                tempTr = 0;
+            } else {
+                statusTr = false;
+            }
         } else {
-            if(sinalLeitura <= trMin && sinalLeitura >= trMax)
+            if(sinalLeitura <= trMin && sinalLeitura >= trMax) {
                 statusTr = true;
-            else
-                tr += TEMPO_AMOSTRAGEM;
+                tr = tempTr;
+                tempTr = 0;
+            } else {
+                statusTr = false;
+            }
         }
     }
 }
@@ -66,22 +73,32 @@ void SistemaO2::calculaTr(bool sinalLeitura, bool amplitude) {
 void SistemaO2::calculaTp(bool sinalLeitura, bool sinalLeitAnterior) {
 
     if(!statusTp) {
-        tp += TEMPO_AMOSTRAGEM;
+        tempTp += TEMPO_AMOSTRAGEM;
         if(tipoAmplitude) {
             if(sinalLeitura <= sinalLeitAnterior) {
                 statusTp = true;
-                //calculaMp(sinalLeitura, amplitude);
+                tp = tempTp;
+                tempTp = 0;
+                statusMP = true;
+            } else {
+                statusTp = false;
             }
         } else {
             if(sinalLeitura >= sinalLeitAnterior) {
                 statusTp = true;
-                //calculaMp(sinalLeitura, amplitude);
+                tp = tempTp;
+                tempTp = 0;
+                statusMP = true;
+            } else {
+                statusTp = false;
             }
         }
     }
 }
 
 void SistemaO2::calculaMp(bool sinalLeitura, bool amplitude) {
-    mp = abs(sinalLeitura-amplitude);
-    statusMP = true;
+    if(!statusMP) {
+        mp = abs(sinalLeitura-amplitude);
+        statusMP = false;
+    }
 }

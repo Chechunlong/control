@@ -3,14 +3,10 @@
 Control::Control(int port, QString ip)
 {
     quanser = new Quanser(ip.toLatin1().data(),port);
-
     signal = new Signal();
     controller = new Controller();
-
     sistemaO2 = new SistemaO2();
-
     tanq = new Tanque();
-
 
     timeAux     = 0;
     tipoSinal   = 0;
@@ -43,6 +39,8 @@ Control::Control(int port, QString ip)
     tempoIntegrativo = 0;
     tipoControler = 0;
     modeControle = 0;
+
+    setPointUP = true;
 
     tanque1 = 0;
     tanque2 = 0;
@@ -92,7 +90,9 @@ double Control::getSinalLeitura()
 
 void Control::setAmplitude(double amplitude)
 {
-    //this->amplitude <= amplitude ? setPointUP = true : setPointUP = false;
+    this->amplitude <= amplitude ? setPointUP = true : setPointUP = false;
+
+    sistemaO2->setTipoAmplitude(setPointUP);
 
     this->amplitude = amplitude;
 }
@@ -293,41 +293,31 @@ void Control::receiveSigal() {
 
         if(canal==canalLeitura) {
 
-            qDebug() << "ordem do sistema = " << getOrdemSistema();
-            if(getOrdemSistema() == SISTEMA_ORDEM_1) {
+            if(getOrdemSistema() == SISTEMA_ORDEM_1)
                 sinalLeitura = tanque1;
-                qDebug() << "sinal leitura do tanqu1";
-            }
-            else if(getOrdemSistema() == SISTEMA_ORDEM_2) {
+            else if(getOrdemSistema() == SISTEMA_ORDEM_2)
                 sinalLeitura = tanque2;
-                qDebug() << "sinal leitura do tanqu2";
-            }
 
             if(tipoMalha == M_FECHADA) {
                 erro = amplitude - sinalLeitura;
 
                 if(getOrdemSistema() ==  SISTEMA_ORDEM_2) {
-                  /*  statusTr = sistemaO2->getStatusTr();
+                    statusTr = sistemaO2->getStatusTr();
                     statusTp = sistemaO2->getStatusTp();
                     statusMp = sistemaO2->getStatusMP();
+                    statusTs = sistemaO2->getStatusTs();
 
-                    if(!statusTp) {
-                        sistemaO2->calculaTp(sinalLeitura, sinalLeitura_old);
-                    } else {
-                        tp = sistemaO2->getTp();
-                    }
+                    if(!statusTp) sistemaO2->calculaTp(sinalLeitura, sinalLeitura_old);
+                    else tp = sistemaO2->getTp();
 
-                    if(!statusMp) {
-                        sistemaO2->calculaMp(sinalLeitura,amplitude);
-                    } else {
-                        mp = sistemaO2->getMp();
-                    }
+                    if(!statusMp) sistemaO2->calculaMp(sinalLeitura, amplitude);
+                    else mp = sistemaO2->getMp();
 
-                    if(!statusTr) {
-                        sistemaO2->calculaTr(sinalLeitura, amplitude);
-                    } else {
-                        tr = sistemaO2->getTr();
-                    }*/
+                    if(!statusTr) sistemaO2->calculaTr(sinalLeitura, amplitude);
+                    else tr = sistemaO2->getTr();
+
+                    if(!statusTs) qDebug() << "falta ts";
+                    else ts = sistemaO2->getTs();
                 }
 
             }
@@ -340,50 +330,23 @@ void Control::receiveSigal() {
     }
 }
 
-double Control::getTr() const
-{
-    return tr;
-}
+double Control::getTr() const { return tr; }
 
-double Control::getMp() const
-{
-    return mp;
-}
+double Control::getMp() const { return mp; }
 
-double Control::getTp() const
-{
-    return tp;
-}
+double Control::getTp() const { return tp; }
 
-double Control::getTs() const
-{
-    return ts;
-}
+double Control::getTs() const { return ts; }
 
-bool Control::getStatusTr() const
-{
-    return statusTr;
-}
+bool Control::getStatusTr() const{ return statusTr; }
 
-bool Control::getStatusMp() const
-{
-    return statusMp;
-}
+bool Control::getStatusMp() const { return statusMp; }
 
-bool Control::getStatusTp() const
-{
-    return statusTp;
-}
+bool Control::getStatusTp() const { return statusTp; }
 
-bool Control::getStatusTs() const
-{
-    return statusTs;
-}
+bool Control::getStatusTs() const { return statusTs; }
 
-int Control::getOrdemSistema() const
-{
-    return ordemSistema;
-}
+int Control::getOrdemSistema() const { return ordemSistema; }
 
 void Control::setTipoTr(int value) { tipoTr = value; }
 
