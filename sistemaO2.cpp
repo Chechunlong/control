@@ -102,10 +102,11 @@ void SistemaO2::calculaTp(double sinalLeitura, double sinalLeitAnterior) {
     if(!statusTp) {
 
         if(tipoAmplitude) {
-            if(sinalLeitura < sinalLeitAnterior) {
-                tempTp += TEMPO_AMOSTRAGEM;}
-
             if(sinalLeitura >= sinalLeitAnterior) {
+                tempTp += TEMPO_AMOSTRAGEM;
+            }
+
+            if(sinalLeitura <= sinalLeitAnterior) {
                 statusTp = true;
                 tp = tempTp/10;
                 tempTp = 0;
@@ -114,10 +115,10 @@ void SistemaO2::calculaTp(double sinalLeitura, double sinalLeitAnterior) {
                 statusTp = false;
             }
         } else {
-            if(sinalLeitura > sinalLeitAnterior) {
+            if(sinalLeitura <= sinalLeitAnterior) {
                 tempTp += TEMPO_AMOSTRAGEM;
             }
-            if(sinalLeitura <= sinalLeitAnterior) {
+            if(sinalLeitura >= sinalLeitAnterior) {
                 statusTp = true;
                 tp = tempTp/10;
                 tempTp = 0;
