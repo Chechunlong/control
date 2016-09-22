@@ -20,6 +20,7 @@ Control::Control(int port, QString ip)
     sinalEscrita    = 0;
     sinalLeitura    = 0;
     sinalCalculado  = 0;
+    sinalLeitura_old = 0;
 
     erro    = 0;
     erroAnt = 0;
@@ -305,8 +306,9 @@ void Control::receiveSigal() {
             tanque2 = canaisLeitura_value[1];
         }
 
-        if(canal==canalLeitura) {
 
+        if(canal==canalLeitura) {
+            sinalLeitura_old = sinalLeitura;
             if(getOrdemSistema() == SISTEMA_ORDEM_1)
                 sinalLeitura = tanque1;
             else if(getOrdemSistema() == SISTEMA_ORDEM_2)
@@ -330,7 +332,7 @@ void Control::receiveSigal() {
                     if(!statusTr) sistemaO2->calculaTr(sinalLeitura, amplitude);
                     else tr = sistemaO2->getTr();
 
-                    if(!statusTs) sistemaO2->calculaTr(sinalLeitura,amplitude);
+                    if(!statusTs) sistemaO2->calculaTs(sinalLeitura,amplitude);
                     else ts = sistemaO2->getTs();
 
                     if(statusTr)

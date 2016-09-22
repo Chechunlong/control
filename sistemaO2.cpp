@@ -71,10 +71,11 @@ void SistemaO2::calculaTr(double sinalLeitura, double amplitude) {
 
     if(!statusTr) {
         if(tipoAmplitude) {
-            qDebug() << "aqui";
+           // qDebug() << "aqui";
             if(sinalLeitura >= trMin && sinalLeitura <= trMax) {
                 tempTr += TEMPO_AMOSTRAGEM;
              }
+            qDebug() << "tempo de resposta " << tempTr;
             if(sinalLeitura>trMax) {
                 statusTr = true;
                 tr = tempTr/10;
@@ -102,23 +103,28 @@ void SistemaO2::calculaTp(double sinalLeitura, double sinalLeitAnterior) {
     if(!statusTp) {
 
         if(tipoAmplitude) {
+            qDebug() << sinalLeitura << sinalLeitAnterior;
             if(sinalLeitura >= sinalLeitAnterior) {
                 tempTp += TEMPO_AMOSTRAGEM;
             }
+            qDebug() << "tempo de pico " << tempTp;
 
-            if(sinalLeitura <= sinalLeitAnterior) {
+            if(sinalLeitura < sinalLeitAnterior) {
                 statusTp = true;
                 tp = tempTp/10;
                 tempTp = 0;
                 statusMP = true;
+                //exit(-1);
             } else {
+
                 statusTp = false;
             }
         } else {
             if(sinalLeitura <= sinalLeitAnterior) {
                 tempTp += TEMPO_AMOSTRAGEM;
+                qDebug() << "biruba";
             }
-            if(sinalLeitura >= sinalLeitAnterior) {
+            if(sinalLeitura > sinalLeitAnterior) {
                 statusTp = true;
                 tp = tempTp/10;
                 tempTp = 0;
