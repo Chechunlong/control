@@ -75,7 +75,7 @@ void SistemaO2::calculaTr(double sinalLeitura, double amplitude) {
             if(sinalLeitura >= trMin && sinalLeitura <= trMax) {
                 tempTr += TEMPO_AMOSTRAGEM;
              }
-            qDebug() << "tempo de resposta " << tempTr;
+            //qDebug() << "tempo de resposta " << tempTr;
             if(sinalLeitura>trMax) {
                 statusTr = true;
                 tr = tempTr/10;
@@ -107,14 +107,17 @@ void SistemaO2::calculaTp(double sinalLeitura, double sinalLeitAnterior, double 
             if(sinalLeitura >= sinalLeitAnterior) {
                 tempTp += TEMPO_AMOSTRAGEM;
             }
-            qDebug() << sinalLeitura << amplitude;
+           // qDebug() << sinalLeitura << amplitude;
             if(sinalLeitura < sinalLeitAnterior) {
                 statusTp = true;
                 tp = tempTp/10;
                 tempTp = 0;
 
                 mp = sinalLeitura-amplitude;
+
                 if(mp<0) mp=-mp;
+                 //qDebug() << "meu calculo de mp = " << mp;
+                 //exit(-1);
                 statusMP = true;
             } else {
 
@@ -142,10 +145,7 @@ void SistemaO2::calculaTp(double sinalLeitura, double sinalLeitAnterior, double 
 }
 
 void SistemaO2::calculaMp(double sinalLeitura, double amplitude) {
-    if(!statusMP) {
-        qDebug() << "calculando mp";
 
-    }
 }
 
 void SistemaO2::calculaTs(double sinalLeitura, double setPoint) {

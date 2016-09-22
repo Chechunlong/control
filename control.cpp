@@ -326,8 +326,10 @@ void Control::receiveSigal() {
                     if(!statusTp) sistemaO2->calculaTp(sinalLeitura, sinalLeitura_old, amplitude);
                     else tp = sistemaO2->getTp();
 
-                    //if(!statusMp) sistemaO2->calculaMp(sinalLeitura, amplitude);
-                    //else mp = sistemaO2->getMp();
+                    if(statusMp) mp = sistemaO2->getMp();
+
+                    if(!statusMp) sistemaO2->calculaMp(sinalLeitura, amplitude);
+                    else mp = sistemaO2->getMp();
 
                     if(!statusTr) sistemaO2->calculaTr(sinalLeitura, amplitude);
                     else tr = sistemaO2->getTr();
@@ -335,8 +337,7 @@ void Control::receiveSigal() {
                     if(!statusTs) sistemaO2->calculaTs(sinalLeitura,amplitude);
                     else ts = sistemaO2->getTs();
 
-                    //if(statusTr)
-                        //qDebug() << tr;
+
                 }
 
             }
