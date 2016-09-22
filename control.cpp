@@ -335,8 +335,8 @@ void Control::receiveSigal() {
                     if(!statusTs) sistemaO2->calculaTs(sinalLeitura,amplitude);
                     else ts = sistemaO2->getTs();
 
-                    if(statusTr)
-                        qDebug() << tr;
+                    //if(statusTr)
+                        //qDebug() << tr;
                 }
 
             }
