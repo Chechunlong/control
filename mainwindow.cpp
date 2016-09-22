@@ -557,7 +557,7 @@ void MainWindow::connectServer()
 
     control = new Control(port,enderecoIP);
 
-    if(control->connectionStatus())
+    if(control->getConnectionStatus())
     {
         this->show();
 
@@ -728,32 +728,30 @@ void MainWindow::receiveData()
 
     control->receiveSigal();
 
+    int ordem = control->getOrdemSistema();
     int canalLeitura = control->getCanalLeitura();
     int tipoMalha = control->getTipoMalha();
-
+    double tanque1;
+    double tanque2;
     double sinalLeitura = 0;
 
-    for(int i=0; i<2; i++)
-    {
-        if(canalLeituraVec[i])
-        {
-            sinalLeitura = control->getCanalValue(i);
+    for(int i=0; i<2; i++) {
+        if(canalLeituraVec[i]) {
+            if(i==0) {
+                tanque1 = control->getCanalValue(0);
+                ui->pb_tanque1->setValue(MAX_LEVEL/tanque1);
+            } else if(i==1) {
+                tanque2 = control->getCanalValue(1);
+                ui->pb_tanque2->setValue(MAX_LEVEL/tanque2);
+            }
+
+            if(ordem == SISTEMA_ORDEM_1) sinalLeitura = tanque1;
+            else if(ordem == SISTEMA_ORDEM_2) sinalLeitura = tanque2;
+
             ui->graficoLeitura->graph(i+2)->addData(key/5,sinalLeitura);
 
-            double nivel = MAX_LEVEL/sinalLeitura;
-            if( i == 0) ui->pb_tanque1->setValue(nivel);
-            if( i == 1) ui->pb_tanque2->setValue(nivel);
-
-
-            /*
-                Se o canal de leitura for igual ao canal de escrita, deve ser
-                obtido dados em relaçao ao sinal enviado, como o erro, etc.
-            */
-            qDebug() << canalLeitura;
-            if(i == canalLeitura)
-            {
-                if(tipoMalha == M_FECHADA) // Malha fechada
-                {
+            if(i == canalLeitura) {
+                if(tipoMalha == M_FECHADA) {
                     double erro = control->getErro();
                     double setPoint = control->getAmplitude();
 
@@ -762,11 +760,8 @@ void MainWindow::receiveData()
                     ui->graficoLeitura->graph(0)->addData(key/5,erro);
                     ui->graficoLeitura->graph(1)->addData(key/5,setPoint);
 
-
-                    int ordem2 = control->getOrdemSistema();
-
-                    if(ordem2 == SISTEMA_ORDEM_2) {
-                        bool statusTr = control->getStatusTr();
+                    if(ordem == SISTEMA_ORDEM_2) {
+                      /*  bool statusTr = control->getStatusTr();
                         bool statusTp = control->getStatusTp();
                         bool statusMp = control->getStatusMp();
                         bool statusTs = control->getStatusTs();
@@ -780,7 +775,7 @@ void MainWindow::receiveData()
                         if(statusTp) ui->lb_tp->setText("Tp = " + QString::number(tp));
                         if(statusTs) ui->lb_ts->setText("Ts = " + QString::number(ts));
                         if(statusMp) ui->lb_mp->setText("Mp = " + QString::number(mp));
-
+                        */
 
                     } else {
 
@@ -790,8 +785,11 @@ void MainWindow::receiveData()
                         ui->lb_ts->clear();
                     }
                 }
-                QString str_sinalLeitura = "Nível do tanque = " + QString::number(sinalLeitura) + " cm";
+                QString str_sinalLeitura = "Nível do tanque = " + QString::number(tanque1) + " cm";
+                QString str_sinalLeituraT2 = "Nível do tanque 2 = " + QString::number(tanque2) + " cm";
+
                 ui->lb_sinalLido->setText(str_sinalLeitura);
+                ui->lb_sinalLidoT2->setText(str_sinalLeituraT2);
             }
         }
 

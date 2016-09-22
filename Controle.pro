@@ -18,7 +18,8 @@ SOURCES += main.cpp\
     control.cpp \
     controller.cpp \
     conectar.cpp \
-    sistemao2.cpp
+    sistemao2.cpp \
+    ../../Downloads/Controle-master/tanque.cpp
 
 HEADERS  += mainwindow.h \
     quanser.h \
@@ -27,7 +28,9 @@ HEADERS  += mainwindow.h \
     control.h \
     controller.h \
     conectar.h \
-    sistemaO2.h
+    sistemaO2.h \
+    ../../Downloads/Controle-master/tanque.h \
+    tanque.h
 
 FORMS    += mainwindow.ui \
     conectar.ui
