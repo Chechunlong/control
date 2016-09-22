@@ -75,7 +75,7 @@ void SistemaO2::calculaTr(double sinalLeitura, double amplitude) {
             if(sinalLeitura >= trMin && sinalLeitura <= trMax) {
                 tempTr += TEMPO_AMOSTRAGEM;
              }
-            qDebug() << "tempo de resposta " << tempTr;
+            //qDebug() << "tempo de resposta " << tempTr;
             if(sinalLeitura>trMax) {
                 statusTr = true;
                 tr = tempTr/10;
@@ -98,49 +98,54 @@ void SistemaO2::calculaTr(double sinalLeitura, double amplitude) {
     }
 }
 
-void SistemaO2::calculaTp(double sinalLeitura, double sinalLeitAnterior) {
+void SistemaO2::calculaTp(double sinalLeitura, double sinalLeitAnterior, double amplitude) {
 
     if(!statusTp) {
 
         if(tipoAmplitude) {
-            qDebug() << sinalLeitura << sinalLeitAnterior;
+            //qDebug() << sinalLeitura << sinalLeitAnterior;
             if(sinalLeitura >= sinalLeitAnterior) {
                 tempTp += TEMPO_AMOSTRAGEM;
             }
-            qDebug() << "tempo de pico " << tempTp;
-
+           // qDebug() << sinalLeitura << amplitude;
             if(sinalLeitura < sinalLeitAnterior) {
                 statusTp = true;
                 tp = tempTp/10;
                 tempTp = 0;
+
+                mp = sinalLeitura-amplitude;
+
+                if(mp<0) mp=-mp;
+                 //qDebug() << "meu calculo de mp = " << mp;
+                 //exit(-1);
                 statusMP = true;
-                //exit(-1);
             } else {
 
                 statusTp = false;
+                statusMP = false;
             }
         } else {
             if(sinalLeitura <= sinalLeitAnterior) {
                 tempTp += TEMPO_AMOSTRAGEM;
-                qDebug() << "biruba";
             }
             if(sinalLeitura > sinalLeitAnterior) {
                 statusTp = true;
                 tp = tempTp/10;
                 tempTp = 0;
+
+                mp = sinalLeitura-amplitude;
+               if(mp<0) mp=-mp;
                 statusMP = true;
             } else {
                 statusTp = false;
+                statusMP = false;
             }
         }
     }
 }
 
 void SistemaO2::calculaMp(double sinalLeitura, double amplitude) {
-    if(!statusMP) {
-        mp = abs(sinalLeitura-amplitude);
-        statusMP = false;
-    }
+
 }
 
 void SistemaO2::calculaTs(double sinalLeitura, double setPoint) {
