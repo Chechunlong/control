@@ -171,6 +171,7 @@ void Control::setTipoOrdemSistema(int ordemSistema)
     }
 }
 
+
 void Control::calculaSinal()
 {
     if(timeAux > periodo) timeAux = 0;
@@ -187,6 +188,9 @@ void Control::calculaSinal()
             tempoDerivativo = Kd/ Kp;
             tempoIntegrativo = Kp / Ki;
         }
+
+        //define se a opção de windup está ativa, pegando essa informação da interface
+        controller->setWindUp(true);
 
 
         switch (tipoControler) {
@@ -206,6 +210,8 @@ void Control::calculaSinal()
             tensao = controller->controlerPI_D(Kp, Ki, Kd, erro, sinalLeitura);
             break;
         }
+
+        controller->setTensaoAnt(tensao);
     }
 
     switch (tipoSinal)
@@ -292,6 +298,9 @@ void Control::sendSignal()
     travel();
 
     quanser->writeDA(canalEscrita,sinalEscrita);
+
+    //(vps) sinal de escrita depois de ter passado pelas travas, utilizado no calculo do windup.
+    controller->setVPS(sinalEscrita);
 }
 
 void Control::receiveSigal()

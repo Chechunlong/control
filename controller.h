@@ -1,3 +1,4 @@
+#include "math.h"
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
@@ -15,7 +16,7 @@ class Controller
         Controller();
 
         double ganhoKp(double Kp, double erro);
-        double ganhoKi(double Ki, double erro);
+        double ganhoKi(double Ki, double Kd, double erro);
         double ganhoKd(double Kd, double erro);
 
         double controlerP(double Kp, double erro);
@@ -23,11 +24,20 @@ class Controller
         double controlerPD(double Kp, double Kd, double erro);
         double controlerPID(double Kp, double Ki, double Kd, double erro);
         double controlerPI_D(double Kp, double Ki, double Kd, double erro, double amplitude);
+        void setTensaoAnt(double tensao);
+        double getTensaoAnt();
+        void setWindUp(bool windup);
+        bool isWindUp();
+        void setVPS(double vps);
+        double getVPS();
 
 
     private:
         double erroAnt;
         double integrador;
+        double tensaoAnt;
+        bool windup = false;
+        double vps;
 };
 
 #endif // CONTROLLER_H
