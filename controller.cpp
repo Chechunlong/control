@@ -8,7 +8,8 @@ Controller::Controller()
 
 double Controller::ganhoKp(double Kp, double erro)
 {
-    return erro * Kp;
+    P = erro * Kp;
+    return P;
 }
 
 double Controller::ganhoKi(double Ki, double Kd, double erro)
@@ -20,7 +21,8 @@ double Controller::ganhoKi(double Ki, double Kd, double erro)
         this->integrador = this->integrador + Ki * erro + (1/(Tt))*(getVPS() - getTensaoAnt());
     }
 
-    return this->integrador;
+    I = this->integrador;
+    return I;
 }
 
 double Controller::ganhoKd(double Kd, double erro)
@@ -28,7 +30,8 @@ double Controller::ganhoKd(double Kd, double erro)
     double derivador = Kd * (erro-this->erroAnt) / TEMPO_AMOSTRAGEM;
     this->erroAnt = erro;
 
-    return derivador;
+    D = derivador;
+    return D;
 }
 
 double Controller::controlerP(double Kp, double erro)
@@ -56,6 +59,16 @@ double Controller::controlerPI_D(double Kp, double Ki, double Kd, double erro, d
     return ganhoKp(Kp, erro) + ganhoKi(Ki, Kd, erro) + ganhoKd(Kd, amplitude);
 }
 
+double Controller::getP() const {
+    return P;
+}
+double Controller::getI() const {
+    return I;
+}
+double Controller::getD() const {
+    return D;
+}
+
 void Controller::setTensaoAnt(double tensao){
     this->tensaoAnt = tensao;
 }
@@ -79,3 +92,6 @@ void Controller::setVPS(double vps){
 double Controller::getVPS(){
     return this->vps;
 }
+
+
+

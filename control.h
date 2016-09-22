@@ -83,6 +83,10 @@ public:
     double getTi() const;
     double getTd() const;
 
+    double getP() const;
+    double getI() const;
+    double getD() const;
+
     double getTempoIntegrativo() const;
     void setTempoIntegrativo(double value);
 
@@ -201,7 +205,7 @@ private:
     double tempoIntegrativo;
     double tempoDerivativo;
 
-
+    double P, I , D;
     // Sistema de Ordem 2
     int ordemSistema;
 
@@ -217,6 +221,8 @@ private:
 
     int tipoTr,
         tipoTs;
+
+
 
     bool setPointUP;
 

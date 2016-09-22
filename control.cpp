@@ -40,6 +40,8 @@ Control::Control(int port, QString ip)
     tipoControler = 0;
     modeControle = 0;
 
+    P = I = D = 0;
+
     setPointUP = true;
 
     tanque1 = 0;
@@ -129,6 +131,10 @@ double Control::getTi() const { return this->tempoIntegrativo; }
 
 double Control::getTd() const { return this->tempoDerivativo; }
 
+double Control::getP() const { return controller->getP(); }
+double Control::getI() const { return controller->getI(); }
+double Control::getD() const { return controller->getD(); }
+
 double Control::getTempoIntegrativo() const { return tempoIntegrativo; }
 
 void Control::setTempoIntegrativo(double value) { tempoIntegrativo = value; }
@@ -184,7 +190,9 @@ void Control::calculaSinal()
             tensao = controller->controlerPD(Kp,Kd, erro);
             break;
         case CONTROLER_PID:
+            qDebug() << Kp << Ki << Kd << erro;
             tensao = controller->controlerPID(Kp,Ki,Kd,erro);
+            qDebug() << tensao;
             break;
         case CONTROLER_PI_D:
             tensao = controller->controlerPI_D(Kp, Ki, Kd, erro, sinalLeitura);
@@ -213,13 +221,14 @@ void Control::calculaSinal()
         double ampMin = offSet;
         double durMax = periodo;
         double durMin = auxForRand;
-        if(timeAux==0)
-        {
+        if(timeAux==0) {
             sinalCalculado = signal->aleatorio(ampMax, ampMin);
             periodo = signal->periodoAleatorio(durMax, durMin);
         }
         break;
     }
+
+    qDebug() << sinalCalculado;
 
     timeAux += 0.1;
 }
@@ -253,6 +262,7 @@ void Control::zerarSinal() {
     sinalCalculado = 0;
     sinalEscrita = 0;
     timeAux = 0;
+    erro = 0;
 }
 
 double Control::readCanal(int canal) { return quanser->readAD(canal)* FATOR_CONVERSAO; }

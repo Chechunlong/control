@@ -19,6 +19,10 @@ class Controller
         double ganhoKi(double Ki, double Kd, double erro);
         double ganhoKd(double Kd, double erro);
 
+        double getP() const;
+        double getI() const;
+        double getD() const;
+
         double controlerP(double Kp, double erro);
         double controlerPI(double Kp, double Ki, double erro);
         double controlerPD(double Kp, double Kd, double erro);
@@ -38,6 +42,10 @@ class Controller
         double tensaoAnt;
         bool windup = false;
         double vps;
+
+        double P;
+        double I;
+        double D;
 };
 
 #endif // CONTROLLER_H

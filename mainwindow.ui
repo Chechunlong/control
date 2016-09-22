@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1337</width>
-    <height>663</height>
+    <height>677</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -253,7 +253,7 @@
       <enum>Qt::RightToLeft</enum>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>3</number>
      </property>
      <widget class="QWidget" name="tab_sinal">
       <attribute name="title">
@@ -939,7 +939,7 @@
          <string>Set point</string>
         </property>
         <property name="checked">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
        </widget>
        <widget class="QCheckBox" name="cb_plot_erro">
@@ -958,7 +958,7 @@
          <string>Erro</string>
         </property>
         <property name="checked">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
        </widget>
        <widget class="QCheckBox" name="cb_plot_p">
@@ -977,7 +977,7 @@
          <string>P</string>
         </property>
         <property name="checked">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
        </widget>
        <widget class="QCheckBox" name="cb_plot_i">
@@ -996,7 +996,7 @@
          <string>I</string>
         </property>
         <property name="checked">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
        </widget>
        <widget class="QCheckBox" name="cb_plot_d">
@@ -1015,7 +1015,7 @@
          <string>D</string>
         </property>
         <property name="checked">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
        </widget>
       </widget>
@@ -1260,6 +1260,19 @@
       <string>Atualizar dados</string>
      </property>
     </widget>
+   </widget>
+   <widget class="QLabel" name="lb_pid">
+    <property name="geometry">
+     <rect>
+      <x>340</x>
+      <y>640</y>
+      <width>391</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
    </widget>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>

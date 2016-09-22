@@ -185,6 +185,20 @@ void MainWindow::UI_configGraphRead()
         ui->graficoLeitura->graph(i+2)->removeFromLegend();
     }
 
+    for(int i=8; i<11; i++) {
+        if(i == 8 )nomeCanal = "P ";
+        if(i == 9 )nomeCanal = "I ";
+        if(i == 10 )nomeCanal = "D ";
+
+        ui->graficoLeitura->addGraph();
+        ui->graficoLeitura->graph(i+2)->setPen(QPen(QColor(rand()%200+10,rand()%200+10,rand()%200+10,255)));
+        ui->graficoLeitura->graph(i+2)->setAntialiasedFill(false);
+
+        ui->graficoLeitura->graph(i+2)->setName(nomeCanal);
+        ui->graficoLeitura->graph(i+2)->setVisible(false);
+        ui->graficoLeitura->graph(i+2)->removeFromLegend();
+    }
+
     ui->graficoLeitura->legend->setVisible(true);
     ui->graficoLeitura->axisRect()->insetLayout()->setInsetAlignment(0,Qt::AlignLeft|Qt::AlignBottom);
 
@@ -227,20 +241,27 @@ void MainWindow::UI_configPlotGraficosL()
     vectorGrafLeitura[3] = ui->cb_plot_i->isChecked();
     vectorGrafLeitura[4] = ui->cb_plot_d->isChecked();
 
-    for(int i=0; i<2; i++)
-    {
-        if(vectorGrafLeitura[i])
-        {
+    for(int i=0; i<2; i++) {
+        if(vectorGrafLeitura[i]) {
             ui->graficoLeitura->graph(i)->addToLegend();
             ui->graficoLeitura->graph(i)->setVisible(true);
-        }
-        else
-        {
+        } else {
             ui->graficoLeitura->graph(i)->removeFromLegend();
             ui->graficoLeitura->graph(i)->setVisible(false);
         }
     }
 
+
+    for(int i=8;i<11; i++) {
+        if(vectorGrafLeitura[i-6]) {
+            ui->graficoLeitura->graph(i+2)->addToLegend();
+            ui->graficoLeitura->graph(i+2)->setVisible(true);
+        } else {
+            ui->graficoLeitura->graph(i+2)->removeFromLegend();
+            ui->graficoLeitura->graph(i+2)->setVisible(false);
+
+        }
+    }
 
     /*if(!ui->canal_l0->isChecked()) ui->cb_plot_canal0->setChecked(false);
     if(!ui->canal_l1->isChecked()) ui->cb_plot_canal1->setChecked(false);
@@ -275,6 +296,7 @@ void MainWindow::UI_configPlotGraficosL()
             ui->graficoLeitura->graph(i+2)->setVisible(false);
         }
     }
+
 }
 
 void MainWindow::UI_configPanel()
@@ -755,10 +777,21 @@ void MainWindow::receiveData()
                     double erro = control->getErro();
                     double setPoint = control->getAmplitude();
 
+                    double ii = control->getI();
+                    double pp = control->getP();
+                    double dd = control->getD();
+
                     ui->lb_erro->setText("Erro = " + QString::number(erro) + " cm");
 
                     ui->graficoLeitura->graph(0)->addData(key/5,erro);
                     ui->graficoLeitura->graph(1)->addData(key/5,setPoint);
+
+
+                    ui->graficoLeitura->graph(10)->addData(key/5,pp);
+                    ui->graficoLeitura->graph(11)->addData(key/5,ii);
+                    ui->graficoLeitura->graph(12)->addData(key/5,dd);
+
+                    ui->lb_pid->setText("P = " + QString::number(pp) + " I = " + QString::number(ii) + " D = " + QString::number(dd));
 
                     if(ordemSistema == SISTEMA_ORDEM_2) {
                        /* bool statusTr = control->getStatusTr();
