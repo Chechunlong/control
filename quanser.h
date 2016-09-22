@@ -109,15 +109,15 @@ private:
 public:
     Quanser (char* _server, int _tcpPort) {
 
-        qDebug() << _server;
-        qDebug() << _tcpPort;
+        //qDebug() << _server;
+        //qDebug() << _tcpPort;
 
         this->tcpPort = _tcpPort;
         this->server = _server;
-        this->connectServer();
+        //this->connectServer();
 
-        if(_tcpPort == 20081) status = true;
-       else status = false;
+       //if(_tcpPort == 20081) status = true;
+       //else status = false;
     }
 
     ~Quanser(void){

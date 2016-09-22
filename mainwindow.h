@@ -108,6 +108,9 @@ private:
     bool sinalPlotEscrita[PLOT_ESCRITA];
     int canalEscrita = 0;
 
+    double tanque1 = 0;
+    double tanque2 = 0;
+
 };
 
 #endif // MAINWINDOW_H

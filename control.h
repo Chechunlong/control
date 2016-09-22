@@ -6,6 +6,8 @@
 #include "controller.h"
 #include "sistemaO2.h"
 
+#include "tanque.h"
+
 #define MAX_VOLTAGE 4
 #define MIN_VOLTAGE -4
 
@@ -105,6 +107,7 @@ public:
     void setTipoSinal(int value);
 
 
+    double readCanal(int canal);
 
     void calculaTPico();
 
@@ -112,7 +115,7 @@ public:
 
     void calculaSinal();
 
-    bool    connectionStatus();
+    bool    getConnectionStatus();
 
     int     levelControl(int value);
 
@@ -156,6 +159,8 @@ private:
     Signal *signal;
     Controller *controller;
     SistemaO2 *sistemaO2;
+
+    Tanque *tanq;
 
     int tipoMalha = 1;  /* 0 -> fechada, 1 -> aberto*/
 
@@ -216,6 +221,10 @@ private:
     bool tp_control;
     bool tr_control;
     bool setPointUP;
+
+    double tanque1;
+    double tanque2;
+    bool simulacao;
 };
 
 #endif // CONTROL_H

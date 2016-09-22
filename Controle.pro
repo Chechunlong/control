@@ -27,7 +27,8 @@ HEADERS  += mainwindow.h \
     control.h \
     controller.h \
     conectar.h \
-    sistemaO2.h
+    sistemaO2.h \
+    tanque.h
 
 FORMS    += mainwindow.ui \
     conectar.ui

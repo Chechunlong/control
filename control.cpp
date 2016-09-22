@@ -9,6 +9,8 @@ Control::Control(int port, QString ip)
 
     sistemaO2 = new SistemaO2();
 
+    tanq = new Tanque();
+
 
     timeAux     = 0;
     tipoSinal   = 0;
@@ -41,6 +43,11 @@ Control::Control(int port, QString ip)
     tempoIntegrativo = 0;
     tipoControler = 0;
     modeControle = 0;
+
+    tanque1 = 0;
+    tanque2 = 0;
+
+    simulacao = true;
 }
 /* Recebe um array de tamanho M,
    a saida é a média do ponto[0].*/
@@ -63,7 +70,7 @@ int Control::getCanalLeitura()
 
 double Control::getCanalValue(int value)
 {
-    if(value >= NUMB_CAN_READ) return -1;
+    //if(value >= NUMB_CAN_READ) return -1;
 
     return canaisLeitura_value[value];
 }
@@ -85,7 +92,7 @@ double Control::getSinalLeitura()
 
 void Control::setAmplitude(double amplitude)
 {
-    this->amplitude <= amplitude ? setPointUP = true : setPointUP = false;
+    //this->amplitude <= amplitude ? setPointUP = true : setPointUP = false;
 
     this->amplitude = amplitude;
 }
@@ -96,67 +103,47 @@ void Control::setAuxForRand(double auxForRand)
 void Control::setCanalEscrita(int canalEscrita)
 { this->canalEscrita = canalEscrita; }
 
-void Control::setOffSet(double value)
-{ offSet = value; }
+void Control::setOffSet(double value) { offSet = value; }
 
-void Control::setPeriodo(double value)
-{ periodo = value; }
+void Control::setPeriodo(double value) { periodo = value; }
 
-void Control::setTensao(double value)
-{ tensao = value; }
+void Control::setTensao(double value) { tensao = value; }
 
-void Control::setTipoMalha(int value)
-{ tipoMalha = value; }
+void Control::setTipoMalha(int value) { tipoMalha = value; }
 
-void Control::setTipoSinal(int value)
-{ tipoSinal = value; }
+void Control::setTipoSinal(int value) { tipoSinal = value; }
 
-double Control::getKp() const
-{ return Kp; }
+double Control::getKp() const { return Kp; }
 
-void Control::setKp(double value)
-{ Kp = value; }
+void Control::setKp(double value) { Kp = value; }
 
-double Control::getKi() const
-{ return Ki; }
+double Control::getKi() const { return Ki; }
 
-void Control::setKi(double value)
-{ Ki = value; }
+void Control::setKi(double value) { Ki = value; }
 
-double Control::getKd() const
-{ return Kd; }
+double Control::getKd() const { return Kd; }
 
-void Control::setKd(double value)
-{ Kd = value; }
+void Control::setKd(double value) { Kd = value; }
 
-double Control::getTi() const
-{ return this->tempoIntegrativo; }
-double Control::getTd() const
-{ return this->tempoDerivativo; }
+double Control::getTi() const { return this->tempoIntegrativo; }
 
-double Control::getTempoIntegrativo() const
-{ return tempoIntegrativo; }
+double Control::getTd() const { return this->tempoDerivativo; }
 
-void Control::setTempoIntegrativo(double value)
-{ tempoIntegrativo = value; }
+double Control::getTempoIntegrativo() const { return tempoIntegrativo; }
 
-double Control::getTempoDerivativo() const
-{ return tempoDerivativo; }
+void Control::setTempoIntegrativo(double value) { tempoIntegrativo = value; }
 
-void Control::setTempoDerivativo(double value)
-{ tempoDerivativo = value; }
+double Control::getTempoDerivativo() const { return tempoDerivativo; }
 
-int Control::getModeControle() const
-{ return modeControle; }
+void Control::setTempoDerivativo(double value) { tempoDerivativo = value; }
 
-void Control::setModeControle(int modeControle)
-{ this->modeControle = modeControle; }
+int Control::getModeControle() const { return modeControle; }
 
-int Control::getTipoControler()
-{ return tipoControler; }
+void Control::setModeControle(int modeControle) { this->modeControle = modeControle; }
 
-void Control::setTipoControler(int tipoControler)
-{ this->tipoControler = tipoControler; }
+int Control::getTipoControler() { return tipoControler; }
+
+void Control::setTipoControler(int tipoControler) { this->tipoControler = tipoControler; }
 
 void Control::setTipoOrdemSistema(int ordemSistema)
 {
@@ -190,7 +177,7 @@ void Control::calculaSinal()
         }
 
         //define se a opção de windup está ativa, pegando essa informação da interface
-        controller->setWindUp(true);
+        //controller->setWindUp(true);
 
 
         switch (tipoControler) {
@@ -244,10 +231,8 @@ void Control::calculaSinal()
     timeAux += 0.1;
 }
 
-bool Control::connectionStatus()
-{
-    return quanser->getStatus();
-}
+
+bool Control::getConnectionStatus() { return quanser->getStatus(); }
 
 int Control::levelControl(int value)
 {
@@ -280,68 +265,52 @@ void Control::zerarSinal()
     timeAux = 0;
 }
 
-void Control::travel()
-{
+double Control::readCanal(int canal) { return quanser->readAD(canal)* FATOR_CONVERSAO; }
+
+void Control::travel() {
     sinalEscrita = voltageControl(sinalEscrita);
 
-    if(sinalLeitura<=3 && sinalEscrita<0) sinalEscrita = 0;
+    if(tanque1<=3 && sinalEscrita<0) sinalEscrita = 0;
 
-    if(sinalLeitura>=28 && sinalEscrita>0) sinalEscrita = 0;
+    if(tanque1>=28 && sinalEscrita>0) sinalEscrita = 0;
 }
 
-void Control::sendSignal()
-{
+void Control::sendSignal() {
     calculaSinal();
 
     sinalEscrita = sinalCalculado;
 
     travel();
 
-    quanser->writeDA(canalEscrita,sinalEscrita);
-
-    //(vps) sinal de escrita depois de ter passado pelas travas, utilizado no calculo do windup.
-    controller->setVPS(sinalEscrita);
+    if(simulacao) tanq->acionaBomba(sinalEscrita);
+    else quanser->writeDA(canalEscrita,sinalEscrita);
 }
 
-void Control::receiveSigal()
-{
-    double readVoltage;
+void Control::receiveSigal() {
 
+    for(int canal=0; canal<2; canal++) {
 
-    for(int canal=0; canal<2; canal++)
-    {
-        readVoltage = quanser->readAD(canal);
-        canaisLeitura_value[canal] = readVoltage * FATOR_CONVERSAO;
-
-
-        double temp = canaisLeitura_value[0];
-        if(temp<=3 && sinalEscrita<0 || temp>=28 && sinalEscrita>0) {
-            sinalEscrita = 0;
-            quanser->writeDA(0,0);
+        if(simulacao) {
+            tanque1 = tanq->getNivelTq1();
+            tanque2 = tanq->getNivelTq2();
+            canaisLeitura_value[0] = tanque1;
+            canaisLeitura_value[1] = tanque2;
+        } else {
+            canaisLeitura_value[canal] = readCanal(canal);
+            tanque1 = canaisLeitura_value[0];
+            tanque2 = canaisLeitura_value[1];
         }
 
-        if(canal==canalLeitura)
-        {
-            sinalLeitura = canaisLeitura_value[canal]; // cm
-            if(tipoMalha == M_FECHADA)
-            {
-                erro = amplitude - sinalLeitura; // cm
+        if(canal==canalLeitura) {
 
-                if(auxContErro >= M){
-                    double saidaErro = filtroMM(arrayErro);
-                    auxContErro = 0;
-                }
-                arrayErro[auxContErro] = erro;
-                auxContErro++;
-                /*
+            if(getOrdemSistema() == SISTEMA_ORDEM_1) sinalLeitura = tanque1;
+            else if(getOrdemSistema() == SISTEMA_ORDEM_2) sinalLeitura = tanque2;
 
-                    Implementação do filtro
+            if(tipoMalha == M_FECHADA) {
+                erro = amplitude - sinalLeitura;
 
-                */
-
-                if(ordemSistema ==  SISTEMA_ORDEM_2)
-                {
-                    statusTr = sistemaO2->getStatusTr();
+                if(getOrdemSistema() ==  SISTEMA_ORDEM_2) {
+                  /*  statusTr = sistemaO2->getStatusTr();
                     statusTp = sistemaO2->getStatusTp();
                     statusMp = sistemaO2->getStatusMP();
 
@@ -361,12 +330,16 @@ void Control::receiveSigal()
                         sistemaO2->calculaTr(sinalLeitura, amplitude);
                     } else {
                         tr = sistemaO2->getTr();
-                    }
+                    }*/
                 }
 
             }
 
         }
+    }
+    if(simulacao) {
+        tanq->escoaTanque1(tanque1);
+        tanq->escoaTanque2(tanque2);
     }
 }
 
