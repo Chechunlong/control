@@ -111,6 +111,14 @@ private:
     double tanque1 = 0;
     double tanque2 = 0;
 
+    int canalLeitura = 0;
+    int tipoMalha = 0;
+
+    double sinalLeitura = 0;
+    int ordemSistema = 0;
+
+    bool start = false;
+
 };
 
 #endif // MAINWINDOW_H

@@ -728,11 +728,9 @@ void MainWindow::receiveData()
 
     control->receiveSigal();
 
-    int canalLeitura = control->getCanalLeitura();
-    int tipoMalha = control->getTipoMalha();
-
-    double sinalLeitura = 0;
-    int ordemSistema = control->getOrdemSistema();
+    canalLeitura = control->getCanalLeitura();
+    tipoMalha = control->getTipoMalha();
+    ordemSistema = control->getOrdemSistema();
 
 
     for(int i=0; i<2; i++) {
@@ -740,22 +738,20 @@ void MainWindow::receiveData()
         tanque1 = control->getCanalValue(0);
         tanque2 = control->getCanalValue(1);
 
-        ui->pb_tanque1->setValue(MAX_LEVEL/tanque1);
-        ui->pb_tanque2->setValue(MAX_LEVEL/tanque2);
+
        // if(canalLeituraVec[i]) {
 
             if(ordemSistema == SISTEMA_ORDEM_1) sinalLeitura = tanque1;
             else if(ordemSistema == SISTEMA_ORDEM_2) sinalLeitura = tanque2;
 
-
+            ui->pb_tanque1->setValue(tanque1);
+            ui->pb_tanque2->setValue(tanque2);
             ui->graficoLeitura->graph(0+2)->addData(key/5,tanque1);
             ui->graficoLeitura->graph(1+2)->addData(key/5,tanque2);
 
            // qDebug() << canalLeitura;
-            if(i == canalLeitura)
-            {
-                if(tipoMalha == M_FECHADA) // Malha fechada
-                {
+            if(i == canalLeitura) {
+                if(tipoMalha == M_FECHADA) {
                     double erro = control->getErro();
                     double setPoint = control->getAmplitude();
 
