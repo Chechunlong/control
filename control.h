@@ -31,6 +31,9 @@
 #define SISTEMA_ORDEM_1 1
 #define SISTEMA_ORDEM_2 2
 
+//parametro para o filtro média movel
+#define M 5
+
 class Control
 {
 public:
@@ -53,6 +56,8 @@ public:
     double  getSinalEnviado();
 
     double  getSinalLeitura();
+
+    double filtroMM(double erro[]);
 
 
     // Controle
@@ -171,6 +176,8 @@ private:
 
     // Malha fechada function: _receiveData()
     double erro, erroAnt;
+    double arrayErro[5];
+    int auxContErro;
 
     int canalEscrita;
     int canalLeitura;

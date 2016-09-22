@@ -25,6 +25,10 @@ Control::Control(int port, QString ip)
 
     erro    = 0;
     erroAnt = 0;
+    arrayErro[M] = {0};
+
+    //contador auxiliar utilizado para o filtro mm.
+    auxContErro = 0;
 
     canalEscrita = 0;
     canalLeitura = 0;
@@ -37,6 +41,15 @@ Control::Control(int port, QString ip)
     tempoIntegrativo = 0;
     tipoControler = 0;
     modeControle = 0;
+}
+/* Recebe um array de tamanho M,
+   a saida é a média do ponto[0].*/
+double Control::filtroMM(double erro[]){
+    double tmp = 0;
+    for(int i=0;i < M;i++){
+        tmp += erro[i];
+    }
+    return tmp/M;
 }
 
 double Control::getAmplitude()
@@ -305,6 +318,12 @@ void Control::receiveSigal()
             {
                 erro = amplitude - sinalLeitura; // cm
 
+                if(auxContErro >= M){
+                    double saidaErro = filtroMM(arrayErro);
+                    auxContErro = 0;
+                }
+                arrayErro[auxContErro] = erro;
+                auxContErro++;
                 /*
 
                     Implementação do filtro
