@@ -158,6 +158,8 @@ public:
 
     void setCanalLeitura(int value);
 
+    void setWindUP(bool value);
+
 private:
     Quanser *quanser;
     Signal *signal;

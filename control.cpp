@@ -389,4 +389,6 @@ void Control::setTipoTs(int value) { tipoTs = value; }
 
 void Control::setCanalLeitura(int value) { canalLeitura = value; }
 
+void Control::setWindUP(bool value) { windUP = value; }
+
 

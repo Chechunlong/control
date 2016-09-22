@@ -668,6 +668,7 @@ void MainWindow::data()
     double  offSet    = ui->dSpinOffSet->value();
     int     canalEscrita = ui->cb_canalEscrita->currentIndex();
     int     tipoSinal    = ui->comboTipoSinal->currentIndex();
+    bool windUP = false;
 
     bool malhaAberta  = ui->radioAberta->isChecked();
     bool malhaFechada = ui->radioFechada->isChecked();
@@ -679,9 +680,12 @@ void MainWindow::data()
     {
         control->setTensao(amplitude);
         control->setTipoMalha(M_ABERTA);
+        control->setWindUP(false);
     }
     else if(malhaFechada)
     {
+        windUP = ui->windup->isChecked();
+        control->setWindUP(windUP);
         control->setTensao(0);
         control->setAmplitude(amplitude);
         control->setTipoMalha(M_FECHADA);
@@ -800,7 +804,7 @@ void MainWindow::receiveData()
 
                         double tr = control->getTr();
                         double tp = control->getTp();
-                        double ts = control->getTs();
+                            double ts = control->getTs();
                         double mp = control->getMp();
 
                         qDebug() << "recebi esse mp = " << mp;
