@@ -18,7 +18,7 @@ SOURCES += main.cpp\
     control.cpp \
     controller.cpp \
     conectar.cpp \
-    sistemao2.cpp
+    sistemaO2.cpp
 
 HEADERS  += mainwindow.h \
     quanser.h \

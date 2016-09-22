@@ -163,22 +163,15 @@ void Control::calculaSinal()
 {
     if(timeAux > periodo) timeAux = 0;
 
-    if(tipoMalha == M_FECHADA)
-    {
-        if(modeControle == CONTROLE_CONST_TEMP)
-        {
+    if(tipoMalha == M_FECHADA) {
+        if(modeControle == CONTROLE_CONST_TEMP) {
            Ki = Kp / tempoIntegrativo;
            Kd = Kp * tempoDerivativo;
         }
-        else
-        {
+        else {
             tempoDerivativo = Kd/ Kp;
             tempoIntegrativo = Kp / Ki;
         }
-
-        //define se a opção de windup está ativa, pegando essa informação da interface
-        //controller->setWindUp(true);
-
 
         switch (tipoControler) {
         case CONTROLER_P:
@@ -234,24 +227,21 @@ void Control::calculaSinal()
 
 bool Control::getConnectionStatus() { return quanser->getStatus(); }
 
-int Control::levelControl(int value)
-{
+int Control::levelControl(int value) {
     if(value>MAX_LEVEL) value = MAX_LEVEL;
     else if (value<MIN_LEVEL) value = MIN_LEVEL;
 
     return value;
 }
 
-double Control::voltageControl(double value)
-{
+double Control::voltageControl(double value) {
     if(value>=MAX_VOLTAGE) value = MAX_VOLTAGE;
     else if (value<=MIN_VOLTAGE) value = MIN_VOLTAGE;
 
     return value;
 }
 
-void Control::zerarSinal()
-{
+void Control::zerarSinal() {
     delete controller;
     delete signal;
 
@@ -303,8 +293,15 @@ void Control::receiveSigal() {
 
         if(canal==canalLeitura) {
 
-            if(getOrdemSistema() == SISTEMA_ORDEM_1) sinalLeitura = tanque1;
-            else if(getOrdemSistema() == SISTEMA_ORDEM_2) sinalLeitura = tanque2;
+            qDebug() << "ordem do sistema = " << getOrdemSistema();
+            if(getOrdemSistema() == SISTEMA_ORDEM_1) {
+                sinalLeitura = tanque1;
+                qDebug() << "sinal leitura do tanqu1";
+            }
+            else if(getOrdemSistema() == SISTEMA_ORDEM_2) {
+                sinalLeitura = tanque2;
+                qDebug() << "sinal leitura do tanqu2";
+            }
 
             if(tipoMalha == M_FECHADA) {
                 erro = amplitude - sinalLeitura;
@@ -388,19 +385,10 @@ int Control::getOrdemSistema() const
     return ordemSistema;
 }
 
-void Control::setTipoTr(int value)
-{
-    tipoTr = value;
-}
+void Control::setTipoTr(int value) { tipoTr = value; }
 
-void Control::setTipoTs(int value)
-{
-    tipoTs = value;
-}
+void Control::setTipoTs(int value) { tipoTs = value; }
 
-void Control::setCanalLeitura(int value)
-{
-    canalLeitura = value;
-}
+void Control::setCanalLeitura(int value) { canalLeitura = value; }
 
 
