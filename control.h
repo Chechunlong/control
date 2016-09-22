@@ -222,7 +222,7 @@ private:
     int tipoTr,
         tipoTs;
 
-
+    bool windUP;
 
     bool setPointUP;
 

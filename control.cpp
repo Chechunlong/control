@@ -48,6 +48,8 @@ Control::Control(int port, QString ip)
 
     setPointUP = true;
 
+    windUP = false;
+
     tanque1 = 0;
     tanque2 = 0;
 
@@ -185,7 +187,7 @@ void Control::calculaSinal()
         }
 
         //seta true caso o usuário selecione a opção.
-        controller->setWindUp(true);
+        controller->setWindUp(windUP);
 
         switch (tipoControler) {
         case CONTROLER_P:
