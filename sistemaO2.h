@@ -80,7 +80,7 @@ public:
     void configTs(int tipoTs, double sinalLeitura);
 
     void calculaTr(double sinalLeitura, double amplitude);
-    void calculaTp(double sinalLeitura, double sinalLeitAnterior, double amplitude);
+    void calculaTp(double sinalLeitura, double sinalLeitAnterior, double amplitude, int tipoMp);
     void calculaMp(double sinalLeitura, int tipoMp, double amplitude);
     void calculaTs(double sinalLeitura, double sinalLeitAnterior, double setPoint);
 };

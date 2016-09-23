@@ -809,6 +809,12 @@ void MainWindow::receiveData()
                         double ts = control->getTs();
                         double mp = control->getMp();
 
+                        double pmp;
+
+                            pmp = mp/MAX_LEVEL;
+                            pmp *= 100;
+
+
                        // qDebug() << "recebi esse mp = " << mp;
 
                         if(statusTr) ui->lb_tr->setText("Tr = " + QString::number(tr) + " ms");
@@ -817,7 +823,7 @@ void MainWindow::receiveData()
                         else ui->lb_tp->clear();
                         if(statusTs) ui->lb_ts->setText("Ts = " + QString::number(ts) + " ms");
                         else ui->lb_ts->clear();
-                        if(statusMp) ui->lb_mp->setText("Mp = " + QString::number(mp) + " cm");
+                        if(statusMp) ui->lb_mp->setText("Mp = " + QString::number(mp) + " cm (" + QString::number(pmp) +"%)");
                         else ui->lb_mp->clear();
 
 

@@ -77,33 +77,38 @@ void SistemaO2::calculaTr(double sinalLeitura, double amplitude) {
     if(!statusTr) {
         if(tipoAmplitude) {
            // qDebug() << "aqui";
-            if(sinalLeitura >= trMin && sinalLeitura <= trMax) {
+            /*if(sinalLeitura >= trMin && sinalLeitura <= trMax) {
                 tempTr += TEMPO_AMOSTRAGEM;
-             }
+             }*/
             //qDebug() << "tempo de resposta " << tempTr;
-            if(sinalLeitura>trMax) {
+            //if(sinalLeitura>trMax) {
+            if(sinalLeitura<trMax) {
+                tempTr += TEMPO_AMOSTRAGEM;
+                statusTr = false;
+            } else {
                 statusTr = true;
                 tr = tempTr;
                 tempTr = 0;
-            } else {
-                statusTr = false;
+
             }
         } else {
-            if(sinalLeitura <= trMin && sinalLeitura >= trMax) {
-                tempTr += TEMPO_AMOSTRAGEM;
-             }
-            if(sinalLeitura<trMax) {
-                statusTr = true;
+          //  if(sinalLeitura <= trMin && sinalLeitura >= trMax) {
+            //    tempTr += TEMPO_AMOSTRAGEM;
+             //}
+            if(sinalLeitura>trMax) {
+             tempTr += TEMPO_AMOSTRAGEM;
+                statusTr = false;
+
+            } else {
                 tr = tempTr;
                 tempTr = 0;
-            } else {
-                statusTr = false;
+                statusTr = true;
             }
         }
     }
 }
 
-void SistemaO2::calculaTp(double sinalLeitura, double sinalLeitAnterior, double amplitude) {
+void SistemaO2::calculaTp(double sinalLeitura, double sinalLeitAnterior, double amplitude, int tipoMp) {
 
     if(!statusTp) {
 
@@ -121,7 +126,14 @@ void SistemaO2::calculaTp(double sinalLeitura, double sinalLeitAnterior, double 
                 tp = tempTp;
                 tempTp = 0;
 
-                mp = sinalLeitura-amplitude;
+                switch(tipoMp){
+                    case ABS:
+                        mp = sinalLeitura - amplitude;
+                    break;
+                    case PICOm:
+                        mp = sinalLeitura;
+                    break;
+                }
                if(mp<0) mp=-mp;
                 statusMP = true;
 
@@ -140,7 +152,14 @@ void SistemaO2::calculaTp(double sinalLeitura, double sinalLeitAnterior, double 
                 tp = tempTp;
                 tempTp = 0;
 
-                mp = sinalLeitura-amplitude;
+                switch(tipoMp){
+                    case ABS:
+                        mp = sinalLeitura - amplitude;
+                    break;
+                    case PICOm:
+                        mp = sinalLeitura;
+                    break;
+                }
                if(mp<0) mp=-mp;
                 statusMP = true;
 
