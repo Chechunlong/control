@@ -806,15 +806,19 @@ void MainWindow::receiveData()
 
                         double tr = control->getTr();
                         double tp = control->getTp();
-                            double ts = control->getTs();
+                        double ts = control->getTs();
                         double mp = control->getMp();
 
                        // qDebug() << "recebi esse mp = " << mp;
 
                         if(statusTr) ui->lb_tr->setText("Tr = " + QString::number(tr) + " ms");
+                        else ui->lb_tr->clear();
                         if(statusTp) ui->lb_tp->setText("Tp = " + QString::number(tp) + " ms");
+                        else ui->lb_tp->clear();
                         if(statusTs) ui->lb_ts->setText("Ts = " + QString::number(ts) + " ms");
+                        else ui->lb_ts->clear();
                         if(statusMp) ui->lb_mp->setText("Mp = " + QString::number(mp) + " cm");
+                        else ui->lb_mp->clear();
 
 
                     } else {
