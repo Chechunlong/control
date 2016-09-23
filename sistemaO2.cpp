@@ -1,5 +1,7 @@
 #include "sistemaO2.h"
 
+bool sinal(double a, double b){ return (a/abs(a))==(b/abs(b));}
+
 double SistemaO2::getMp() const { return mp; }
 
 double SistemaO2::getTr() const { return tr; }
@@ -78,7 +80,7 @@ void SistemaO2::calculaTr(double sinalLeitura, double amplitude) {
             //qDebug() << "tempo de resposta " << tempTr;
             if(sinalLeitura>trMax) {
                 statusTr = true;
-                tr = tempTr/10;
+                tr = tempTr;
                 tempTr = 0;
             } else {
                 statusTr = false;
@@ -89,7 +91,7 @@ void SistemaO2::calculaTr(double sinalLeitura, double amplitude) {
              }
             if(sinalLeitura<trMax) {
                 statusTr = true;
-                tr = tempTr/10;
+                tr = tempTr;
                 tempTr = 0;
             } else {
                 statusTr = false;
@@ -110,7 +112,7 @@ void SistemaO2::calculaTp(double sinalLeitura, double sinalLeitAnterior, double 
            // qDebug() << sinalLeitura << amplitude;
             if(sinalLeitura < sinalLeitAnterior) {
                 statusTp = true;
-                tp = tempTp/10;
+                tp = tempTp;
                 tempTp = 0;
 
                 statusMP = true;
@@ -125,7 +127,7 @@ void SistemaO2::calculaTp(double sinalLeitura, double sinalLeitAnterior, double 
             }
             if(sinalLeitura > sinalLeitAnterior) {
                 statusTp = true;
-                tp = tempTp/10;
+                tp = tempTp;
                 tempTp = 0;
 
                 mp = sinalLeitura-amplitude;
@@ -166,18 +168,44 @@ void SistemaO2::calculaMp(double sinalLeitura, int tipoMp, double amplitude) {
     }
 }
 
-void SistemaO2::calculaTs(double sinalLeitura, double setPoint) {
-    if(!statusTs) {
-        double erro = abs(sinalLeitura - setPoint);
-        tempTs += TEMPO_AMOSTRAGEM;
-        if(erro <= ts && statusTs) {
-            ts = tempTs;
-            statusTs = false;
-            tempTs = 0;
-        } else if (erro > ts) {
-            ts = tempTs;
-            statusTs = true;
-        }
+void SistemaO2::calculaTs(double sinalLeitura, double sinalLeitAnterior, double setPoint)
+{
+    double erro = abs(sinalLeitura - setPoint);
+    double derivada = sinalLeitura - sinalLeitAnterior;
+    double tolerancia = 0;
+
+    switch (tipoTs) {
+        case TS2:
+            tolerancia = setPoint*.02;
+            break;
+        case TS5:
+            tolerancia = setPoint*.05;
+            break;
+        case TS10:
+            tolerancia = setPoint*.10;
+            break;
     }
 
+    if(!statusTs && erro >= tolerancia) statusTs = true;
+    else if(!statusTs) return;
+
+    ts_aux += TEMPO_AMOSTRAGEM;
+
+    if(erro <= tolerancia && ts_enable)
+    {//Quando o erro for aceitável entrar aqui somente uma vez
+        ts = ts_aux;
+        ts_enable = false;
+        ts_derivada = derivada;
+    }
+    if (erro > tolerancia)
+    {//Mostrar contagem enquanto erro não for aceitável
+        ts = ts_aux;
+        ts_enable = true;
+    }
+
+    if((derivada == 0 || !sinal(ts_derivada,derivada)) && !ts_enable)
+    {
+        statusTs = false;
+        ts_aux = 0;
+    }
 }

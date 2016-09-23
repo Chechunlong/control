@@ -349,8 +349,11 @@ void Control::receiveSigal() {
                     if(!statusTr) sistemaO2->calculaTr(sinalLeitura, amplitude);
                     else tr = sistemaO2->getTr();
 
-                    if(!statusTs) sistemaO2->calculaTs(sinalLeitura,amplitude);
-                    else ts = sistemaO2->getTs();
+                    //if(!statusTs) sistemaO2->calculaTs(sinalLeitura,amplitude);
+                    //else ts = sistemaO2->getTs();
+
+                    sistemaO2->calculaTs(sinalLeitura,sinalLeitura_old,amplitude);
+                                        ts = sistemaO2->getTs();
 
 
                 }

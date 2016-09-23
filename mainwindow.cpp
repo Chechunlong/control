@@ -809,12 +809,12 @@ void MainWindow::receiveData()
                             double ts = control->getTs();
                         double mp = control->getMp();
 
-                        qDebug() << "recebi esse mp = " << mp;
+                       // qDebug() << "recebi esse mp = " << mp;
 
-                        if(statusTr) ui->lb_tr->setText("Tr = " + QString::number(tr));
-                        if(statusTp) ui->lb_tp->setText("Tp = " + QString::number(tp));
-                        if(statusTs) ui->lb_ts->setText("Ts = " + QString::number(ts));
-                        if(statusMp) ui->lb_mp->setText("Mp = " + QString::number(mp));
+                        if(statusTr) ui->lb_tr->setText("Tr = " + QString::number(tr) + " ms");
+                        if(statusTp) ui->lb_tp->setText("Tp = " + QString::number(tp) + " ms");
+                        if(statusTs) ui->lb_ts->setText("Ts = " + QString::number(ts) + " ms");
+                        if(statusMp) ui->lb_mp->setText("Mp = " + QString::number(mp) + " cm");
 
 
                     } else {

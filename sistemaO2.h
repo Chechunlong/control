@@ -37,6 +37,11 @@ class SistemaO2 {
     bool statusTr;
     bool statusTs;
     bool statusMP;
+
+    double ts_aux = 0;
+    double ts_derivada = 0;
+    bool ts_enable = false;
+
 public:
     SistemaO2() {
         tipoAmplitude = true;
@@ -77,7 +82,7 @@ public:
     void calculaTr(double sinalLeitura, double amplitude);
     void calculaTp(double sinalLeitura, double sinalLeitAnterior, double amplitude);
     void calculaMp(double sinalLeitura, int tipoMp, double amplitude);
-    void calculaTs(double sinalLeitura, double setPoint);
+    void calculaTs(double sinalLeitura, double sinalLeitAnterior, double setPoint);
 };
 
 #endif // SISTEMAO2_H
