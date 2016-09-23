@@ -326,11 +326,12 @@ void Control::receiveSigal() {
                 erro = amplitude - sinalLeitura;
 
                 if(auxContErro >= 5){
-                    double saidaErro = this->filtroMM(arrayErro);
                     auxContErro = 0;
                 }
                 arrayErro[auxContErro] = erro;
                 auxContErro++;
+
+                erro = this->filtroMM(arrayErro);
 
                 if(getOrdemSistema() ==  SISTEMA_ORDEM_2) {
                     statusTr = sistemaO2->getStatusTr();
