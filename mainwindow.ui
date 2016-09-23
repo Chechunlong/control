@@ -98,9 +98,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>480</y>
+      <y>500</y>
       <width>321</width>
-      <height>151</height>
+      <height>161</height>
      </rect>
     </property>
     <property name="title">
@@ -234,7 +234,7 @@
       <x>10</x>
       <y>60</y>
       <width>321</width>
-      <height>411</height>
+      <height>441</height>
      </rect>
     </property>
     <property name="title">
@@ -246,14 +246,14 @@
        <x>10</x>
        <y>30</y>
        <width>301</width>
-       <height>331</height>
+       <height>361</height>
       </rect>
      </property>
      <property name="layoutDirection">
       <enum>Qt::RightToLeft</enum>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab_sinal">
       <attribute name="title">
@@ -310,7 +310,7 @@
          <x>10</x>
          <y>100</y>
          <width>271</width>
-         <height>191</height>
+         <height>221</height>
         </rect>
        </property>
        <property name="layoutDirection">
@@ -453,6 +453,19 @@
         </property>
         <property name="singleStep">
          <double>0.500000000000000</double>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="windup">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>190</y>
+          <width>85</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>WindUp</string>
         </property>
        </widget>
       </widget>
@@ -1238,7 +1251,7 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>370</y>
+       <y>400</y>
        <width>141</width>
        <height>31</height>
       </rect>
@@ -1251,7 +1264,7 @@
      <property name="geometry">
       <rect>
        <x>160</x>
-       <y>370</y>
+       <y>400</y>
        <width>151</width>
        <height>31</height>
       </rect>

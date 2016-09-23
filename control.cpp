@@ -48,6 +48,8 @@ Control::Control(int port, QString ip)
 
     setPointUP = true;
 
+    windUP = false;
+
     tanque1 = 0;
     tanque2 = 0;
 
@@ -185,7 +187,7 @@ void Control::calculaSinal()
         }
 
         //seta true caso o usuário selecione a opção.
-        controller->setWindUp(false);
+        controller->setWindUp(windUP);
 
         switch (tipoControler) {
         case CONTROLER_P:
@@ -388,5 +390,7 @@ void Control::setTipoTs(int value) { tipoTs = value; }
 void Control::setTipoMp(int value) { tipoMp = value; }
 
 void Control::setCanalLeitura(int value) { canalLeitura = value; }
+
+void Control::setWindUP(bool value) { windUP = value; }
 
 
