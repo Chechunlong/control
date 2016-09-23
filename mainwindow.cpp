@@ -694,9 +694,11 @@ void MainWindow::data()
         } else if(segundaOrdem) {
             int tipoTr = ui->combo_Tr->currentIndex();
             int tipoTs = ui->combo_Ts->currentIndex();
+            int tipoMp = ui->combo_Mp->currentIndex();
 
             control->setTipoTr(tipoTr);
             control->setTipoTs(tipoTs);
+            control->setTipoMp(tipoMp);
 
             control->setTipoOrdemSistema(SISTEMA_ORDEM_2);
             control->setCanalLeitura(1);

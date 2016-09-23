@@ -185,7 +185,7 @@ void Control::calculaSinal()
         }
 
         //seta true caso o usuário selecione a opção.
-        controller->setWindUp(true);
+        controller->setWindUp(false);
 
         switch (tipoControler) {
         case CONTROLER_P:
@@ -341,7 +341,7 @@ void Control::receiveSigal() {
 
                     if(statusMp) mp = sistemaO2->getMp();
 
-                    if(!statusMp) sistemaO2->calculaMp(sinalLeitura, amplitude);
+                    if(!statusMp) sistemaO2->calculaMp(sinalLeitura, tipoMp, amplitude);
                     else mp = sistemaO2->getMp();
 
                     if(!statusTr) sistemaO2->calculaTr(sinalLeitura, amplitude);
@@ -384,6 +384,8 @@ int Control::getOrdemSistema() const { return ordemSistema; }
 void Control::setTipoTr(int value) { tipoTr = value; }
 
 void Control::setTipoTs(int value) { tipoTs = value; }
+
+void Control::setTipoMp(int value) { tipoMp = value; }
 
 void Control::setCanalLeitura(int value) { canalLeitura = value; }
 

@@ -156,6 +156,8 @@ public:
 
     void setTipoTs(int value);
 
+    void setTipoMp(int value);
+
     void setCanalLeitura(int value);
 
 private:
@@ -220,7 +222,8 @@ private:
          statusTs;
 
     int tipoTr,
-        tipoTs;
+        tipoTs,
+        tipoMp;
 
 
 

@@ -12,6 +12,9 @@
 #define TS5 1
 #define TS10 2
 
+#define ABS 0
+#define PICOm 1
+
 #define TEMPO_AMOSTRAGEM 0.1
 
 class SistemaO2 {
@@ -73,7 +76,7 @@ public:
 
     void calculaTr(double sinalLeitura, double amplitude);
     void calculaTp(double sinalLeitura, double sinalLeitAnterior, double amplitude);
-    void calculaMp(double sinalLeitura, double amplitude);
+    void calculaMp(double sinalLeitura, int tipoMp, double amplitude);
     void calculaTs(double sinalLeitura, double setPoint);
 };
 
