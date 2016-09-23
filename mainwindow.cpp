@@ -329,9 +329,9 @@ void MainWindow::UI_configPanel()
     ui->combo_Tr->addItem("0-100%",QVariant(Tr100));
     ui->combo_Tr->addItem("5-95%",QVariant(Tr95));
     ui->combo_Tr->addItem("10-90%",QVariant(Tr90));
-    ui->combo_Ts->addItem("2%",QVariant(2));
-    ui->combo_Ts->addItem("7%",QVariant(7));
-    ui->combo_Ts->addItem("10%",QVariant(10));
+    ui->combo_Ts->addItem("2%",QVariant(0));
+    ui->combo_Ts->addItem("5%",QVariant(1));
+    ui->combo_Ts->addItem("10%",QVariant(2));
 
     ui->dSpinAux->setVisible(false);
     ui->labelAux->setVisible(false);
@@ -676,14 +676,11 @@ void MainWindow::data()
     bool primeiraOrdem = ui->rbSistemaO1->isChecked();
     bool segundaOrdem = ui->rbSistemaO2->isChecked();
 
-    if(malhaAberta)
-    {
+    if(malhaAberta) {
         control->setTensao(amplitude);
         control->setTipoMalha(M_ABERTA);
         control->setWindUP(false);
-    }
-    else if(malhaFechada)
-    {
+    } else if(malhaFechada) {
         windUP = ui->windup->isChecked();
         control->setWindUP(windUP);
         control->setTensao(0);
@@ -709,8 +706,7 @@ void MainWindow::data()
         }
     }
 
-    if(tipoSinal == ALEATORIO)
-    {
+    if(tipoSinal == ALEATORIO) {
         double auxForRand = ui->dSpinAux->value();
         control->setAuxForRand(auxForRand);
     }

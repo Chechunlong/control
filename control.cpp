@@ -209,6 +209,7 @@ void Control::calculaSinal()
             break;
         }
         //utilizado no calculo do windup
+        //if(windUP)
         controller->setTensaoAnt(tensao);
     }
 
@@ -296,6 +297,7 @@ void Control::sendSignal() {
     else quanser->writeDA(canalEscrita,sinalEscrita);
 
     //utilizado no windup
+    //if(windUP)
     controller->setVPS(sinalEscrita);
 }
 
