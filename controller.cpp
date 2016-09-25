@@ -4,6 +4,9 @@ Controller::Controller()
 {
     erroAnt = 0;
     integrador = 0;
+    tensaoAnt = 0;
+    vps = 0;
+    taw = 75;
 }
 
 double Controller::ganhoKp(double Kp, double erro)
@@ -12,16 +15,17 @@ double Controller::ganhoKp(double Kp, double erro)
     return P;
 }
 
-double Controller::ganhoKi(double Ki, double Kd, double erro)
+double Controller::ganhoKi(double Ki, double Kd, double Kp, double erro)
 {
     this->integrador += erro * Ki * TEMPO_AMOSTRAGEM;
+    I = this->integrador;
+
+    taw = 75/sqrt(0.005/0.05) * sqrt(Kd/Ki);
 
     if(isWindUp()){
-        double Tt = sqrt(Kd/Ki);
-        this->integrador = this->integrador + Ki * erro + (1/(Tt))*(getVPS() - getTensaoAnt());
+        I += (Kp/taw)*TEMPO_AMOSTRAGEM*(vps - tensaoAnt);
     }
-
-    I = this->integrador;
+    this->integrador = I;
     return I;
 }
 
@@ -41,7 +45,7 @@ double Controller::controlerP(double Kp, double erro)
 
 double Controller::controlerPI(double Kp, double Ki, double erro)
 {
-    return ganhoKp(Kp, erro) + ganhoKi(Ki, 0, erro);
+    return ganhoKp(Kp, erro) + ganhoKi(Ki, 0, Kp, erro);
 }
 
 double Controller::controlerPD(double Kp, double Kd, double erro)
@@ -51,12 +55,12 @@ double Controller::controlerPD(double Kp, double Kd, double erro)
 
 double Controller::controlerPID(double Kp, double Ki, double Kd, double erro)
 {
-    return ganhoKp(Kp, erro) + ganhoKi(Ki, Kd, erro) + ganhoKd(Kd, erro);
+    return ganhoKp(Kp, erro) + ganhoKi(Ki, Kd, Kp, erro) + ganhoKd(Kd, erro);
 }
 
 double Controller::controlerPI_D(double Kp, double Ki, double Kd, double erro, double amplitude)
 {
-    return ganhoKp(Kp, erro) + ganhoKi(Ki, Kd, erro) + ganhoKd(Kd, amplitude);
+    return ganhoKp(Kp, erro) + ganhoKi(Ki, Kd, Kp, erro) + ganhoKd(Kd, amplitude);
 }
 
 double Controller::getP() const {

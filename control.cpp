@@ -208,9 +208,6 @@ void Control::calculaSinal()
             tensao = controller->controlerPI_D(Kp, Ki, Kd, erro, sinalLeitura);
             break;
         }
-        //utilizado no calculo do windup
-        //if(windUP)
-        controller->setTensaoAnt(tensao);
     }
 
     switch (tipoSinal)
@@ -238,7 +235,6 @@ void Control::calculaSinal()
         }
         break;
     }
-
    // qDebug() << sinalCalculado;
 
     timeAux += 0.1;
@@ -291,14 +287,15 @@ void Control::sendSignal() {
 
     sinalEscrita = sinalCalculado;
 
+    controller->setTensaoAnt(sinalCalculado);
+
     travel();
+
+    //utilizado no windup
+    controller->setVPS(sinalEscrita);
 
     if(simulacao) tanq->acionaBomba(sinalEscrita);
     else quanser->writeDA(canalEscrita,sinalEscrita);
-
-    //utilizado no windup
-    //if(windUP)
-    controller->setVPS(sinalEscrita);
 }
 
 void Control::receiveSigal() {

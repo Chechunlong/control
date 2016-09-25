@@ -1,4 +1,5 @@
 #include "math.h"
+#include "control.h"
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
@@ -16,7 +17,7 @@ class Controller
         Controller();
 
         double ganhoKp(double Kp, double erro);
-        double ganhoKi(double Ki, double Kd, double erro);
+        double ganhoKi(double Ki, double Kd, double Kp, double erro);
         double ganhoKd(double Kd, double erro);
 
         double getP() const;
@@ -42,6 +43,8 @@ class Controller
         double tensaoAnt;
         bool windup = false;
         double vps;
+        double iAnt;
+        double taw;
 
         double P;
         double I;
