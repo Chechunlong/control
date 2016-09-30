@@ -33,6 +33,9 @@
 #define SISTEMA_ORDEM_1 1
 #define SISTEMA_ORDEM_2 2
 
+#define C_O2_CONVENCIONAL 1
+#define C_O2_CASCATA 2
+
 //parametro para o filtro média movel
 #define M 5
 
@@ -93,6 +96,9 @@ public:
     double getTempoDerivativo() const;
     void setTempoDerivativo(double value);
 
+    void setTempoIntegrativoCas(double value);
+    void setTempoDerivativoCas(double value);
+
 
     void setAmplitude(double amplitude);
 
@@ -116,6 +122,10 @@ public:
     void calculaTPico();
 
     void zeraControlOrdem2();
+
+    double calculaTensaoPID(double tipoControler, double Kp, double Ki, double Kd, double erro, double sinalLeitura);
+
+    double modulaSinalCalculado(double tensao);
 
     void calculaSinal();
 
@@ -162,10 +172,26 @@ public:
 
     void setWindUP(bool value);
 
+    void setModeSegOrdem(int value);
+
+
+    void setTipoControlerCas(double value);
+
+    void setKpCas(double value);
+
+    void setKiCas(double value);
+
+    void setKdCas(double value);
+
+    void setModeControleCas(double value);
+
+
+
 private:
     Quanser *quanser;
     Signal *signal;
     Controller *controller;
+    Controller *contCascata;
     SistemaO2 *sistemaO2;
 
     Tanque *tanq;
@@ -209,19 +235,32 @@ private:
     double tempoIntegrativo;
     double tempoDerivativo;
 
+    double erroCas;
+    double tensaoCas;
+    double tipoControlerCas;
+    double modeControleCas;
+    double KpCas;
+    double KiCas;
+    double KdCas;
+    double sinalLeituraCas;
+
+    double tempoIntegrativoCas;
+    double tempoDerivativoCas;
+
     double P, I , D;
     // Sistema de Ordem 2
     int ordemSistema;
+    int modeSegOrdem; /* Se eh convencional ou em cascata */
 
     double tr,
            mp,
            tp,
            ts;
 
-    bool statusTr,
-         statusMp,
-         statusTp,
-         statusTs;
+    bool statusTr;
+    bool statusMp;
+    bool statusTp;
+    bool statusTs;
 
     int tipoTr,
         tipoTs,
