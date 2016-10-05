@@ -9,7 +9,7 @@ Control::Control(int port, QString ip)
     sistemaO2 = new SistemaO2();
     tanq = new Tanque();
 
-    timeAux     = 0;
+/*    timeAux     = 0;
     tipoSinal   = 0;
 
     tensao      = 0;
@@ -69,7 +69,7 @@ Control::Control(int port, QString ip)
     modeControle = CONTROLE_GANHO;
     modeControleCas = CONTROLE_GANHO;
     modeSegOrdem = C_O2_CONVENCIONAL;
-
+*/
 }
 /* Recebe um array de tamanho M,
    a saida é a média do ponto[0].*/
@@ -81,36 +81,23 @@ double Control::filtroMM(double erro[]){
     return tmp/M;
 }
 
-double Control::getAmplitude()
-{ return amplitude; }
+double Control::getAmplitude() { return amplitude; }
 
-int Control::getCanalEscrita()
-{ return canalEscrita; }
+int Control::getCanalEscrita() { return canalEscrita; }
 
-int Control::getCanalLeitura()
-{ return canalLeitura; }
+int Control::getCanalLeitura() { return canalLeitura; }
 
-double Control::getCanalValue(int value)
-{
-    //if(value >= NUMB_CAN_READ) return -1;
+double Control::getCanalValue(int value) { return canaisLeitura_value[value]; }
 
-    return canaisLeitura_value[value];
-}
+double Control::getErro() { return erro; }
 
-double Control::getErro()
-{ return erro; }
+int Control::getTipoMalha() { return tipoMalha; }
 
-int Control::getTipoMalha()
-{ return tipoMalha; }
+double Control::getSinalCalculado() { return sinalCalculado; }
 
-double Control::getSinalCalculado()
-{ return sinalCalculado; }
+double Control::getSinalEnviado() { return sinalEscrita; }
 
-double Control::getSinalEnviado()
-{ return sinalEscrita; }
-
-double Control::getSinalLeitura()
-{ return sinalLeitura; }
+double Control::getSinalLeitura() { return sinalLeitura; }
 
 void Control::setAmplitude(double amplitude)
 {
@@ -187,103 +174,57 @@ void Control::setTipoOrdemSistema(int ordemSistema)
     }
 }
 
-double Control::calculaTensaoPID(double tipoControler, double Kp, double Ki, double Kd, double erro, double sinalLeitura) {
+double Control::getTr() const { return tr; }
 
-    if(tipoControler == CONTROLER_P)
-        return controller->controlerP(Kp, erro);
-    else if(tipoControler == CONTROLER_PI)
-        return controller->controlerPI(Kp, Ki, erro);
-    else if(tipoControler == CONTROLER_PD)
-        return controller->controlerPD(Kp,Kd, erro);
-    else if(tipoControler == CONTROLER_PID)
-        return controller->controlerPID(Kp,Ki,Kd,erro);
-     else if(tipoControler == CONTROLER_PI_D)
-        return controller->controlerPI_D(Kp, Ki, Kd, erro, sinalLeitura);
-}
+double Control::getMp() const { return mp; }
 
-double Control::modulaSinalCalculado(double tensao) {
-    if(tipoSinal == DEGRAU)
-        return signal->degrau(tensao, offSet);
-    else if(tipoSinal == SENOIDAL)
-        return signal->seno(tensao,timeAux,periodo,offSet);
-    else if(tipoSinal == QUADRADA)
-        return signal->quadrada(tensao, timeAux, periodo, offSet);
-    else if(tipoSinal == DENTE_DE_SERRA)
-        return  signal->serra(tensao,timeAux, periodo, offSet);
-    else if(tipoSinal == ALEATORIO) {
-        double ampMax = amplitude;
-        double ampMin = offSet;
-        double durMax = periodo;
-        double durMin = auxForRand;
-        if(timeAux==0) {
-            periodo = signal->periodoAleatorio(durMax, durMin);
-            return signal->aleatorio(ampMax, ampMin);
-        }
-    }
-}
+double Control::getTp() const { return tp; }
 
-void Control::calculaSinal() {
-    if(timeAux > periodo) timeAux = 0;
+double Control::getTs() const { return ts; }
 
-    if(tipoMalha == M_FECHADA)
+bool Control::getStatusTr() const{ return statusTr; }
+
+bool Control::getStatusMp() const { return statusMp; }
+
+bool Control::getStatusTp() const { return statusTp; }
+
+bool Control::getStatusTs() const { return statusTs; }
+
+int Control::getOrdemSistema() const { return ordemSistema; }
+
+void Control::setTipoTr(int value) { tipoTr = value; }
+
+void Control::setTipoTs(int value) { tipoTs = value; }
+
+void Control::setTipoMp(int value) { tipoMp = value; }
+
+void Control::setCanalLeitura(int value) { canalLeitura = value; }
+
+void Control::setWindUP(bool value) { windUP = value; }
+
+void Control::setModeSegOrdem(int value) { modeSegOrdem = value; }
+
+void Control::setTipoControlerCas(double value) {
+    tipoControlerCas = value;
     {
-        if(modeControle == CONTROLE_CONST_TEMP)
-        {
-           Ki = Kp / tempoIntegrativo;
-           Kd = Kp * tempoDerivativo;
-        }
-        else
-        {
-            tempoDerivativo = Kd/ Kp;
-            tempoIntegrativo = Kp / Ki;
-        }
-
-        if(ordemSistema == SISTEMA_ORDEM_2 && modeSegOrdem == C_O2_CASCATA) {
-            if(modeControleCas == CONTROLE_CONST_TEMP)
-            {
-                KiCas = KpCas / tempoIntegrativoCas;
-                KdCas = KpCas * tempoDerivativoCas;
-            }
-            else
-            {
-                // TODO
-            }
-        }
-
-        //seta true caso o usuário selecione a opção.
-        controller->setWindUp(windUP);
-
-        tensao = calculaTensaoPID(tipoControler, Kp, Ki, Kd, erro, sinalLeitura);
-        /*
-            Se o sistema eh de 1a ordem -> sinalLeitura recebe valor de tanque1
-            Caso nao -> sinalLeitura recebe valor de tanque2
-        */
-
-        if(ordemSistema == SISTEMA_ORDEM_1) {
-            sinalCalculado = modulaSinalCalculado(tensao);
-        }
-        else if(ordemSistema == SISTEMA_ORDEM_2) {
-            if(modeSegOrdem == C_O2_CASCATA) {
-
-                erroCas = modulaSinalCalculado(tensao) - tanque1;
-                tensaoCas = calculaTensaoPID( tipoControlerCas, KpCas, KiCas, KdCas, erroCas, sinalLeituraCas);
-                sinalCalculado = modulaSinalCalculado(tensaoCas);
-            }
-            else if(modeSegOrdem == C_O2_CONVENCIONAL) {
-                sinalCalculado = modulaSinalCalculado(tensao);
-            }
-        }
+        qDebug() << "tipoControlerCas = " << tipoControlerCas;
     }
-    else if(tipoMalha == M_ABERTA)
-    {
-        sinalCalculado = modulaSinalCalculado(tensao);
-    }
-
-    timeAux += 0.1;
 }
 
+void Control::setKpCas(double value) { KpCas = value; }
+
+void Control::setKiCas(double value) { KiCas = value; }
+
+void Control::setKdCas(double value) { KdCas = value; }
+
+void Control::setModeControleCas(double value) { modeControleCas = value; }
+
+void Control::setTempoIntegrativoCas(double value) { tempoIntegrativoCas = value; }
+
+void Control::setTempoDerivativoCas(double value)  { tempoDerivativoCas = value; }
 
 bool Control::getConnectionStatus() { return quanser->getStatus(); }
+
 
 int Control::levelControl(int value) {
     if(value>MAX_LEVEL) value = MAX_LEVEL;
@@ -324,6 +265,117 @@ void Control::travel() {
     if(tanque1>=28 && sinalEscrita>0) sinalEscrita = 0;
 }
 
+void Control::tempoControle() {
+    statusTr = sistemaO2->getStatusTr();
+    statusTp = sistemaO2->getStatusTp();
+    statusMp = sistemaO2->getStatusMP();
+    statusTs = sistemaO2->getStatusTs();
+
+    if(!statusTp) sistemaO2->calculaTp(sinalLeitura, sinalLeitura_old, amplitude, tipoMp);
+    else tp = sistemaO2->getTp();
+
+    if(statusMp) mp = sistemaO2->getMp();
+
+    if(!statusMp) sistemaO2->calculaMp(sinalLeitura, tipoMp, amplitude);
+    else mp = sistemaO2->getMp();
+
+    if(!statusTr) sistemaO2->calculaTr(sinalLeitura, amplitude);
+    else tr = sistemaO2->getTr();
+
+    //if(!statusTs) sistemaO2->calculaTs(sinalLeitura,amplitude);
+    //else ts = sistemaO2->getTs();
+
+    sistemaO2->calculaTs(sinalLeitura,sinalLeitura_old,amplitude);
+     ts = sistemaO2->getTs();
+}
+
+double Control::calculaTensao(double tensao) {
+    if(tipoSinal == DEGRAU)
+        return signal->degrau(tensao, offSet);
+    else if(tipoSinal == SENOIDAL)
+        return signal->seno(tensao,timeAux,periodo,offSet);
+    else if(tipoSinal == QUADRADA)
+        return signal->quadrada(tensao, timeAux, periodo, offSet);
+    else if(tipoSinal == DENTE_DE_SERRA)
+        return  signal->serra(tensao,timeAux, periodo, offSet);
+    else if(tipoSinal == ALEATORIO) {
+        double ampMax = amplitude;
+        double ampMin = offSet;
+        double durMax = periodo;
+        double durMin = auxForRand;
+        if(timeAux==0) {
+            periodo = signal->periodoAleatorio(durMax, durMin);
+            return signal->aleatorio(ampMax, ampMin);
+        }
+    }
+}
+
+double Control::calculaTensaoPID(double tipoControler, double Kp, double Ki, double Kd, double erro, double sinalLeitura) {
+
+    if(tipoControler == CONTROLER_P)
+        return calculaTensao(controller->controlerP(Kp, erro));
+    else if(tipoControler == CONTROLER_PI)
+        return calculaTensao(controller->controlerPI(Kp, Ki, erro));
+    else if(tipoControler == CONTROLER_PD)
+        return calculaTensao(controller->controlerPD(Kp,Kd, erro));
+    else if(tipoControler == CONTROLER_PID)
+        return calculaTensao(controller->controlerPID(Kp,Ki,Kd,erro));
+     else if(tipoControler == CONTROLER_PI_D)
+        return calculaTensao(controller->controlerPI_D(Kp, Ki, Kd, erro, sinalLeitura));
+}
+
+void Control::calculaSinal() {
+    if(timeAux > periodo) timeAux = 0;
+
+    if(tipoMalha == M_FECHADA) {
+        if(modeControle == CONTROLE_CONST_TEMP) {
+           Ki = Kp / tempoIntegrativo;
+           Kd = Kp * tempoDerivativo;
+
+           if(ordemSistema == SISTEMA_ORDEM_2 && modeSegOrdem == C_O2_CASCATA) {
+                KiCas = KpCas / tempoIntegrativoCas;
+                KdCas = KpCas * tempoDerivativoCas;
+           }
+        }
+        else {
+            tempoDerivativo = Kd/ Kp;
+            tempoIntegrativo = Kp / Ki;
+
+            if(ordemSistema == SISTEMA_ORDEM_2 && modeSegOrdem == C_O2_CASCATA) {
+
+                // TODO ...
+
+            }
+        }
+
+        controller->setWindUp(windUP);
+
+        /*
+            Para Malha fechada e 2a ordem convencional
+        */
+        sinalCalculado = calculaTensaoPID(tipoControler, Kp, Ki, Kd, erro, sinalLeitura);
+
+        if(debCas)
+        qDebug() << "sinalCalculado = " << sinalCalculado;
+
+        if(debCas) {
+            qDebug() << "KpCas = " << KpCas << " KiCas = " << KiCas << " KdCas = " << KdCas;
+        }
+
+        if(ordemSistema == SISTEMA_ORDEM_2 && modeSegOrdem == C_O2_CASCATA) {
+            qDebug() << "controle cascata";
+            erroCas = tanque1 -sinalCalculado;
+            sinalCalculado = calculaTensaoPID( tipoControlerCas, KpCas, KiCas, KdCas, erroCas, sinalCalculado);
+        }
+    }
+    else if(tipoMalha == M_ABERTA) {
+        sinalCalculado = calculaTensao(tensao);
+    }
+
+    timeAux += 0.1;
+}
+
+
 void Control::sendSignal() {
     calculaSinal();
 
@@ -355,13 +407,11 @@ void Control::receiveSigal() {
             tanque2 = canaisLeitura_value[1];
         }
 
-
         if(canal==canalLeitura) {
             sinalLeitura_old = sinalLeitura;
-            if(getOrdemSistema() == SISTEMA_ORDEM_1)
-                sinalLeitura = tanque1;
-            else if(getOrdemSistema() == SISTEMA_ORDEM_2)
-                sinalLeitura = tanque2;
+
+            if(ordemSistema == SISTEMA_ORDEM_1) sinalLeitura = tanque1;
+            else if(ordemSistema == SISTEMA_ORDEM_2) sinalLeitura = tanque2;
 
             if(tipoMalha == M_FECHADA) {
                 erro = amplitude - sinalLeitura;
@@ -369,35 +419,14 @@ void Control::receiveSigal() {
                 if(auxContErro >= 5){
                     auxContErro = 0;
                 }
+
                 arrayErro[auxContErro] = erro;
                 auxContErro++;
 
                 erro = this->filtroMM(arrayErro);
 
-                if(getOrdemSistema() ==  SISTEMA_ORDEM_2) {
-                    statusTr = sistemaO2->getStatusTr();
-                    statusTp = sistemaO2->getStatusTp();
-                    statusMp = sistemaO2->getStatusMP();
-                    statusTs = sistemaO2->getStatusTs();
-
-                    if(!statusTp) sistemaO2->calculaTp(sinalLeitura, sinalLeitura_old, amplitude, tipoMp);
-                    else tp = sistemaO2->getTp();
-
-                    if(statusMp) mp = sistemaO2->getMp();
-
-                    if(!statusMp) sistemaO2->calculaMp(sinalLeitura, tipoMp, amplitude);
-                    else mp = sistemaO2->getMp();
-
-                    if(!statusTr) sistemaO2->calculaTr(sinalLeitura, amplitude);
-                    else tr = sistemaO2->getTr();
-
-                    //if(!statusTs) sistemaO2->calculaTs(sinalLeitura,amplitude);
-                    //else ts = sistemaO2->getTs();
-
-                    sistemaO2->calculaTs(sinalLeitura,sinalLeitura_old,amplitude);
-                                        ts = sistemaO2->getTs();
-
-
+                if(ordemSistema ==  SISTEMA_ORDEM_2)  {
+                    tempoControle();
                 }
 
             }
@@ -410,72 +439,6 @@ void Control::receiveSigal() {
     }
 }
 
-double Control::getTr() const { return tr; }
 
-double Control::getMp() const { return mp; }
-
-double Control::getTp() const { return tp; }
-
-double Control::getTs() const { return ts; }
-
-bool Control::getStatusTr() const{ return statusTr; }
-
-bool Control::getStatusMp() const { return statusMp; }
-
-bool Control::getStatusTp() const { return statusTp; }
-
-bool Control::getStatusTs() const { return statusTs; }
-
-int Control::getOrdemSistema() const { return ordemSistema; }
-
-void Control::setTipoTr(int value) { tipoTr = value; }
-
-void Control::setTipoTs(int value) { tipoTs = value; }
-
-void Control::setTipoMp(int value) { tipoMp = value; }
-
-void Control::setCanalLeitura(int value) { canalLeitura = value; }
-
-void Control::setWindUP(bool value) { windUP = value; }
-
-void Control::setModeSegOrdem(int value)
-{
-    modeSegOrdem = value;
-}
-
-void Control::setTipoControlerCas(double value)
-{
-    tipoControlerCas = value;
-}
-
-void Control::setKpCas(double value)
-{
-    KpCas = value;
-}
-
-void Control::setKiCas(double value)
-{
-    KiCas = value;
-}
-
-void Control::setKdCas(double value)
-{
-    KdCas = value;
-}
-
-void Control::setModeControleCas(double value)
-{
-    modeControleCas = value;
-}
-
-void Control::setTempoIntegrativoCas(double value)
-{
-    tempoIntegrativoCas = value;
-}
-
-void Control::setTempoDerivativoCas(double value)
-{
-    tempoDerivativoCas = value;
-}
 
 

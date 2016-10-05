@@ -4,8 +4,9 @@
 #define TAB_SINAL 0
 #define TAB_CONTROLE 1
 
+#define TAB_MESTRE 0
+#define TAB_ESCRAVO 1
 
-//ADCIONADOS POR JOAO B
 #define ABS 0
 #define PICOm 1
 
@@ -102,17 +103,24 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->dSpinOffSet,    SIGNAL(valueChanged(double)), this, SLOT(UI_limitRandInput()));
     connect(ui->dSpinAux,       SIGNAL(valueChanged(double)), this, SLOT(UI_limitRandInput()));
 
-    ///Ordem do Sistema e comportamento do sistema
-    connect(ui->radioFechada, SIGNAL(toggled(bool)), ui->group_Ordem, SLOT(setEnabled(bool)));
-    connect(ui->radioAberta, SIGNAL(toggled(bool)), ui->group_Ordem, SLOT(setDisabled(bool)));
-    connect(ui->rbSistemaO1, SIGNAL(toggled(bool)), ui->combo_Mp, SLOT(setDisabled(bool)));
-    connect(ui->rbSistemaO1, SIGNAL(toggled(bool)), ui->combo_Tr, SLOT(setDisabled(bool)));
-    connect(ui->rbSistemaO1, SIGNAL(toggled(bool)), ui->combo_Ts, SLOT(setDisabled(bool)));
+    //Ordem do Sistema e comportamento do sistema
+    connect(ui->radioFechada, SIGNAL(toggled(bool)), ui->frameOrdem, SLOT(setEnabled(bool)));
+    //connect(ui->radioAberta, SIGNAL(toggled(bool)), ui->frameOrdem, SLOT(setDisabled(bool)));
+    //connect(ui->rbSistemaO1, SIGNAL(toggled(bool)), ui->combo_Mp, SLOT(setDisabled(bool)));
+    //connect(ui->rbSistemaO1, SIGNAL(toggled(bool)), ui->combo_Tr, SLOT(setDisabled(bool)));
+    //connect(ui->rbSistemaO1, SIGNAL(toggled(bool)), ui->combo_Ts, SLOT(setDisabled(bool)));
     connect(ui->rbSistemaO2, SIGNAL(toggled(bool)), ui->combo_Mp, SLOT(setEnabled(bool)));
     connect(ui->rbSistemaO2, SIGNAL(toggled(bool)), ui->combo_Tr, SLOT(setEnabled(bool)));
     connect(ui->rbSistemaO2, SIGNAL(toggled(bool)), ui->combo_Ts, SLOT(setEnabled(bool)));
     connect(ui->rbSistemaO2, SIGNAL(toggled(bool)), ui->canal_l1, SLOT(setChecked(bool)));
     connect(ui->rbSistemaO1, SIGNAL(toggled(bool)), ui->canal_l0, SLOT(setChecked(bool)));
+
+    //Sistema de Segunda Ordem e Controle Simples e Cascata
+    connect(ui->rbSistemaO2, SIGNAL(toggled(bool)), ui->tabControlador->widget(TAB_ESCRAVO), SLOT(setEnabled(bool)));
+    connect(ui->rbSistemaO2,  SIGNAL(toggled(bool)), ui->frameTipo2Ordem, SLOT(setEnabled(bool)));
+    connect(ui->radioAberta,  SIGNAL(clicked(bool)), ui->frameTipo2Ordem, SLOT(setDisabled(bool)));
+    connect(ui->radioFechada, SIGNAL(pressed()),    this, SLOT(UI_tipo2Ordem_setEnable()));
+
 
     UI_configPanel(); /* Método principal para setar o INIT da UI */
 }
@@ -142,15 +150,16 @@ void MainWindow::UI_configGraphWrite()
     ui->graficoEscrita->graph(1)->setAntialiasedFill(false);
     ui->graficoEscrita->graph(1)->setName("Sinal Calculado");
 
-    ui->graficoEscrita->xAxis->setTickLabelType(QCPAxis::ltDateTime);
-    ui->graficoEscrita->xAxis->setDateTimeFormat("hh:mm:ss");
-    ui->graficoEscrita->xAxis->setAutoTickStep(true);
-    ui->graficoEscrita->xAxis->setTickStep(1);
-    ui->graficoEscrita->xAxis->setLabel("Tempo (hh:mm:ss)");
+    ui->graficoEscrita->xAxis->setLabel("Tempo (s)");
 
     ui->graficoEscrita->yAxis->setRange(-4.5,4.5);
     ui->graficoEscrita->yAxis->setNumberPrecision(2);
     ui->graficoEscrita->yAxis->setLabel("Tensão (V) ");
+
+    //Usuário arraste eixo varia com o mouse, zoom com a roda do mouse e selecione gráficos clicando:
+    ui->graficoEscrita->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables );
+    ui->graficoEscrita->axisRect(0)->setRangeDrag(Qt::Vertical);
+    ui->graficoEscrita->axisRect(0)->setRangeZoom(Qt::Vertical);
 }
 
 void MainWindow::UI_configGraphRead()
@@ -202,15 +211,15 @@ void MainWindow::UI_configGraphRead()
     ui->graficoLeitura->legend->setVisible(true);
     ui->graficoLeitura->axisRect()->insetLayout()->setInsetAlignment(0,Qt::AlignLeft|Qt::AlignBottom);
 
-    ui->graficoLeitura->xAxis->setTickLabelType(QCPAxis::ltDateTime);
-    ui->graficoLeitura->xAxis->setDateTimeFormat("hh:mm:ss");
-    ui->graficoLeitura->xAxis->setAutoTickStep(true);
-    ui->graficoLeitura->xAxis->setTickStep(1);
-    ui->graficoLeitura->xAxis->setLabel("Tempo (hh:mm:ss)");
+    ui->graficoLeitura->xAxis->setLabel("Tempo (s)");
 
     ui->graficoLeitura->yAxis->setRange(0,30);
     ui->graficoLeitura->yAxis->setNumberPrecision(2);
     ui->graficoLeitura->yAxis->setLabel("Nivel do tanque (Cm) ");
+
+    //Usuário dê zoom com a roda do mouse na vertical
+    ui->graficoLeitura->setInteractions(QCP::iRangeZoom);
+    ui->graficoLeitura->axisRect(0)->setRangeZoom(Qt::Vertical);
 }
 
 void MainWindow::UI_configPlotGraficosE()
@@ -570,8 +579,12 @@ void MainWindow::UI_limitRandInput()
     }
 }
 
-// Control
+void MainWindow::UI_tipo2Ordem_setEnable()
+{
+    ui->frameTipo2Ordem->setEnabled(ui->rbSistemaO2->isChecked());
+}
 
+// Control
 void MainWindow::connectServer()
 {
     int port =  conectar->getPort();
@@ -626,27 +639,41 @@ void MainWindow::zerarSinal()
 
 void MainWindow::controladorPID()
 {
+    if(ui->radioSimples->isChecked()) {
+        control->setModeSegOrdem(C_O2_CONVENCIONAL);
+    }
+    else if(ui->radioCascata->isChecked()) {
+        control->setModeSegOrdem(C_O2_CASCATA);
+    }
+    else {
+        control->setModeSegOrdem(C_O2_CONVENCIONAL);
+    }
+
     bool controlerGanho = ui->rb_constGanho->isChecked();
     bool controlerTempo = ui->rb_constTempo->isChecked();
 
     double Kp    = ui->sp_kp->value();
     double Ki_ti = ui->sp_ki_ti->value();
     double Kd_td = ui->sp_kd_td->value();
-
     int tipoControler = ui->tipoControlador->currentIndex();
 
-    control->setTipoControler(tipoControler);
-
-    if(ui->rbSistemaO2)  {
+    if(ui->rbSistemaO2->isChecked())  {
         control->setTipoOrdemSistema(SISTEMA_ORDEM_2);
     } else {
         control->setTipoOrdemSistema(SISTEMA_ORDEM_1);
     }
 
-    if(controlerGanho) control->setModeControle(CONTROLE_GANHO);
-    if(controlerTempo) control->setModeControle(CONTROLE_CONST_TEMP);
+    if(controlerGanho) {
+        control->setModeControle(CONTROLE_GANHO);
+        control->setModeControleCas(CONTROLE_GANHO);
+    }
+    if(controlerTempo) {
+        control->setModeControle(CONTROLE_CONST_TEMP);
+        control->setModeControleCas(CONTROLE_CONST_TEMP);
+    }
 
     control->setKp(Kp);
+    control->setTipoControler(tipoControler);
     if(controlerGanho)
     {
         control->setKi(Ki_ti);
@@ -658,7 +685,26 @@ void MainWindow::controladorPID()
         control->setTempoIntegrativo(Ki_ti);
     }
 
-    control->setTipoControler(tipoControler);
+
+    /* Controlador em cascata */
+    if(ui->rbSistemaO2->isChecked() && ui->radioCascata->isChecked()) {
+        double kd_tdCas = ui->sp_kd_td_2->value();
+        double ki_tiCas = ui->sp_ki_ti_2->value();
+        double kpCas = ui->sp_kp_2->value();
+        int tipoControlerCas = 0;//ui->tipoControlador_2->currentIndex();
+
+        if(controlerGanho) {
+            control->setKdCas(kd_tdCas);
+            control->setKiCas(ki_tiCas);
+        }
+        else {
+            control->setTempoDerivativoCas(kd_tdCas);
+            control->setTempoIntegrativoCas(ki_tiCas);
+        }
+
+        control->setKpCas(kpCas);
+        control->setTipoControlerCas(tipoControlerCas);
+    }
 }
 
 void MainWindow::data()
@@ -719,8 +765,6 @@ void MainWindow::data()
 
 void MainWindow::sendData()
 {
-    double key = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
-
     control->sendSignal();
 
     double sinalEscrita   = control->getSinalEnviado();
@@ -729,7 +773,7 @@ void MainWindow::sendData()
 
     QString str_canalEscrita;
     if(canalEscrita < 0) str_canalEscrita = "Nenhum canal selecionado";
-    else str_canalEscrita = "Escrevendo em canal" + QString::number(canalEscrita);
+    else str_canalEscrita = "Escrevendo em canal " + QString::number(canalEscrita);
 
     QString str_sinalEnviado   = "Sinal enviado = " + QString::number(sinalEscrita) + " V";
     QString str_sinalCalculado = "Sinal calculado = " + QString::number(sinalCalculado) + " V";
@@ -738,17 +782,18 @@ void MainWindow::sendData()
     ui->lb_tensaoCalculada->setText(str_sinalCalculado);
     ui->lb_canalEscrita->setText(str_canalEscrita);
 
-    ui->graficoEscrita->graph(0)->addData(key/5, sinalEscrita);
-    ui->graficoEscrita->graph(1)->addData(key/5, sinalCalculado);
+    ui->graficoEscrita->graph(0)->addData(tempoEscrita, sinalEscrita);
+    ui->graficoEscrita->graph(1)->addData(tempoEscrita, sinalCalculado);
+    ui->graficoEscrita->graph(0)->removeData(tempoEscrita-120);
+    ui->graficoEscrita->graph(1)->removeData(tempoEscrita-120);
 
-    ui->graficoEscrita->xAxis->setRange((key + 0.25)/5, 8, Qt::AlignRight);
+    ui->graficoEscrita->xAxis->setRange(tempoEscrita, 60, Qt::AlignRight);
+    tempoEscrita += 0.1;
     ui->graficoEscrita->replot();
 }
 
 void MainWindow::receiveData()
 {
-    double key = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
-
     control->receiveSigal();
 
     canalLeitura = control->getCanalLeitura();
@@ -769,8 +814,8 @@ void MainWindow::receiveData()
 
             ui->pb_tanque1->setValue(tanque1);
             ui->pb_tanque2->setValue(tanque2);
-            ui->graficoLeitura->graph(0+2)->addData(key/5,tanque1);
-            ui->graficoLeitura->graph(1+2)->addData(key/5,tanque2);
+            ui->graficoLeitura->graph(0+2)->addData(tempoLeitura,tanque1);
+            ui->graficoLeitura->graph(1+2)->addData(tempoLeitura,tanque2);
 
            // qDebug() << canalLeitura;
             if(i == canalLeitura) {
@@ -784,13 +829,17 @@ void MainWindow::receiveData()
 
                     ui->lb_erro->setText("Erro = " + QString::number(erro) + " cm");
 
-                    ui->graficoLeitura->graph(0)->addData(key/5,erro);
-                    ui->graficoLeitura->graph(1)->addData(key/5,setPoint);
+                    ui->graficoLeitura->graph(0)->addData(tempoLeitura,erro);
+                    ui->graficoLeitura->graph(1)->addData(tempoLeitura,setPoint);
+                    ui->graficoLeitura->graph(0)->removeData(tempoLeitura-120);
+                    ui->graficoLeitura->graph(1)->removeData(tempoLeitura-120);
 
-
-                    ui->graficoLeitura->graph(10)->addData(key/5,pp);
-                    ui->graficoLeitura->graph(11)->addData(key/5,ii);
-                    ui->graficoLeitura->graph(12)->addData(key/5,dd);
+                    ui->graficoLeitura->graph(10)->addData(tempoLeitura,pp);
+                    ui->graficoLeitura->graph(11)->addData(tempoLeitura,ii);
+                    ui->graficoLeitura->graph(12)->addData(tempoLeitura,dd);
+                    ui->graficoLeitura->graph(10)->removeData(tempoLeitura-120);
+                    ui->graficoLeitura->graph(11)->removeData(tempoLeitura-120);
+                    ui->graficoLeitura->graph(12)->removeData(tempoLeitura-120);
 
                     ui->lb_pid->setText("P = " + QString::number(pp) + " I = " + QString::number(ii) + " D = " + QString::number(dd));
 
@@ -810,21 +859,17 @@ void MainWindow::receiveData()
                             pmp = mp/MAX_LEVEL;
                             pmp *= 100;
 
-
-                       // qDebug() << "recebi esse mp = " << mp;
-
                         if(statusTr) ui->lb_tr->setText("Tr = " + QString::number(tr) + " ms");
                         else ui->lb_tr->clear();
                         if(statusTp) ui->lb_tp->setText("Tp = " + QString::number(tp) + " ms");
                         else ui->lb_tp->clear();
-                        if(statusTs) ui->lb_ts->setText("Ts = " + QString::number(ts) + " ms");
+                        if(statusTs) ui->lb_ts->setText("Ts = " + QString::number(ts) + " s");
                         else ui->lb_ts->clear();
                         if(statusMp) ui->lb_mp->setText("Mp = " + QString::number(mp) + " cm (" + QString::number(pmp) +"%)");
                         else ui->lb_mp->clear();
 
 
                     } else {
-
                         ui->lb_tr->clear();
                         ui->lb_tp->clear();
                         ui->lb_mp->clear();
@@ -835,12 +880,10 @@ void MainWindow::receiveData()
                 ui->lb_sinalLidoT2->setText("Nível do tanque 2 = " + QString::number(tanque2) + " cm");
             }
       //  }
-
-
     }
 
-    ui->graficoLeitura->xAxis->setRange((key+0.25)/5, 8, Qt::AlignRight);
+    ui->graficoLeitura->xAxis->setRange(tempoLeitura, 60, Qt::AlignRight);
+    tempoLeitura += 0.1;
+    ui->graficoLeitura->yAxis->setRangeLower(0.0);
     ui->graficoLeitura->replot();
-
-
 }
