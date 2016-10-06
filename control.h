@@ -123,7 +123,7 @@ public:
 
     void zeraControlOrdem2();
 
-    double calculaTensaoPID(double tipoControler, double Kp, double Ki, double Kd, double erro, double sinalLeitura);
+    double calculaTensaoPID(Controller *controller, double tipoControler, double Kp, double Ki, double Kd, double erro, double sinalLeitura);
 
     void tempoControle();
 

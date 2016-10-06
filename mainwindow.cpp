@@ -691,7 +691,7 @@ void MainWindow::controladorPID()
         double kd_tdCas = ui->sp_kd_td_2->value();
         double ki_tiCas = ui->sp_ki_ti_2->value();
         double kpCas = ui->sp_kp_2->value();
-        int tipoControlerCas = 0;//ui->tipoControlador_2->currentIndex();
+        int tipoControlerCas = 3;//ui->tipoControlador_2->currentIndex();
 
         if(controlerGanho) {
             control->setKdCas(kd_tdCas);

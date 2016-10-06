@@ -310,7 +310,7 @@ double Control::calculaTensao(double tensao) {
     }
 }
 
-double Control::calculaTensaoPID(double tipoControler, double Kp, double Ki, double Kd, double erro, double sinalLeitura) {
+double Control::calculaTensaoPID(Controller *controller, double tipoControler, double Kp, double Ki, double Kd, double erro, double sinalLeitura) {
 
     if(tipoControler == CONTROLER_P)
         return calculaTensao(controller->controlerP(Kp, erro));
@@ -353,7 +353,8 @@ void Control::calculaSinal() {
         /*
             Para Malha fechada e 2a ordem convencional
         */
-        sinalCalculado = calculaTensaoPID(tipoControler, Kp, Ki, Kd, erro, sinalLeitura);
+
+        sinalCalculado = calculaTensaoPID(controller, tipoControler, Kp, Ki, Kd, erro, sinalLeitura);
 
         if(debCas)
         qDebug() << "sinalCalculado = " << sinalCalculado;
@@ -364,8 +365,8 @@ void Control::calculaSinal() {
 
         if(ordemSistema == SISTEMA_ORDEM_2 && modeSegOrdem == C_O2_CASCATA) {
             qDebug() << "controle cascata";
-            erroCas = tanque1 -sinalCalculado;
-            sinalCalculado = calculaTensaoPID( tipoControlerCas, KpCas, KiCas, KdCas, erroCas, sinalCalculado);
+            erroCas = sinalCalculado - tanque1;
+            sinalCalculado = calculaTensaoPID(contCascata, tipoControlerCas, KpCas, KiCas, KdCas, erroCas, sinalCalculado);
         }
     }
     else if(tipoMalha == M_ABERTA) {
@@ -405,6 +406,10 @@ void Control::receiveSigal() {
             canaisLeitura_value[canal] = readCanal(canal);
             tanque1 = canaisLeitura_value[0];
             tanque2 = canaisLeitura_value[1];
+        }
+
+        if(debCas) {
+            qDebug() << "tanque1 = " << tanque1 << " tanque2 = " << tanque2;
         }
 
         if(canal==canalLeitura) {

@@ -23,6 +23,7 @@
 using std::string;
 using std::stringstream;
 
+
 class Quanser {
 private:
    char* server;
