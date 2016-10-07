@@ -73,12 +73,18 @@ Control::Control(int port, QString ip)
 }
 /* Recebe um array de tamanho M,
    a saida é a média do ponto[0].*/
+
 double Control::filtroMM(double erro[]){
     double tmp = 0;
     for(int i=0;i < P_MM;i++){
         tmp += erro[i];
     }
-    return tmp/P_MM;
+    return trunca(tmp/P_MM);
+}
+
+double Control::trunca(double numero) {
+
+    return (int)numero + ( ( (int)((numero - (int)numero) * 100) ) / 100. );
 }
 
 double Control::getAmplitude() { return amplitude; }
@@ -369,12 +375,15 @@ void Control::calculaSinal() {
             qDebug() << "controle cascata -: controlador " << tipoControlerCas;
 
             erroCas = sinalCalculado - tanque1;
+            erroCas = trunca(erroCas);
             sinalCalculado = calculaTensaoPID(contCascata, tipoControlerCas, KpCas, KiCas, KdCas, erroCas, sinalCalculado);
         }
     }
     else if(tipoMalha == M_ABERTA) {
         sinalCalculado = calculaTensao(tensao);
     }
+
+    sinalCalculado = trunca(sinalCalculado);
 
     timeAux += 0.1;
 }
@@ -403,10 +412,14 @@ void Control::receiveSigal() {
         if(simulacao) {
             tanque1 = tanq->getNivelTq1();
             tanque2 = tanq->getNivelTq2();
+
+            tanque1 = trunca(tanque1);
+            tanque2 = trunca(tanque2);
+
             canaisLeitura_value[0] = tanque1;
             canaisLeitura_value[1] = tanque2;
         } else {
-            canaisLeitura_value[canal] = readCanal(canal);
+            canaisLeitura_value[canal] = trunca(readCanal(canal));
             tanque1 = canaisLeitura_value[0];
             tanque2 = canaisLeitura_value[1];
         }
@@ -422,7 +435,10 @@ void Control::receiveSigal() {
             else if(ordemSistema == SISTEMA_ORDEM_2) sinalLeitura = tanque2;
 
             if(tipoMalha == M_FECHADA) {
-                erro = amplitude - sinalLeitura;
+                erro = trunca(amplitude - sinalLeitura);
+
+                sinalLeitura = trunca(sinalLeitura);
+
 
                 if(auxContErro >= 5){
                     auxContErro = 0;

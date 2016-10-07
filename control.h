@@ -37,7 +37,7 @@
 #define C_O2_CASCATA 2
 
 //parametro para o filtro média movel
-#define P_MM 20
+#define P_MM 5
 
 class Control
 {
@@ -63,6 +63,8 @@ public:
     double  getSinalLeitura();
 
     double filtroMM(double erro[]);
+
+    double trunca(double numero);
 
 
     // Controle
