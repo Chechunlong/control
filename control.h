@@ -33,8 +33,11 @@
 #define SISTEMA_ORDEM_1 1
 #define SISTEMA_ORDEM_2 2
 
+#define C_O2_CONVENCIONAL 1
+#define C_O2_CASCATA 2
+
 //parametro para o filtro média movel
-#define M 5
+#define P_MM 20
 
 class Control
 {
@@ -93,6 +96,9 @@ public:
     double getTempoDerivativo() const;
     void setTempoDerivativo(double value);
 
+    void setTempoIntegrativoCas(double value);
+    void setTempoDerivativoCas(double value);
+
 
     void setAmplitude(double amplitude);
 
@@ -116,6 +122,12 @@ public:
     void calculaTPico();
 
     void zeraControlOrdem2();
+
+    double calculaTensaoPID(Controller *controller, double tipoControler, double Kp, double Ki, double Kd, double erro, double sinalLeitura);
+
+    void tempoControle();
+
+    double calculaTensao(double tensao);
 
     void calculaSinal();
 
@@ -162,78 +174,113 @@ public:
 
     void setWindUP(bool value);
 
+    void setModeSegOrdem(int value);
+
+
+    void setTipoControlerCas(double value);
+
+    void setKpCas(double value);
+
+    void setKiCas(double value);
+
+    void setKdCas(double value);
+
+    void setModeControleCas(double value);
+
+
+
 private:
     Quanser *quanser;
     Signal *signal;
     Controller *controller;
+    Controller *contCascata;
     SistemaO2 *sistemaO2;
-
     Tanque *tanq;
 
-    int tipoMalha = 1;  /* 0 -> fechada, 1 -> aberto*/
+    int tipoMalha = M_FECHADA;  /* 0 -> fechada, 1 -> aberto*/
 
-    double timeAux;
-    int tipoSinal;      /* 0 = Degrau | 1 = Quadrada | 2 = Senoidal | 3 = Dente de Serra | 4 = Aleatório */
+    double timeAux = 0.0;
+    int tipoSinal = DEGRAU;      /* 0 = Degrau | 1 = Quadrada | 2 = Senoidal | 3 = Dente de Serra | 4 = Aleatório */
 
-    double sinalEscrita;
-    double sinalLeitura;
-    double sinalLeitura_old;
-    double sinalCalculado;
+    double sinalEscrita = 0;
+    double sinalLeitura = 0;
+    double sinalLeitura_old = 0;
+    double sinalCalculado = 0;
 
     // Update data function: _data()
-    double tensao;
-    double offSet;
-    double periodo;
-    double amplitude;
-    double auxForRand;
+    double tensao = 0;
+    double offSet = 0;
+    double periodo = 0;
+    double amplitude = 0;
+    double auxForRand = 0;
 
     // Malha fechada function: _receiveData()
-    double erro, erroAnt;
-    double arrayErro[5];
-    int auxContErro;
+    double erro = 0;
+    double erroAnt = 0;
+    double arrayErro[5] = {0};
+    int auxContErro = 0;
 
-    int canalEscrita;
-    int canalLeitura;
-    int canalLeituraO2;
+    int canalEscrita = 0;
+    int canalLeitura = 0;
+    int canalLeituraO2 = 0;
 
     double canaisLeitura_value[NUMB_CAN_READ] = {0};
 
     // Controlador
-    int tipoControler;
-    int modeControle;
-    double Kp;
-    double Ki;
-    double Kd;
-    double Ti;
-    double Td;
-    double tempoIntegrativo;
-    double tempoDerivativo;
+    int tipoControler = CONTROLER_P;
+    int modeControle = CONTROLE_GANHO;
+    double Kp = 0;
+    double Ki = 0;
+    double Kd = 0;
+    double KpCas = 0;
+    double KiCas = 0;
+    double KdCas = 0;
+    double Ti = 0;
+    double Td = 0;
+    double tempoIntegrativo = 0;
+    double tempoDerivativo = 0;
 
-    double P, I , D;
+    double erroCas = 0;
+    double tensaoCas = 0;
+    double tipoControlerCas = 0;
+    double modeControleCas = 0;
+    double sinalLeituraCas = 0;
+
+    double tempoIntegrativoCas = 0;
+    double tempoDerivativoCas = 0;
+
+    double P = 0;
+    double I = 0;
+    double D = 0;
+
     // Sistema de Ordem 2
-    int ordemSistema;
+    int ordemSistema = SISTEMA_ORDEM_1;
+    int modeSegOrdem = C_O2_CONVENCIONAL; /* Se eh convencional ou em cascata */
 
-    double tr,
-           mp,
-           tp,
-           ts;
+    double tr = 0;
+    double mp = 0;
+    double tp = 0;
+    double ts = 0;
 
-    bool statusTr,
-         statusMp,
-         statusTp,
-         statusTs;
+    bool statusTr = false;
+    bool statusMp = false;
+    bool statusTp = false;
+    bool statusTs = false;
 
-    int tipoTr,
-        tipoTs,
-        tipoMp;
+    int tipoTr;
+    int tipoTs;
+    int tipoMp;
 
-    bool windUP;
+    bool windUP = false;
 
     bool setPointUP;
 
-    double tanque1;
-    double tanque2;
-    bool simulacao;
+    double tanque1 = 0;
+    double tanque2 = 0;
+
+    bool simulacao = false;
+
+    bool debCas = true;
 };
 
 #endif // CONTROL_H

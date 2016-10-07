@@ -79,7 +79,7 @@ private slots:
     void UI_configConsControle();
     void UI_configControlador();
     void UI_limitRandInput();
-
+    void UI_tipo2Ordem_setEnable();
 
     void connectServer();
     void zerarSinal();
@@ -118,6 +118,9 @@ private:
     int ordemSistema = 0;
 
     bool start = false;
+
+    double tempoLeitura = 0.0;
+    double tempoEscrita = 0.0;
 
 };
 

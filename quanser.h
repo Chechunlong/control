@@ -23,6 +23,7 @@
 using std::string;
 using std::stringstream;
 
+
 class Quanser {
 private:
    char* server;
@@ -114,7 +115,7 @@ public:
 
         this->tcpPort = _tcpPort;
         this->server = _server;
-        //this->connectServer();
+        this->connectServer();
 
        //if(_tcpPort == 20081) status = true;
        //else status = false;
