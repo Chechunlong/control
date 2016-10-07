@@ -75,10 +75,10 @@ Control::Control(int port, QString ip)
    a saida é a média do ponto[0].*/
 double Control::filtroMM(double erro[]){
     double tmp = 0;
-    for(int i=0;i < M;i++){
+    for(int i=0;i < P_MM;i++){
         tmp += erro[i];
     }
-    return tmp/M;
+    return tmp/P_MM;
 }
 
 double Control::getAmplitude() { return amplitude; }
@@ -242,9 +242,11 @@ double Control::voltageControl(double value) {
 
 void Control::zerarSinal() {
     delete controller;
+    delete contCascata;
     delete signal;
 
     controller = new Controller();
+    contCascata = new Controller();
     signal = new Signal();
 
     tipoMalha = M_ABERTA;
@@ -364,7 +366,8 @@ void Control::calculaSinal() {
         }
 
         if(ordemSistema == SISTEMA_ORDEM_2 && modeSegOrdem == C_O2_CASCATA) {
-            qDebug() << "controle cascata";
+            qDebug() << "controle cascata -: controlador " << tipoControlerCas;
+
             erroCas = sinalCalculado - tanque1;
             sinalCalculado = calculaTensaoPID(contCascata, tipoControlerCas, KpCas, KiCas, KdCas, erroCas, sinalCalculado);
         }

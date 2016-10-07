@@ -14,6 +14,12 @@
 #define Tr95 1
 #define Tr90 2
 
+#define GRAPH_SINAL_ENVIADO 0
+#define GRAPH_SINAL_CALCULADO 1
+
+#define GRAPH_ERRO 0
+#define GRAPH_SET_POINT 1
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -44,10 +50,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->rb_constGanho,   SIGNAL(toggled(bool)),this,SLOT(UI_configControlador()));
     connect(ui->rb_constTempo,   SIGNAL(toggled(bool)),this,SLOT(UI_configControlador()));
     connect(ui->tipoControlador, SIGNAL(currentIndexChanged(int)),this,SLOT(UI_configControlador()));
-    connect(ui->radioFechada, SIGNAL(toggled(bool)), ui->tab_sinal_controle->widget(TAB_CONTROLE), SLOT(setEnabled(bool)));
-    connect(ui->radioAberta,  SIGNAL(toggled(bool)), ui->tab_sinal_controle->widget(TAB_CONTROLE), SLOT(setDisabled(bool)));
-    connect(ui->rb_constTempo, SIGNAL(toggled(bool)),this,SLOT(UI_configConsControle()));
-    connect(ui->rb_constGanho, SIGNAL(toggled(bool)),this,SLOT(UI_configConsControle()));
+    connect(ui->radioFechada,    SIGNAL(toggled(bool)), ui->tab_sinal_controle->widget(TAB_CONTROLE), SLOT(setEnabled(bool)));
+    connect(ui->radioAberta,     SIGNAL(toggled(bool)), ui->tab_sinal_controle->widget(TAB_CONTROLE), SLOT(setDisabled(bool)));
+    connect(ui->rb_constTempo,   SIGNAL(toggled(bool)),this,SLOT(UI_configConsControle()));
+    connect(ui->rb_constGanho,   SIGNAL(toggled(bool)),this,SLOT(UI_configConsControle()));
 
     /// Habilitar Canais e Mostrar Canais no Gráfico
     connect(ui->canal_l0, SIGNAL(toggled(bool)), ui->cb_plot_canal0, SLOT(setEnabled(bool)));
@@ -105,10 +111,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //Ordem do Sistema e comportamento do sistema
     connect(ui->radioFechada, SIGNAL(toggled(bool)), ui->frameOrdem, SLOT(setEnabled(bool)));
-    //connect(ui->radioAberta, SIGNAL(toggled(bool)), ui->frameOrdem, SLOT(setDisabled(bool)));
-    //connect(ui->rbSistemaO1, SIGNAL(toggled(bool)), ui->combo_Mp, SLOT(setDisabled(bool)));
-    //connect(ui->rbSistemaO1, SIGNAL(toggled(bool)), ui->combo_Tr, SLOT(setDisabled(bool)));
-    //connect(ui->rbSistemaO1, SIGNAL(toggled(bool)), ui->combo_Ts, SLOT(setDisabled(bool)));
     connect(ui->rbSistemaO2, SIGNAL(toggled(bool)), ui->combo_Mp, SLOT(setEnabled(bool)));
     connect(ui->rbSistemaO2, SIGNAL(toggled(bool)), ui->combo_Tr, SLOT(setEnabled(bool)));
     connect(ui->rbSistemaO2, SIGNAL(toggled(bool)), ui->combo_Ts, SLOT(setEnabled(bool)));
@@ -116,11 +118,11 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->rbSistemaO1, SIGNAL(toggled(bool)), ui->canal_l0, SLOT(setChecked(bool)));
 
     //Sistema de Segunda Ordem e Controle Simples e Cascata
-    connect(ui->rbSistemaO2, SIGNAL(toggled(bool)), ui->tabControlador->widget(TAB_ESCRAVO), SLOT(setEnabled(bool)));
-    connect(ui->rbSistemaO2,  SIGNAL(toggled(bool)), ui->frameTipo2Ordem, SLOT(setEnabled(bool)));
-    connect(ui->radioAberta,  SIGNAL(clicked(bool)), ui->frameTipo2Ordem, SLOT(setDisabled(bool)));
-    connect(ui->radioFechada, SIGNAL(pressed()),    this, SLOT(UI_tipo2Ordem_setEnable()));
-
+    ui->gp_graf_pid_2->setVisible(false);
+    ui->tabControlador->widget(TAB_ESCRAVO)->setEnabled(false);
+    connect(ui->radioCascata, SIGNAL(toggled(bool)), this, SLOT(UI_tipo2Ordem_setEnable()));
+    connect(ui->rbSistemaO2,  SIGNAL(toggled(bool)), this, SLOT(UI_tipo2Ordem_setEnable()));
+    connect(ui->radioFechada, SIGNAL(toggled(bool)), this, SLOT(UI_tipo2Ordem_setEnable()));
 
     UI_configPanel(); /* Método principal para setar o INIT da UI */
 }
@@ -140,21 +142,21 @@ void MainWindow::UI_configGraphWrite()
 
     // sinal enviado
     ui->graficoEscrita->addGraph(); // blue line
-    ui->graficoEscrita->graph(0)->setPen(QPen(Qt::blue));
-    ui->graficoEscrita->graph(0)->setAntialiasedFill(false);
-    ui->graficoEscrita->graph(0)->setName("Sinal Enviado");
+    ui->graficoEscrita->graph(GRAPH_SINAL_ENVIADO)->setPen(QPen(Qt::blue));
+    ui->graficoEscrita->graph(GRAPH_SINAL_ENVIADO)->setAntialiasedFill(false);
+    ui->graficoEscrita->graph(GRAPH_SINAL_ENVIADO)->setName("Sinal Enviado");
 
     // sinal calculado
     ui->graficoEscrita->addGraph(); // red line
-    ui->graficoEscrita->graph(1)->setPen(QPen(Qt::red));
-    ui->graficoEscrita->graph(1)->setAntialiasedFill(false);
-    ui->graficoEscrita->graph(1)->setName("Sinal Calculado");
+    ui->graficoEscrita->graph(GRAPH_SINAL_CALCULADO)->setPen(QPen(Qt::red));
+    ui->graficoEscrita->graph(GRAPH_SINAL_CALCULADO)->setAntialiasedFill(false);
+    ui->graficoEscrita->graph(GRAPH_SINAL_CALCULADO)->setName("Sinal Calculado");
 
     ui->graficoEscrita->xAxis->setLabel("Tempo (s)");
-
     ui->graficoEscrita->yAxis->setRange(-4.5,4.5);
     ui->graficoEscrita->yAxis->setNumberPrecision(2);
     ui->graficoEscrita->yAxis->setLabel("Tensão (V) ");
+    ui->graficoEscrita->xAxis->setSubTickCount(10);
 
     //Usuário arraste eixo varia com o mouse, zoom com a roda do mouse e selecione gráficos clicando:
     ui->graficoEscrita->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables );
@@ -166,18 +168,18 @@ void MainWindow::UI_configGraphRead()
 {
     // Erro
     ui->graficoLeitura->addGraph(); // red line
-    ui->graficoLeitura->graph(0)->setPen(QPen(Qt::red));
-    ui->graficoLeitura->graph(0)->setVisible(false);
-    ui->graficoLeitura->graph(0)->setAntialiasedFill(false);
-    ui->graficoLeitura->graph(0)->setName("Erro");
-    ui->graficoLeitura->graph(0)->removeFromLegend();
+    ui->graficoLeitura->graph(GRAPH_ERRO)->setPen(QPen(Qt::red));
+    ui->graficoLeitura->graph(GRAPH_ERRO)->setVisible(false);
+    ui->graficoLeitura->graph(GRAPH_ERRO)->setAntialiasedFill(false);
+    ui->graficoLeitura->graph(GRAPH_ERRO)->setName("Erro");
+    ui->graficoLeitura->graph(GRAPH_ERRO)->removeFromLegend();
 
     // Set Point
     ui->graficoLeitura->addGraph();
-    ui->graficoLeitura->graph(1)->setPen(QPen(Qt::black));
-    ui->graficoLeitura->graph(1)->setVisible(false);
-    ui->graficoLeitura->graph(1)->setName("Set Point");
-    ui->graficoLeitura->graph(1)->removeFromLegend();
+    ui->graficoLeitura->graph(GRAPH_SET_POINT)->setPen(QPen(Qt::black));
+    ui->graficoLeitura->graph(GRAPH_SET_POINT)->setVisible(false);
+    ui->graficoLeitura->graph(GRAPH_SET_POINT)->setName("Set Point");
+    ui->graficoLeitura->graph(GRAPH_SET_POINT)->removeFromLegend();
 
     QString nomeCanal;
     for(int i=0; i<8; i++)
@@ -218,7 +220,7 @@ void MainWindow::UI_configGraphRead()
     ui->graficoLeitura->yAxis->setLabel("Nivel do tanque (Cm) ");
 
     //Usuário dê zoom com a roda do mouse na vertical
-    ui->graficoLeitura->setInteractions(QCP::iRangeZoom);
+    ui->graficoLeitura->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
     ui->graficoLeitura->axisRect(0)->setRangeZoom(Qt::Vertical);
 }
 
@@ -272,15 +274,6 @@ void MainWindow::UI_configPlotGraficosL()
         }
     }
 
-    /*if(!ui->canal_l0->isChecked()) ui->cb_plot_canal0->setChecked(false);
-    if(!ui->canal_l1->isChecked()) ui->cb_plot_canal1->setChecked(false);
-    if(!ui->canal_l2->isChecked()) ui->cb_plot_canal2->setChecked(false);
-    if(!ui->canal_l3->isChecked()) ui->cb_plot_canal3->setChecked(false);
-    if(!ui->canal_l4->isChecked()) ui->cb_plot_canal4->setChecked(false);
-    if(!ui->canal_l5->isChecked()) ui->cb_plot_canal5->setChecked(false);
-    if(!ui->canal_l6->isChecked()) ui->cb_plot_canal6->setChecked(false);
-    if(!ui->canal_l7->isChecked()) ui->cb_plot_canal7->setChecked(false);*/
-
     canalLeituraPlotVec[0] = ui->cb_plot_canal0->isChecked();
     canalLeituraPlotVec[1] = ui->cb_plot_canal1->isChecked();
     canalLeituraPlotVec[2] = ui->cb_plot_canal2->isChecked();
@@ -314,16 +307,22 @@ void MainWindow::UI_configPanel()
     // Criando canais de escrita
     for(int i=0; i<4; i++) ui->cb_canalEscrita->addItem("Canal " + QString::number(i),QVariant(i));
 
-    //ui->buttonAtualizar->setStyleSheet("background-color: blue");
     ui->buttonStop->setStyleSheet("background-color: red");
     ui->pb_tanque1->setValue(0);
 
     // Controladores
+    ///Mestre
     ui->tipoControlador->addItem("P",QVariant(CONTROLER_P));
     ui->tipoControlador->addItem("PD",QVariant(CONTROLER_PD));
     ui->tipoControlador->addItem("PI",QVariant(CONTROLER_PI));
     ui->tipoControlador->addItem("PID",QVariant(CONTROLER_PID));
     ui->tipoControlador->addItem("PI-D",QVariant(CONTROLER_PI_D));
+    ///Escravo
+    ui->tipoControlador_2->addItem("P",QVariant(CONTROLER_P));
+    ui->tipoControlador_2->addItem("PD",QVariant(CONTROLER_PD));
+    ui->tipoControlador_2->addItem("PI",QVariant(CONTROLER_PI));
+    ui->tipoControlador_2->addItem("PID",QVariant(CONTROLER_PID));
+    ui->tipoControlador_2->addItem("PI-D",QVariant(CONTROLER_PI_D));
 
     // Sinais gerados
     ui->comboTipoSinal->addItem("Degrau",QVariant(DEGRAU));
@@ -332,7 +331,8 @@ void MainWindow::UI_configPanel()
     ui->comboTipoSinal->addItem("Dente de Serra",QVariant(DENTE_DE_SERRA));
     ui->comboTipoSinal->addItem("Aleatório",QVariant(ALEATORIO));
 
-    ///Comportamento do Sistema
+    //Comportamento do Sistema
+    // Mestre
     ui->combo_Mp->addItem("ABS",QVariant(ABS));
     ui->combo_Mp->addItem("PICOm",QVariant(PICOm));
     ui->combo_Tr->addItem("0-100%",QVariant(Tr100));
@@ -341,14 +341,21 @@ void MainWindow::UI_configPanel()
     ui->combo_Ts->addItem("2%",QVariant(0));
     ui->combo_Ts->addItem("5%",QVariant(1));
     ui->combo_Ts->addItem("10%",QVariant(2));
+    //Escravo
+    ui->combo_Mp_2->addItem("ABS",QVariant(ABS));
+    ui->combo_Mp_2->addItem("PICOm",QVariant(PICOm));
+    ui->combo_Tr_2->addItem("0-100%",QVariant(Tr100));
+    ui->combo_Tr_2->addItem("5-95%",QVariant(Tr95));
+    ui->combo_Tr_2->addItem("10-90%",QVariant(Tr90));
+    ui->combo_Ts_2->addItem("2%",QVariant(0));
+    ui->combo_Ts_2->addItem("5%",QVariant(1));
+    ui->combo_Ts_2->addItem("10%",QVariant(2));
 
     ui->dSpinAux->setVisible(false);
     ui->labelAux->setVisible(false);
 
     UI_malhaAberta();
     UI_configControlador();
-
-    //UI_canaisLeituraPlot();
 }
 
 int MainWindow::UI_getTipoMalha()
@@ -414,11 +421,15 @@ void MainWindow::UI_configControlador()
     {
         ui->lb_kd_td->setText("Kd = ");
         ui->lb_ki_ti->setText("Ki = ");
+        ui->lb_kd_td_2->setText("Kd = ");
+        ui->lb_ki_ti_2->setText("Ki = ");
     }
     else if(controlConstTempo)
     {
         ui->lb_kd_td->setText("Td = ");
         ui->lb_ki_ti->setText("Ti = ");
+        ui->lb_kd_td_2->setText("Td = ");
+        ui->lb_ki_ti_2->setText("Ti = ");
     }
 
     switch (tipoControler)
@@ -581,7 +592,11 @@ void MainWindow::UI_limitRandInput()
 
 void MainWindow::UI_tipo2Ordem_setEnable()
 {
-    ui->frameTipo2Ordem->setEnabled(ui->rbSistemaO2->isChecked());
+    ui->frameTipo2Ordem->setEnabled(ui->rbSistemaO2->isChecked() && ui->radioFechada->isChecked());
+    ui->gp_graf_pid_2->setVisible(ui->rbSistemaO2->isChecked() && ui->radioFechada->isChecked());
+    ui->tabControlador->widget(TAB_ESCRAVO)->setEnabled(ui->radioFechada->isChecked() &&
+                                                        ui->rbSistemaO2->isChecked() &&
+                                                        ui->radioCascata->isChecked());
 }
 
 // Control
@@ -621,12 +636,9 @@ void MainWindow::connectServer()
 
 void MainWindow::zerarSinal()
 {
-
     QMessageBox::StandardButton reply;
-
     reply = QMessageBox::critical(this, "Confirmação", "Você realmente deseja zerar o sinal da planta?",
                                     QMessageBox::Yes|QMessageBox::No);
-
     if (reply == QMessageBox::Yes)
     {
         //control->setTensao(0);
@@ -636,6 +648,7 @@ void MainWindow::zerarSinal()
         QMessageBox::about(this, "Confirmação", "O sinal de envio foi zerado!");
     }
 }
+
 
 void MainWindow::controladorPID()
 {
@@ -691,7 +704,7 @@ void MainWindow::controladorPID()
         double kd_tdCas = ui->sp_kd_td_2->value();
         double ki_tiCas = ui->sp_ki_ti_2->value();
         double kpCas = ui->sp_kp_2->value();
-        int tipoControlerCas = 3;//ui->tipoControlador_2->currentIndex();
+        int tipoControlerCas = ui->tipoControlador_2->currentIndex();
 
         if(controlerGanho) {
             control->setKdCas(kd_tdCas);
@@ -707,6 +720,7 @@ void MainWindow::controladorPID()
     }
 }
 
+
 void MainWindow::data()
 {
     double  amplitude = ui->dSpinAmp->value();
@@ -721,6 +735,8 @@ void MainWindow::data()
 
     bool primeiraOrdem = ui->rbSistemaO1->isChecked();
     bool segundaOrdem = ui->rbSistemaO2->isChecked();
+    bool controladorCascataO2 = ui->radioCascata->isChecked();
+    bool controladorSimplesO2 = ui->radioSimples->isChecked();
 
     if(malhaAberta) {
         control->setTensao(amplitude);
@@ -884,6 +900,6 @@ void MainWindow::receiveData()
 
     ui->graficoLeitura->xAxis->setRange(tempoLeitura, 60, Qt::AlignRight);
     tempoLeitura += 0.1;
-    ui->graficoLeitura->yAxis->setRangeLower(0.0);
+    //ui->graficoLeitura->yAxis->setRangeLower(0.0);
     ui->graficoLeitura->replot();
 }

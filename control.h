@@ -37,7 +37,7 @@
 #define C_O2_CASCATA 2
 
 //parametro para o filtro média movel
-#define M 5
+#define P_MM 20
 
 class Control
 {
@@ -278,7 +278,7 @@ private:
     double tanque1 = 0;
     double tanque2 = 0;
 
-    bool simulacao = true;
+    bool simulacao = false;
 
     bool debCas = true;
 };
