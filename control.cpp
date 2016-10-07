@@ -84,7 +84,11 @@ double Control::filtroMM(double erro[]){
 
 double Control::trunca(double numero) {
 
-    return (int)numero + ( ( (int)((numero - (int)numero) * 100) ) / 100. );
+    //return numero;
+
+    double fator = 10000.0;
+
+    return (int)numero + ( ( (int)((numero - (int)numero) * fator) ) /  fator);
 }
 
 double Control::getAmplitude() { return amplitude; }
@@ -212,6 +216,7 @@ void Control::setModeSegOrdem(int value) { modeSegOrdem = value; }
 
 void Control::setTipoControlerCas(double value) {
     tipoControlerCas = value;
+    if(debCas)
     {
         qDebug() << "tipoControlerCas = " << tipoControlerCas;
     }
@@ -250,10 +255,12 @@ void Control::zerarSinal() {
     delete controller;
     delete contCascata;
     delete signal;
+    delete sistemaO2;
 
     controller = new Controller();
     contCascata = new Controller();
     signal = new Signal();
+    sistemaO2 = new SistemaO2();
 
     tipoMalha = M_ABERTA;
     tensao = 0;
@@ -436,6 +443,8 @@ void Control::receiveSigal() {
 
             if(tipoMalha == M_FECHADA) {
                 erro = trunca(amplitude - sinalLeitura);
+
+                qDebug() << "erro = " << erro << " aplitude = " << amplitude << " sinalLeitura = " << sinalLeitura;
 
                 sinalLeitura = trunca(sinalLeitura);
 

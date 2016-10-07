@@ -37,7 +37,7 @@
 #define C_O2_CASCATA 2
 
 //parametro para o filtro média movel
-#define P_MM 5
+#define P_MM 10
 
 class Control
 {
@@ -219,7 +219,7 @@ private:
     // Malha fechada function: _receiveData()
     double erro = 0;
     double erroAnt = 0;
-    double arrayErro[5] = {0};
+    double arrayErro[P_MM] = {0};
     int auxContErro = 0;
 
     int canalEscrita = 0;
@@ -280,7 +280,7 @@ private:
     double tanque1 = 0;
     double tanque2 = 0;
 
-    bool simulacao = false;
+    bool simulacao = true;
 
     bool debCas = true;
 };
