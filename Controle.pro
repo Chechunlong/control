@@ -28,7 +28,8 @@ HEADERS  += mainwindow.h \
     controller.h \
     conectar.h \
     sistemaO2.h \
-    tanque.h
+    tanque.h \
+    filtrommv.h
 
 FORMS    += mainwindow.ui \
     conectar.ui

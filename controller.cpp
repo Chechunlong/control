@@ -9,6 +9,8 @@ Controller::Controller()
     taw = 75;
 }
 
+
+
 double Controller::ganhoKp(double Kp, double erro)
 {
     P = erro * Kp;

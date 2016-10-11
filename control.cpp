@@ -9,6 +9,9 @@ Control::Control(int port, QString ip)
     sistemaO2 = new SistemaO2();
     tanq = new Tanque();
 
+    ftanque1 = new FiltroMMV();
+    ftanque2 = new FiltroMMV();
+
 /*    timeAux     = 0;
     tipoSinal   = 0;
 
@@ -85,7 +88,6 @@ double Control::filtroMM(double erro[]){
 double Control::trunca(double numero) {
 
     //return numero;
-
     double fator = 10000.0;
 
     return (int)numero + ( ( (int)((numero - (int)numero) * fator) ) /  fator);
@@ -306,7 +308,8 @@ void Control::tempoControle() {
     //else ts = sistemaO2->getTs();
 
     sistemaO2->calculaTs(sinalLeitura,sinalLeitura_old,amplitude);
-     ts = sistemaO2->getTs();
+
+    ts = sistemaO2->getTs();
 }
 
 double Control::calculaTensao(double tensao) {
@@ -374,19 +377,18 @@ void Control::calculaSinal() {
             Para Malha fechada e 2a ordem convencional
         */
 
-        sinalCalculado = calculaTensaoPID(controller, tipoControler, Kp, Ki, Kd, erro, sinalLeitura);
+        sinalParCas = calculaTensaoPID(controller, tipoControler, Kp, Ki, Kd, erro, sinalLeitura);
 
         if(debCas)
-        qDebug() << "sinalCalculado = " << sinalCalculado;
+        qDebug() << "sinalCalculado = " << sinalParCas;
 
         if(debCas) {
             qDebug() << "KpCas = " << KpCas << " KiCas = " << KiCas << " KdCas = " << KdCas;
         }
 
         if(ordemSistema == SISTEMA_ORDEM_2 && modeSegOrdem == C_O2_CASCATA) {
-            qDebug() << "controle cascata -: controlador " << tipoControlerCas;
-            sinalParCas = sinalCalculado;
-            erroCas = sinalCalculado - tanque1;
+            //qDebug() << "controle cascata -: controlador " << tipoControlerCas;
+            erroCas = sinalParCas - tanque1;
             erroCas = trunca(erroCas);
             sinalCalculado = calculaTensaoPID(contCascata, tipoControlerCas, KpCas, KiCas, KdCas, erroCas, sinalCalculado);
         }
@@ -431,27 +433,47 @@ void Control::receiveSigal() {
             canaisLeitura_value[0] = tanque1;
             canaisLeitura_value[1] = tanque2;
         } else {
-            canaisLeitura_value[canal] = trunca(readCanal(canal));
-            tanque1 = canaisLeitura_value[0];
-            tanque2 = canaisLeitura_value[1];
+
+            canaisLeitura_value[canal] = readCanal(canal);
+
+           if(canal == 0) {
+                ftanque1->add(canaisLeitura_value[0]);
+                tanque1 = ftanque1->media();
+            } else if(canal == 1) {
+                ftanque2->add(canaisLeitura_value[1]);
+                tanque2 = ftanque2->media();
+            }
+
+            //tanque1 = canaisLeitura_value[0];
+            //tanque2 = canaisLeitura_value[1];
+
+
+            tanque1 = trunca(tanque1);
+            tanque2 = trunca(tanque2);
+
+            if(tanque1 < 0) tanque1 = 0;
+            if(tanque2 < 0) tanque2 = 0;
         }
 
-        if(debCas) {
+
             qDebug() << "tanque1 = " << tanque1 << " tanque2 = " << tanque2;
-        }
+
 
         if(canal==canalLeitura) {
             sinalLeitura_old = sinalLeitura;
+
+
 
             if(ordemSistema == SISTEMA_ORDEM_1) sinalLeitura = tanque1;
             else if(ordemSistema == SISTEMA_ORDEM_2) sinalLeitura = tanque2;
 
             if(tipoMalha == M_FECHADA) {
-                erro = trunca(amplitude - sinalLeitura);
+                erro = amplitude - sinalLeitura;
 
-                qDebug() << "erro = " << erro << " aplitude = " << amplitude << " sinalLeitura = " << sinalLeitura;
+               // qDebug() << "erro = " << erro << " aplitude = " << amplitude << " sinalLeitura = " << sinalLeitura;
 
-                sinalLeitura = trunca(sinalLeitura);
+                //sinalLeitura = trunca(sinalLeitura);
+
 
 
                 if(auxContErro >= 5){

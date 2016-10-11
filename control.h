@@ -8,6 +8,8 @@
 
 #include "tanque.h"
 
+#include "filtrommv.h"
+
 #define MAX_VOLTAGE 4
 #define MIN_VOLTAGE -4
 
@@ -203,6 +205,9 @@ private:
     SistemaO2 *sistemaO2;
     Tanque *tanq;
 
+    FiltroMMV *ftanque1;
+    FiltroMMV *ftanque2;
+
     int tipoMalha = M_FECHADA;  /* 0 -> fechada, 1 -> aberto*/
 
     double timeAux = 0.0;
@@ -210,7 +215,7 @@ private:
 
     double sinalEscrita = 0;
     double sinalLeitura = 0;
-    double sinalLeitura_old = 0;
+    double sinalLeitura_old = 100;
     double sinalCalculado = 0;
 
     // Update data function: _data()
@@ -290,9 +295,9 @@ private:
 
     double sinalParCas;
 
-    bool simulacao = true;
+    bool simulacao = false;
 
-    bool debCas = true;
+    bool debCas = false;
 };
 
 #endif // CONTROL_H

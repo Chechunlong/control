@@ -88,6 +88,10 @@ private slots:
     void sendData();
     void receiveData();
 
+    double trunca(double numero);
+
+    void keyPressEvent(QKeyEvent *event);
+
 
 private:
     Ui::MainWindow *ui;

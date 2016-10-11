@@ -1,5 +1,14 @@
 #include "sistemaO2.h"
 
+double SistemaO2::trunca(double numero) {
+
+    //return numero;
+
+    double fator = 10.0;
+
+    return (int)numero + ( ( (int)((numero - (int)numero) * fator) ) /  fator);
+}
+
 bool sinal(double a, double b){ return (a/abs(a))==(b/abs(b));}
 
 double SistemaO2::getMp() const { return mp; }
@@ -74,14 +83,13 @@ void SistemaO2::configTs(int tipoTs, double sinalLeitura) {
 
 void SistemaO2::calculaTr(double sinalLeitura, double amplitude) {
 
+    //sinalLeitura = trunca(sinalLeitura);
+    qDebug() << "sl tr" << sinalLeitura;
+    if(sinalLeitura<0) sinalLeitura = 0;
+
     if(!statusTr) {
         if(tipoAmplitude) {
-           // qDebug() << "aqui";
-            /*if(sinalLeitura >= trMin && sinalLeitura <= trMax) {
-                tempTr += TEMPO_AMOSTRAGEM;
-             }*/
-            //qDebug() << "tempo de resposta " << tempTr;
-            //if(sinalLeitura>trMax) {
+
             if(sinalLeitura<trMax) {
                 tempTr += TEMPO_AMOSTRAGEM;
                 statusTr = false;
@@ -92,9 +100,7 @@ void SistemaO2::calculaTr(double sinalLeitura, double amplitude) {
 
             }
         } else {
-          //  if(sinalLeitura <= trMin && sinalLeitura >= trMax) {
-            //    tempTr += TEMPO_AMOSTRAGEM;
-             //}
+
             if(sinalLeitura>trMax) {
              tempTr += TEMPO_AMOSTRAGEM;
                 statusTr = false;
@@ -110,13 +116,27 @@ void SistemaO2::calculaTr(double sinalLeitura, double amplitude) {
 
 void SistemaO2::calculaTp(double sinalLeitura, double sinalLeitAnterior, double amplitude, int tipoMp) {
 
+    sinalLeitura = trunca(sinalLeitura);
+    sinalLeitAnterior = trunca(sinalLeitAnterior);
+    //if(sinalLeitura<0) sinalLeitura = 0;
+    //if(sinalLeitAnterior<0) sinalLeitAnterior = 0;
+    qDebug() << "sl tp " << sinalLeitura;
+    qDebug() << "sla tp " << sinalLeitAnterior;
+
+    if(!statusTp)
+    tempTp += TEMPO_AMOSTRAGEM;
+
+    if(statusTr)
     if(!statusTp) {
+
 
         if(tipoAmplitude) {
             //qDebug() << sinalLeitura << sinalLeitAnterior;
+            qDebug() << "eh aqui";
+            //tr true
             if(sinalLeitura >= sinalLeitAnterior) {
-                tempTp += TEMPO_AMOSTRAGEM;
 
+                // cotinua lendo
                 statusTp = false;
                 statusMP = false;
             } else {
@@ -137,11 +157,11 @@ void SistemaO2::calculaTp(double sinalLeitura, double sinalLeitAnterior, double 
                if(mp<0) mp=-mp;
                 statusMP = true;
 
-
+                //exit(0);
             }
         } else {
             if(sinalLeitura <= sinalLeitAnterior) {
-                tempTp += TEMPO_AMOSTRAGEM;
+                //tempTp += TEMPO_AMOSTRAGEM;
 
                 statusTp = false;
                 statusMP = false;
@@ -237,4 +257,14 @@ void SistemaO2::calculaTs(double sinalLeitura, double sinalLeitAnterior, double 
         ts_aux = 0;
     }
     }
+    qDebug() << "ts " << ts;
+}
+
+
+double SistemaO2::_filtroTS() {
+    double tmp = 0;
+    for(int i=0;i < FILTRO_TS;i++){
+        tmp += filtroTS[i];
+    }
+    return tmp/FILTRO_TS;
 }

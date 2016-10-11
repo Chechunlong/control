@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QPrinter>
 
 #define TAB_SINAL 0
 #define TAB_CONTROLE 1
@@ -92,6 +93,12 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->cb_plot_d,              SIGNAL(toggled(bool)), this, SLOT(UI_configPlotGraficosL()));
     connect(ui->cb_graf_sinalCalculado, SIGNAL(toggled(bool)), this, SLOT(UI_configPlotGraficosE()));
     connect(ui->cb_graf_sinalEnviado,   SIGNAL(toggled(bool)), this, SLOT(UI_configPlotGraficosE()));
+    connect(ui->cb_SinalParcial,   SIGNAL(toggled(bool)), this, SLOT(UI_configPlotGraficosE()));
+    //connect(ui->cb_plot_erro_2,           SIGNAL(toggled(bool)), this, SLOT(UI_configPlotGraficosL()));
+    //connect(ui->cb_plot_setPoint_2,       SIGNAL(toggled(bool)), this, SLOT(UI_configPlotGraficosL()));
+    connect(ui->cb_plot_p_2,              SIGNAL(toggled(bool)), this, SLOT(UI_configPlotGraficosL()));
+    connect(ui->cb_plot_i_2,              SIGNAL(toggled(bool)), this, SLOT(UI_configPlotGraficosL()));
+    connect(ui->cb_plot_d_2,              SIGNAL(toggled(bool)), this, SLOT(UI_configPlotGraficosL()));
 
     // Botões
     connect(ui->buttonAtualizar,SIGNAL(clicked(bool)),this,SLOT(data()));
@@ -152,6 +159,14 @@ void MainWindow::UI_configGraphWrite()
     ui->graficoEscrita->graph(GRAPH_SINAL_CALCULADO)->setAntialiasedFill(false);
     ui->graficoEscrita->graph(GRAPH_SINAL_CALCULADO)->setName("Sinal Calculado");
 
+    //Sinal Parcial calculado
+    ui->graficoEscrita->addGraph(); // red line
+    ui->graficoEscrita->graph(2)->setPen(QPen(Qt::yellow));
+    ui->graficoEscrita->graph(2)->setAntialiasedFill(false);
+    ui->graficoEscrita->graph(2)->setName("Sinal Paricial Calculado");
+    ui->graficoEscrita->graph(2)->removeFromLegend();
+    ui->graficoEscrita->graph(2)->setVisible(false);
+
     ui->graficoEscrita->xAxis->setLabel("Tempo (s)");
     ui->graficoEscrita->yAxis->setRange(-4.5,4.5);
     ui->graficoEscrita->yAxis->setNumberPrecision(2);
@@ -196,10 +211,13 @@ void MainWindow::UI_configGraphRead()
         ui->graficoLeitura->graph(i+2)->removeFromLegend();
     }
 
-    for(int i=8; i<11; i++) {
+    for(int i=8; i<14; i++) {
         if(i == 8 )nomeCanal = "P ";
-        if(i == 9 )nomeCanal = "I ";
-        if(i == 10 )nomeCanal = "D ";
+        else if(i == 9 )nomeCanal = "I ";
+        else if(i == 10 )nomeCanal = "D ";
+        else if(i == 11 )nomeCanal = "P Cascata ";
+        else if(i == 12 )nomeCanal = "I Cascata";
+        else if(i == 13 )nomeCanal = "D Cascata";
 
         ui->graficoLeitura->addGraph();
         ui->graficoLeitura->graph(i+2)->setPen(QPen(QColor(rand()%200+10,rand()%200+10,rand()%200+10,255)));
@@ -222,25 +240,20 @@ void MainWindow::UI_configGraphRead()
     //Usuário dê zoom com a roda do mouse na vertical
     ui->graficoLeitura->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
     ui->graficoLeitura->axisRect(0)->setRangeZoom(Qt::Vertical);
+    ui->graficoLeitura->axisRect(0)->setRangeDrag(Qt::Vertical);
 }
 
 void MainWindow::UI_configPlotGraficosE()
 {
     sinalPlotEscrita[1] = ui->cb_graf_sinalCalculado->isChecked();
     sinalPlotEscrita[0] = ui->cb_graf_sinalEnviado->isChecked();
+    sinalPlotEscrita[2] = ui->cb_SinalParcial->isChecked();
 
-    for(int i=0; i<PLOT_ESCRITA; i++)
+    for(int i=0; i<PLOT_ESCRITA+1; i++)
     {
-        if(sinalPlotEscrita[i])
-        {
-            ui->graficoEscrita->graph(i)->addToLegend();
-            ui->graficoEscrita->graph(i)->setVisible(true);
-        }
-        else
-        {
-            ui->graficoEscrita->graph(i)->removeFromLegend();
-            ui->graficoEscrita->graph(i)->setVisible(false);
-        }
+        ui->graficoEscrita->graph(i)->setVisible(sinalPlotEscrita[i]);
+        if(sinalPlotEscrita[i]) ui->graficoEscrita->graph(i)->addToLegend();
+        else ui->graficoEscrita->graph(i)->removeFromLegend();
     }
 }
 
@@ -251,29 +264,22 @@ void MainWindow::UI_configPlotGraficosL()
     vectorGrafLeitura[2] = ui->cb_plot_p->isChecked();
     vectorGrafLeitura[3] = ui->cb_plot_i->isChecked();
     vectorGrafLeitura[4] = ui->cb_plot_d->isChecked();
+    vectorGrafLeitura[5] = ui->cb_plot_p_2->isChecked();
+    vectorGrafLeitura[6] = ui->cb_plot_i_2->isChecked();
+    vectorGrafLeitura[7] = ui->cb_plot_d_2->isChecked();
 
-    for(int i=0; i<2; i++) {
-        if(vectorGrafLeitura[i]) {
-            ui->graficoLeitura->graph(i)->addToLegend();
-            ui->graficoLeitura->graph(i)->setVisible(true);
-        } else {
-            ui->graficoLeitura->graph(i)->removeFromLegend();
-            ui->graficoLeitura->graph(i)->setVisible(false);
-        }
+    for(int i=0; i<2; i++)
+    {
+        ui->graficoLeitura->graph(i)->setVisible(vectorGrafLeitura[i]);
+        if(vectorGrafLeitura[i]) ui->graficoLeitura->graph(i)->addToLegend();
+        else                     ui->graficoLeitura->graph(i)->removeFromLegend();
     }
-
-
-    for(int i=8;i<11; i++) {
-        if(vectorGrafLeitura[i-6]) {
-            ui->graficoLeitura->graph(i+2)->addToLegend();
-            ui->graficoLeitura->graph(i+2)->setVisible(true);
-        } else {
-            ui->graficoLeitura->graph(i+2)->removeFromLegend();
-            ui->graficoLeitura->graph(i+2)->setVisible(false);
-
-        }
+    for(int i=8;i<14; i++)
+    {
+        ui->graficoLeitura->graph(i+2)->setVisible(vectorGrafLeitura[i-6]);
+        if(vectorGrafLeitura[i-6]) ui->graficoLeitura->graph(i+2)->addToLegend();
+        else                       ui->graficoLeitura->graph(i+2)->removeFromLegend();
     }
-
     canalLeituraPlotVec[0] = ui->cb_plot_canal0->isChecked();
     canalLeituraPlotVec[1] = ui->cb_plot_canal1->isChecked();
     canalLeituraPlotVec[2] = ui->cb_plot_canal2->isChecked();
@@ -290,7 +296,6 @@ void MainWindow::UI_configPlotGraficosL()
         {
             ui->graficoLeitura->graph(i+2)->addToLegend();
             ui->graficoLeitura->graph(i+2)->setVisible(true);
-
         }
         else
         {
@@ -610,11 +615,9 @@ void MainWindow::connectServer()
     if(control->getConnectionStatus())
     {
         this->show();
-
         QString mensagem = "Conectado em " + enderecoIP + ":" + QString::number(port);
         ui->labelStatus->setText(mensagem);
         ui->labelStatus->setStyleSheet("QLabel { color : green; }");
-        //ui->buttonConectar->setDisabled(true);
 
         threadEscrita->start();
         threadLeitura->start();
@@ -624,11 +627,8 @@ void MainWindow::connectServer()
     }
     else
     {
-        //ui->labelStatus->setText("Conexão Falhou!");
-        //ui->labelStatus->setStyleSheet("QLabel { color : red; }");
-
-        QMessageBox::critical(this,tr("Control Quanser - Conexão Falhou!"),tr("Verifique o IP e/ou porta do servidor!"));
-
+        QMessageBox::critical(this,tr("Control Quanser - Conexão Falhou!"),
+                              tr("Verifique o IP e/ou porta do servidor!"));
         conectar->show();
 
     }
@@ -641,9 +641,6 @@ void MainWindow::zerarSinal()
                                     QMessageBox::Yes|QMessageBox::No);
     if (reply == QMessageBox::Yes)
     {
-        //control->setTensao(0);
-        //control->setTipoMalha(M_ABERTA);
-        //QApplication::quit();
         control->zerarSinal();
         QMessageBox::about(this, "Confirmação", "O sinal de envio foi zerado!");
     }
@@ -791,21 +788,44 @@ void MainWindow::sendData()
     if(canalEscrita < 0) str_canalEscrita = "Nenhum canal selecionado";
     else str_canalEscrita = "Escrevendo em canal " + QString::number(canalEscrita);
 
-    QString str_sinalEnviado   = "Sinal enviado = " + QString::number(sinalEscrita) + " V";
-    QString str_sinalCalculado = "Sinal calculado = " + QString::number(sinalCalculado) + " V";
+    QString str_sinalEnviado   = "Sinal enviado = " + QString::number(trunca(sinalEscrita)) + " V";
+    QString str_sinalCalculado = "Sinal calculado = " + QString::number(trunca(sinalCalculado)) + " V";
 
-    ui->lb_tensaoEscrita->setText(str_sinalEnviado);
-    ui->lb_tensaoCalculada->setText(str_sinalCalculado);
-    ui->lb_canalEscrita->setText(str_canalEscrita);
+    ui->lb_tensaoEscrita->setText(" ");
+    ui->lb_tensaoCalculada->setText(" ");
+    ui->lb_canalEscrita->setText(" ");
 
     ui->graficoEscrita->graph(0)->addData(tempoEscrita, sinalEscrita);
     ui->graficoEscrita->graph(1)->addData(tempoEscrita, sinalCalculado);
+    ui->graficoEscrita->graph(2)->addData(tempoLeitura,control->getSinalPar());
     ui->graficoEscrita->graph(0)->removeData(tempoEscrita-120);
     ui->graficoEscrita->graph(1)->removeData(tempoEscrita-120);
+    ui->graficoEscrita->graph(2)->removeData(tempoEscrita-120);
 
     ui->graficoEscrita->xAxis->setRange(tempoEscrita, 60, Qt::AlignRight);
     tempoEscrita += 0.1;
     ui->graficoEscrita->replot();
+}
+
+
+double trunca(double numero, int n) {
+
+    //return numero;
+
+    double fator = 10.0;
+
+    for(int i=0; i<n; i++) fator *= fator;
+
+    return (int)numero + ( ( (int)((numero - (int)numero) * fator) ) /  fator);
+}
+
+double MainWindow::trunca(double numero) {
+
+    //return numero;
+
+    double fator = 10.0;
+
+    return (int)numero + ( ( (int)((numero - (int)numero) * fator) ) /  fator);
 }
 
 void MainWindow::receiveData()
@@ -843,7 +863,13 @@ void MainWindow::receiveData()
                     double pp = control->getP();
                     double dd = control->getD();
 
-                    ui->lb_erro->setText("Erro = " + QString::number(erro) + " cm");
+                    Controller *ccas = new Controller();
+                    ccas = control->getControlerEsc();
+                    double ii2 = ccas->getI();
+                    double pp2 = ccas->getP();
+                    double dd2 = ccas->getD();
+
+                    ui->lb_erro->setText("Erro = " + QString::number(trunca(erro)) + " cm");
 
                     ui->graficoLeitura->graph(0)->addData(tempoLeitura,erro);
                     ui->graficoLeitura->graph(1)->addData(tempoLeitura,setPoint);
@@ -857,7 +883,15 @@ void MainWindow::receiveData()
                     ui->graficoLeitura->graph(11)->removeData(tempoLeitura-120);
                     ui->graficoLeitura->graph(12)->removeData(tempoLeitura-120);
 
-                    ui->lb_pid->setText("P = " + QString::number(pp) + " I = " + QString::number(ii) + " D = " + QString::number(dd));
+                    ui->graficoLeitura->graph(13)->addData(tempoLeitura,pp2);
+                    ui->graficoLeitura->graph(14)->addData(tempoLeitura,ii2);
+                    ui->graficoLeitura->graph(15)->addData(tempoLeitura,dd2);
+                    ui->graficoLeitura->graph(13)->removeData(tempoLeitura-120);
+                    ui->graficoLeitura->graph(14)->removeData(tempoLeitura-120);
+                    ui->graficoLeitura->graph(15)->removeData(tempoLeitura-120);
+
+
+                    //ui->lb_pid->setText("P = " + QString::number(pp) + " I = " + QString::number(ii) + " D = " + QString::number(dd));
 
                     if(ordemSistema == SISTEMA_ORDEM_2) {
                         bool statusTr = control->getStatusTr();
@@ -874,6 +908,7 @@ void MainWindow::receiveData()
 
                             pmp = mp/MAX_LEVEL;
                             pmp *= 100;
+                            pmp = trunca(pmp);
 
                         if(statusTr) ui->lb_tr->setText("Tr = " + QString::number(tr) + " ms");
                         else ui->lb_tr->clear();
@@ -892,8 +927,8 @@ void MainWindow::receiveData()
                         ui->lb_ts->clear();
                     }
                 }
-                ui->lb_sinalLido->setText("Nível do tanque 1 = " + QString::number(tanque1) + " cm");
-                ui->lb_sinalLidoT2->setText("Nível do tanque 2 = " + QString::number(tanque2) + " cm");
+                ui->lb_sinalLido->setText("Nível do tanque 1 = " + QString::number(trunca(tanque1)) + " cm");
+                ui->lb_sinalLidoT2->setText("Nível do tanque 2 = " + QString::number(trunca(tanque2)) + " cm");
             }
       //  }
     }
@@ -902,4 +937,34 @@ void MainWindow::receiveData()
     tempoLeitura += 0.1;
     //ui->graficoLeitura->yAxis->setRangeLower(0.0);
     ui->graficoLeitura->replot();
+}
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+
+    if(event->key() == Qt::Key_F1)
+    {
+        ui->graficoEscrita->saveJpg("Grafico Escrita.jpg",0,0,9,10);
+
+        QPixmap pixmap("Grafico Escrita.jpg");
+        //pixmap.setDevicePixelRatio(.1);
+
+        QPrinter printer(QPrinter::HighResolution); //create your QPrinter (don't need to be high resolution, anyway)
+        printer.setPageSize(QPrinter::A4);
+        printer.setOrientation(QPrinter::Portrait);
+        printer.setPageMargins (15,15,15,15,QPrinter::Millimeter);
+        printer.setFullPage(false);
+        printer.setOutputFileName("output.pdf");
+        printer.setOutputFormat(QPrinter::PdfFormat); //you can use native format of system usin QPrinter::NativeFormat
+
+        QPainter painter(&printer); // create a painter which will paint 'on printer'.
+        painter.setFont(QFont("Tahoma",8));
+        painter.drawText(200,200,"Test");
+        painter.drawPixmap(100,400,pixmap);
+        painter.end();
+
+    }
+    else if (event->key() == Qt::Key_F2)
+    {
+        ui->graficoLeitura->saveJpg("Grafico Leitura.jpg");
+    }
 }

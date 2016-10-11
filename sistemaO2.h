@@ -17,6 +17,8 @@
 
 #define TEMPO_AMOSTRAGEM 0.1
 
+#define FILTRO_TS 100
+
 class SistemaO2 {
 
     bool tipoAmplitude;
@@ -41,6 +43,12 @@ class SistemaO2 {
     double ts_aux = 0;
     double ts_derivada = 0;
     bool ts_enable = false;
+
+    double trunca(double numero);
+
+    int auxFiltroTs = 0;
+
+    double filtroTS[FILTRO_TS] = {0};
 
 public:
     SistemaO2() {
@@ -75,6 +83,8 @@ public:
     bool getStatusMP() const;
     void setStatusMP(bool value);
     void setTipoAmplitude(bool value);
+
+    double _filtroTS();
 
     void configTr(int tipoTr, double sinalLeitura, double amplitude);
     void configTs(int tipoTs, double sinalLeitura);
