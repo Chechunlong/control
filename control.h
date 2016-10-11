@@ -92,6 +92,10 @@ public:
     double getI() const;
     double getD() const;
 
+    double getPesc() const;
+    double getIesc() const;
+    double getDesc() const;
+
     double getTempoIntegrativo() const;
     void setTempoIntegrativo(double value);
 
@@ -254,6 +258,10 @@ private:
     double P = 0;
     double I = 0;
     double D = 0;
+
+    double Pcas =0;
+    double Icas =0;
+    double Dcas =0;
 
     // Sistema de Ordem 2
     int ordemSistema = SISTEMA_ORDEM_1;
