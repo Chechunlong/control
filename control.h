@@ -96,6 +96,8 @@ public:
     double getIesc() const;
     double getDesc() const;
 
+    double getSinalPar() const;
+
     double getTempoIntegrativo() const;
     void setTempoIntegrativo(double value);
 
@@ -287,6 +289,8 @@ private:
 
     double tanque1 = 0;
     double tanque2 = 0;
+
+    double sinalParCas;
 
     bool simulacao = true;
 

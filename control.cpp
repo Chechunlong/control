@@ -159,6 +159,8 @@ double Control::getPesc() const { return  contCascata->getP(); }
 double Control::getIesc() const { return  contCascata->getI(); }
 double Control::getDesc() const { return  contCascata->getD(); }
 
+double Control::getSinalPar() const { return sinalParCas; }
+
 
 double Control::getTempoIntegrativo() const { return tempoIntegrativo; }
 
@@ -386,7 +388,7 @@ void Control::calculaSinal() {
 
         if(ordemSistema == SISTEMA_ORDEM_2 && modeSegOrdem == C_O2_CASCATA) {
             qDebug() << "controle cascata -: controlador " << tipoControlerCas;
-
+            sinalParCas = sinalCalculado;
             erroCas = sinalCalculado - tanque1;
             erroCas = trunca(erroCas);
             sinalCalculado = calculaTensaoPID(contCascata, tipoControlerCas, KpCas, KiCas, KdCas, erroCas, sinalCalculado);
