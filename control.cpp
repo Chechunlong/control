@@ -154,10 +154,7 @@ double Control::getP() const { return controller->getP(); }
 double Control::getI() const { return controller->getI(); }
 double Control::getD() const { return controller->getD(); }
 
-
-double Control::getPesc() const { return  contCascata->getP(); }
-double Control::getIesc() const { return  contCascata->getI(); }
-double Control::getDesc() const { return  contCascata->getD(); }
+Controller * Control::getControlerEsc() const { return contCascata; }
 
 double Control::getSinalPar() const { return sinalParCas; }
 

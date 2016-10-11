@@ -92,9 +92,7 @@ public:
     double getI() const;
     double getD() const;
 
-    double getPesc() const;
-    double getIesc() const;
-    double getDesc() const;
+    Controller* getControlerEsc() const;
 
     double getSinalPar() const;
 
