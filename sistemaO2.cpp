@@ -46,8 +46,6 @@ void SistemaO2::configTr(int tipoTr, double sinalLeitura, double amplitude) {
     tempTp = tempTr = tempTs = 0;
     statusMP = statusTp = statusTr = statusTs = false;
 
-    //qDebug() << "amplitude " << amplitude;
-    //qDebug() << "tipo Tr " << tipoTr;
     switch (tipoTr) {
         case TR100:
             trMin = sinalLeitura;
@@ -84,7 +82,7 @@ void SistemaO2::configTs(int tipoTs, double sinalLeitura) {
 void SistemaO2::calculaTr(double sinalLeitura, double amplitude) {
 
     //sinalLeitura = trunca(sinalLeitura);
-    qDebug() << "sl tr" << sinalLeitura;
+    //qDebug() << "sl tr" << sinalLeitura;
     if(sinalLeitura<0) sinalLeitura = 0;
 
     if(!statusTr) {
@@ -189,30 +187,7 @@ void SistemaO2::calculaTp(double sinalLeitura, double sinalLeitAnterior, double 
 }
 
 void SistemaO2::calculaMp(double sinalLeitura, int tipoMp, double amplitude) {
-   /* if(!statusMP && tipoAmplitude){
-        //mp = sinalLeitura;
-        switch(tipoMp){
-            case ABS:
-                mp = sinalLeitura - amplitude;
-            break;
-            case PICOm:
-                mp = sinalLeitura;
-            break;
-        }
-        //qDebug() << "mp" << mp;
-        statusMP = false;
-    }else if(!statusMP && !tipoAmplitude){
 
-        switch(tipoMp){
-            case ABS:
-                mp = sinalLeitura - amplitude;
-            break;
-            case PICOm:
-                mp = sinalLeitura;
-            break;
-        }
-        statusMP = false;
-    }*/
 }
 
 void SistemaO2::calculaTs(double sinalLeitura, double sinalLeitAnterior, double setPoint)

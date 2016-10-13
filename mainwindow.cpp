@@ -914,9 +914,9 @@ void MainWindow::receiveData()
                         else ui->lb_tr->clear();
                         if(statusTp) ui->lb_tp->setText("Tp = " + QString::number(tp) + " ms");
                         else ui->lb_tp->clear();
-                        if(statusTs) ui->lb_ts->setText("Ts = " + QString::number(ts) + " s");
-                        else ui->lb_ts->clear();
-                        if(statusMp) ui->lb_mp->setText("Mp = " + QString::number(mp) + " cm (" + QString::number(pmp) +"%)");
+                        ui->lb_ts->setText("Ts = " + QString::number(ts) + " s");
+                        //else ui->lb_ts->clear();
+                        if(statusMp)ui->lb_mp->setText("Mp = " + QString::number(mp) + " cm (" + QString::number(pmp) +"%)");
                         else ui->lb_mp->clear();
 
 
