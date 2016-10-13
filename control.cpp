@@ -424,8 +424,10 @@ void Control::receiveSigal() {
     for(int canal=0; canal<2; canal++) {
 
         if(simulacao) {
-            tanque1 = tanq->getNivelTq1();
-            tanque2 = tanq->getNivelTq2();
+
+            //gg = 0;
+            tanque1 = (double)tanq->getNivelTq1();
+            tanque2 = (double)tanq->getNivelTq2();
 
             tanque1 = trunca(tanque1);
             tanque2 = trunca(tanque2);
@@ -433,6 +435,9 @@ void Control::receiveSigal() {
             canaisLeitura_value[0] = tanque1;
             canaisLeitura_value[1] = tanque2;
         } else {
+
+
+                //std::cout << signal/1000;
 
             canaisLeitura_value[canal] = readCanal(canal);
 

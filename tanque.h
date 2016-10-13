@@ -1,16 +1,33 @@
 #ifndef TANQUE_H
 #define TANQUE_H
 
+#include <QDebug>
+#include <cmath>
 class Tanque
 {
 public:
+
+
     Tanque() {
 	    this->nivelTq1 = 0;
     	this->nivelTq2 = 0;
 	}
 
+    double getRuido() {
+        srand(time(NULL));
+        double ampMax = 10;
+        double ampMin = -10;
+         double gg = (((double) rand () / ((double) RAND_MAX + 1)) * (ampMax - ampMin + 1))+ ampMin;
+         gg /= 100;
+
+         qDebug() << gg;
+         return gg;
+
+    }
+
     double getNivelTq1() {
-		return this->nivelTq1;
+
+        return this->nivelTq1;
 	}    
     double getNivelTq2() {
 		return this->nivelTq2;

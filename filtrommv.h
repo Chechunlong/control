@@ -1,7 +1,7 @@
 #ifndef FILTROMMV_H
 #define FILTROMMV_H
 
-#define N_AMOSTRA 4
+#define N_AMOSTRA 5
 
 class FiltroMMV {
 private:
