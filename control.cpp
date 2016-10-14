@@ -12,6 +12,7 @@ Control::Control(int port, QString ip)
     ftanque1 = new FiltroMMV();
     ftanque2 = new FiltroMMV();
 
+
 /*    timeAux     = 0;
     tipoSinal   = 0;
 
@@ -221,13 +222,7 @@ void Control::setWindUP(bool value) { windUP = value; }
 
 void Control::setModeSegOrdem(int value) { modeSegOrdem = value; }
 
-void Control::setTipoControlerCas(double value) {
-    tipoControlerCas = value;
-    if(debCas)
-    {
-        qDebug() << "tipoControlerCas = " << tipoControlerCas;
-    }
-}
+void Control::setTipoControlerCas(double value) { tipoControlerCas = value; }
 
 void Control::setKpCas(double value) { KpCas = value; }
 
@@ -379,25 +374,34 @@ void Control::calculaSinal() {
 
         sinalParCas = calculaTensaoPID(controller, tipoControler, Kp, Ki, Kd, erro, sinalLeitura);
 
-        if(debCas)
-        qDebug() << "sinalCalculado = " << sinalParCas;
-
         if(debCas) {
-            qDebug() << "KpCas = " << KpCas << " KiCas = " << KiCas << " KdCas = " << KdCas;
+        qDebug() << "erro = " << erro;
+        qDebug() << "sinalCalculado = " << sinalParCas;
+        qDebug() << "kp = " << Kp << " ki = " << Ki << " kd = " << Kd;
+        qDebug() << "KpCas = " << KpCas << " KiCas = " << KiCas << " KdCas = " << KdCas;
+        qDebug() << "############";
+
+
+
         }
 
-        if(ordemSistema == SISTEMA_ORDEM_2 && modeSegOrdem == C_O2_CASCATA) {
-            //qDebug() << "controle cascata -: controlador " << tipoControlerCas;
-            erroCas = sinalParCas - tanque1;
-            erroCas = trunca(erroCas);
-            sinalCalculado = calculaTensaoPID(contCascata, tipoControlerCas, KpCas, KiCas, KdCas, erroCas, sinalCalculado);
+        if(ordemSistema == SISTEMA_ORDEM_2) {
+           if(modeSegOrdem == C_O2_CASCATA) {
+                //qDebug() << "controle cascata -: controlador " << tipoControlerCas;
+                //qDebug() << sinalParCas;
+                erroCas = sinalParCas - tanque1;
+                //erroCas = trunca(erroCas);
+                sinalCalculado = calculaTensaoPID(contCascata, tipoControlerCas, KpCas, KiCas, KdCas, erroCas, sinalCalculado);
+            } else if(modeSegOrdem == C_O2_CONVENCIONAL) {
+                sinalCalculado = sinalParCas;
+            }
         }
     }
     else if(tipoMalha == M_ABERTA) {
         sinalCalculado = calculaTensao(tensao);
     }
 
-    sinalCalculado = trunca(sinalCalculado);
+
 
     timeAux += 0.1;
 }
@@ -424,35 +428,42 @@ void Control::receiveSigal() {
     for(int canal=0; canal<2; canal++) {
 
         if(simulacao) {
+
+            //gg = 0;
             tanque1 = tanq->getNivelTq1();
             tanque2 = tanq->getNivelTq2();
 
-            tanque1 = trunca(tanque1);
-            tanque2 = trunca(tanque2);
+            //tanque1 = trunca(tanque1);
+            //tanque2 = trunca(tanque2);
 
             canaisLeitura_value[0] = tanque1;
             canaisLeitura_value[1] = tanque2;
         } else {
 
+
+                //std::cout << signal/1000;
+
             canaisLeitura_value[canal] = readCanal(canal);
 
            if(canal == 0) {
-                ftanque1->add(canaisLeitura_value[0]);
-                tanque1 = ftanque1->media();
+                //ftanque1->add(canaisLeitura_value[0]);
+                //tanque1 = ftanque1->media();
+               tanque1 = canaisLeitura_value[0];
             } else if(canal == 1) {
-                ftanque2->add(canaisLeitura_value[1]);
-                tanque2 = ftanque2->media();
+                //ftanque2->add(canaisLeitura_value[1]);
+                //tanque2 = ftanque2->media();
+               tanque2 = canaisLeitura_value[1];
             }
 
             //tanque1 = canaisLeitura_value[0];
             //tanque2 = canaisLeitura_value[1];
 
 
-            tanque1 = trunca(tanque1);
-            tanque2 = trunca(tanque2);
+            //tanque1 = trunca(tanque1);
+            //tanque2 = trunca(tanque2);
 
-            if(tanque1 < 0) tanque1 = 0;
-            if(tanque2 < 0) tanque2 = 0;
+            //if(tanque1 < 0) tanque1 = 0;
+            //if(tanque2 < 0) tanque2 = 0;
         }
 
 
@@ -476,14 +487,16 @@ void Control::receiveSigal() {
 
 
 
-                if(auxContErro >= 5){
-                    auxContErro = 0;
-                }
+                //if(auxContErro >= 5){
+                //    auxContErro = 0;
+                //}
 
-                arrayErro[auxContErro] = erro;
-                auxContErro++;
+                //qDebug() << "erro = " << erro;
 
-                erro = this->filtroMM(arrayErro);
+                //arrayErro[auxContErro] = erro;
+               // auxContErro++;
+
+                //erro = this->filtroMM(arrayErro);
 
                 if(ordemSistema ==  SISTEMA_ORDEM_2)  {
                     tempoControle();
