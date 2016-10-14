@@ -295,9 +295,9 @@ private:
 
     double sinalParCas;
 
-    bool simulacao = false;
+    bool simulacao = true;
 
-    bool debCas = false;
+    bool debCas = true;
 };
 
 #endif // CONTROL_H

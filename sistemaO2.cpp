@@ -114,12 +114,12 @@ void SistemaO2::calculaTr(double sinalLeitura, double amplitude) {
 
 void SistemaO2::calculaTp(double sinalLeitura, double sinalLeitAnterior, double amplitude, int tipoMp) {
 
-    sinalLeitura = trunca(sinalLeitura);
-    sinalLeitAnterior = trunca(sinalLeitAnterior);
+    //sinalLeitura = trunca(sinalLeitura);
+    //sinalLeitAnterior = trunca(sinalLeitAnterior);
     //if(sinalLeitura<0) sinalLeitura = 0;
     //if(sinalLeitAnterior<0) sinalLeitAnterior = 0;
-    qDebug() << "sl tp " << sinalLeitura;
-    qDebug() << "sla tp " << sinalLeitAnterior;
+    //qDebug() << "sl tp " << sinalLeitura;
+    //qDebug() << "sla tp " << sinalLeitAnterior;
 
     if(!statusTp)
     tempTp += TEMPO_AMOSTRAGEM;
