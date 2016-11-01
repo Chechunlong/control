@@ -42,9 +42,9 @@ private:
 
     double nivelObs;
 
-    double **matglA; /* 2x2 */
-    double **matglB; /* 2x2 */
-    double **matglC; /* 2x2 */
+    double **matGlA; /* 2x2 */
+    double **matGlB; /* 2x2 */
+    double **matGlC; /* 2x2 */
 
     double **matG; /* 2x2 */
     double **matI; /* 2x2 */
@@ -57,7 +57,7 @@ private:
     double **matColSL;
 
     double **matXObs; /* 2x1 x observador*/
-    double YObs; /* Y observador */
+    double yObs; /* Y observador */
 
     double** Mat_Aloc(int linhas, int colunas);
     double** Mat_Free(int linhas, int colunas, double** mat);
@@ -75,7 +75,7 @@ public:
 
     double getNivelObs();
 
-    void calculaObservador(double tensao, double y, vector<int> polo1, vector<int> polo2); /* y é o nivel do tanque */
+    void calculaObservador(double tensao, double y, int polo1[2], int polo2[2]); /* y é o nivel do tanque */
 };
 
 #endif // OBSERVADOR_H

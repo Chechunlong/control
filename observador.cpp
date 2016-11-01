@@ -81,10 +81,10 @@ double** Observador::Mat_Sum(double **matA, double **matB, double** matC, int li
 
 void Observador::geraMatQL() {
 
-    matB = Mat_MultEscalar(matG, 2, 2, b);
-    matC = Mat_MultEscalar(matI, 2, 2, c);
+    matGlB = Mat_MultEscalar(matG, 2, 2, b);
+    matGlC = Mat_MultEscalar(matI, 2, 2, c);
 
-    matQL = Mat_Sum(matvA, matglB, matglC, 2, 2);;
+    matQL = Mat_Sum(matGlA, matGlB, matGlC, 2, 2);
 
     //return matQL;
 }
@@ -102,9 +102,9 @@ void Observador::geraMatL() {
 
 Observador::Observador() {
     matColSL = Mat_Aloc(2,1);
-    matA = Mat_Aloc(2,2);
-    matB = Mat_Aloc(2,2);
-    matC = Mat_Aloc(2,2);
+    matGlA = Mat_Aloc(2,2);
+    matGlB = Mat_Aloc(2,2);
+    matGlC = Mat_Aloc(2,2);
 
     matG = Mat_Aloc(2,2);
     matI = Mat_Aloc(2,2);
@@ -126,15 +126,15 @@ Observador::Observador() {
     matG[1][1] = 0.993458;
 
     /* Matriz G^2 */
-    matA[0][0] = 0.986958798;
-    matA[0][1] = 0.0;
-    matA[1][0] = 0.012954692;
-    matA[1][1] = 0.986958798;
+    matGlA[0][0] = 0.986958798;
+    matGlA[0][1] = 0.0;
+    matGlA[1][0] = 0.012954692;
+    matGlA[1][1] = 0.986958798;
 
-    matI[0][0] = 0.986958798;
+    matI[0][0] = 1.0;
     matI[0][1] = 0.0;
-    matI[1][0] = 0.012954692;
-    matI[1][1] = 0.986958798;
+    matI[1][0] = 0.0;
+    matI[1][1] = 1.0;
 
     matWoInv[0][0] = -152.3708589;
     matWoInv[0][1] = 153.3742331;
@@ -143,33 +143,26 @@ Observador::Observador() {
 }
 
 Observador::~Observador() {
-    matA = matAloc(2,2,matA);
-    matB = matAloc(2,2,matB);
-    matC = matAloc(2,2,matC);
+    matGlA = Mat_Free(2,2,matGlA);
+    matGlB = Mat_Free(2,2,matGlB);
+    matGlC = Mat_Free(2,2,matGlC);
 
-    matG = matAloc(2,2,matG);
-    matI = matAloc(2,2,matI);
-    matH = matAloc(2,1,matH);
-    matWoInv = matAloc(2,2,matWoInv);
+    matG = Mat_Free(2,2,matG);
+    matI = Mat_Free(2,2,matI);
+    matH = Mat_Free(2,1,matH);
+    matWoInv = Mat_Free(2,2,matWoInv);
 
-    matQL = matAloc(2,2,matQL);
-    matL = matAloc(2,2,matL);
+    matQL = Mat_Free(2,2,matQL);
+    matL = Mat_Free(2,2,matL);
 }
 
-double Observador::getL1Obs() {
 
-}
-
-double Observador::getL2Obs() {
-
-}
-
-void Observador::calculaObservador(double tensao, double y, vector<int> polo1, vector<int> polo2) {
+void Observador::calculaObservador(double tensao, double y, int polo1[2], int polo2[2]) {
     b = polo1[0]*2;
     c = polo1[0]*polo2[0] + polo1[1]*polo2[1];
 
     matXObs = Mat_Sum( Mat_Mult(matG,2,2,matXObs,2,1), \
-                       Mat_MultEscalar(matL, 2, 1, y-yobs), \
+                       Mat_MultEscalar(matL, 2, 1, y-yObs), \
                        Mat_MultEscalar(matH, 2, 1, tensao), \
                         2, 1);
 }

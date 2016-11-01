@@ -10,6 +10,8 @@
 
 #include "filtrommv.h"
 
+#include "observador.h"
+
 #define MAX_VOLTAGE 4
 #define MIN_VOLTAGE -4
 
@@ -204,6 +206,8 @@ private:
     Controller *contCascata;
     SistemaO2 *sistemaO2;
     Tanque *tanq;
+
+    Observador *observador;
 
     FiltroMMV *ftanque1;
     FiltroMMV *ftanque2;

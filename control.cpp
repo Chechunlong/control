@@ -12,6 +12,8 @@ Control::Control(int port, QString ip)
     ftanque1 = new FiltroMMV();
     ftanque2 = new FiltroMMV();
 
+    observador = new Observador();
+
 
 /*    timeAux     = 0;
     tipoSinal   = 0;
