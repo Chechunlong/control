@@ -104,7 +104,10 @@ int Control::getCanalLeitura() { return canalLeitura; }
 
 double Control::getCanalValue(int value) { return canaisLeitura_value[value]; }
 
-double Control::getErro() { return erro; }
+double Control::getErro() {
+    //return erro;
+    return observado;
+}
 
 int Control::getTipoMalha() { return tipoMalha; }
 
@@ -377,11 +380,11 @@ void Control::calculaSinal() {
         sinalParCas = calculaTensaoPID(controller, tipoControler, Kp, Ki, Kd, erro, sinalLeitura);
 
         if(debCas) {
-        qDebug() << "erro = " << erro;
-        qDebug() << "sinalCalculado = " << sinalParCas;
-        qDebug() << "kp = " << Kp << " ki = " << Ki << " kd = " << Kd;
-        qDebug() << "KpCas = " << KpCas << " KiCas = " << KiCas << " KdCas = " << KdCas;
-        qDebug() << "############";
+       // qDebug() << "erro = " << erro;
+       // qDebug() << "sinalCalculado = " << sinalParCas;
+       // qDebug() << "kp = " << Kp << " ki = " << Ki << " kd = " << Kd;
+       // qDebug() << "KpCas = " << KpCas << " KiCas = " << KiCas << " KdCas = " << KdCas;
+       // qDebug() << "############";
 
 
 
@@ -402,6 +405,12 @@ void Control::calculaSinal() {
     else if(tipoMalha == M_ABERTA) {
         sinalCalculado = calculaTensao(tensao);
     }
+
+
+    double polo1[] = {0.5, 0.4 };
+    double polo2[] = {0.5, -0.4 };
+
+    observado = observador->calculaObservador(sinalCalculado,tanque2,polo1,polo2);
 
 
 

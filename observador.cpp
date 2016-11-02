@@ -79,7 +79,7 @@ double** Observador::Mat_Sum(double **matA, double **matB, double** matC, int li
 }
 
 
-void Observador::geraMatQL() {
+void Observador::geraMatQL(double b, double c) {
 
     matGlB = Mat_MultEscalar(matG, 2, 2, b);
     matGlC = Mat_MultEscalar(matI, 2, 2, c);
@@ -89,8 +89,8 @@ void Observador::geraMatQL() {
     //return matQL;
 }
 
-void Observador::geraMatL() {
-    geraMatQL();
+void Observador::geraMatL(double b, double c) {
+    geraMatQL( b,  c);
 
     double **matTemp = Mat_Aloc(2,2);
     matTemp = Mat_Mult(matQL, 2, 2, matWoInv, 2, 2);
@@ -106,6 +106,8 @@ Observador::Observador() {
     matGlB = Mat_Aloc(2,2);
     matGlC = Mat_Aloc(2,2);
 
+    matC = Mat_Aloc(1,2);
+
     matG = Mat_Aloc(2,2);
     matI = Mat_Aloc(2,2);
     matH = Mat_Aloc(2,1);
@@ -115,7 +117,15 @@ Observador::Observador() {
     matQL = Mat_Aloc(2,2);
     matL = Mat_Aloc(2,1);
 
+    matXObs = Mat_Aloc(2,1);
+
+    matXObs[0][0] = 0.0;
+    matXObs[1][0] = 0.0;
+
     /*-------------------*/
+
+    matC[0][0] = 0;
+    matC[0][1] = 1;
 
     matColSL[0][0] = 0.0;
     matColSL[1][0] = 1.0;
@@ -136,6 +146,9 @@ Observador::Observador() {
     matI[1][0] = 0.0;
     matI[1][1] = 1.0;
 
+    matH[0][0] = 0.021196;
+    matH[1][0] = 0.000069;
+
     matWoInv[0][0] = -152.3708589;
     matWoInv[0][1] = 153.3742331;
     matWoInv[1][0] = 1.0;
@@ -154,15 +167,44 @@ Observador::~Observador() {
 
     matQL = Mat_Free(2,2,matQL);
     matL = Mat_Free(2,2,matL);
+
 }
 
 
-void Observador::calculaObservador(double tensao, double y, int polo1[2], int polo2[2]) {
+double Observador::calculaObservador(double tensao, double y, double polo1[2], double polo2[2]) {
     b = polo1[0]*2;
     c = polo1[0]*polo2[0] + polo1[1]*polo2[1];
 
-    matXObs = Mat_Sum( Mat_Mult(matG,2,2,matXObs,2,1), \
-                       Mat_MultEscalar(matL, 2, 1, y-yObs), \
-                       Mat_MultEscalar(matH, 2, 1, tensao), \
-                        2, 1);
+    geraMatL(b,c);
+
+    qDebug() << "b = " << b;
+    qDebug() << "c = " << c;
+
+
+
+
+    //double **matGnew = Mat_Aloc(2,1);
+    //matGnew = ;
+
+    //qDebug() << "matGnew[0][0] " << matGnew[0][0];
+    //qDebug() << "matGnew[1][0] " << matGnew[1][0];
+    //qDebug() << "matL[0][0] " << matL[0][0];
+    //qDebug() << "matL[1][0] " << matL[1][0];
+    //qDebug() << "matH[0][0] " << matH[0][0];
+    //qDebug() << "matH[1][0] " << matH[1][0];
+
+    matXObs = Mat_Sum(Mat_Mult(matG,2,2,matXObs,2,1), \
+                      Mat_MultEscalar(matL, 2, 1, y-yObs), \
+                      Mat_MultEscalar(matH, 2, 1, tensao), \
+                      2, 1);
+
+    qDebug() << "matXObs[0][0] " << matXObs[0][0];
+    qDebug() << "matXObs[1][0] " << matXObs[1][0];
+    double **temp = Mat_Aloc(1,1);
+    temp =  Mat_Mult(matC,1,2, matXObs,2,1);
+
+    yObs = temp[0][0];
+    qDebug() << "yObs " << yObs;
+    Mat_Free(1,1,temp);
+    return yObs;
 }

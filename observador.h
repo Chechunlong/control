@@ -6,6 +6,8 @@
 #include <assert.h>
 #include <stdlib.h>
 
+#include <QDebug>
+#include <iostream>
 class Observador {
 
 private:
@@ -53,6 +55,8 @@ private:
     double **matQL; /* 2x2 */
     double **matL; /* 2x1 */
 
+    double **matC; /*1x2*/
+
 
     double **matColSL;
 
@@ -67,15 +71,15 @@ private:
     double** Mat_Sum(double **matA, double **matB, int linhas, int colunas);
     double** Mat_Sum(double **matA, double **matB, double **matC, int linhas, int colunas);
 
-    void geraMatQL();
-    void geraMatL();
+    void geraMatQL(double b, double c);
+    void geraMatL(double b, double c);
 public:
     Observador();
     ~Observador();
 
     double getNivelObs();
 
-    void calculaObservador(double tensao, double y, int polo1[2], int polo2[2]); /* y é o nivel do tanque */
+    double calculaObservador(double tensao, double y, double polo1[], double polo2[]); /* y é o nivel do tanque */
 };
 
 #endif // OBSERVADOR_H

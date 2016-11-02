@@ -302,6 +302,8 @@ private:
     bool simulacao = true;
 
     bool debCas = true;
+
+    double observado;
 };
 
 #endif // CONTROL_H
