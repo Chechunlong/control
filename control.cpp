@@ -389,15 +389,15 @@ void Control::calculaSinal() {
                 sinalCalculado = sinalParCas;
 
                 if(observador) {
-                    qDebug() << polo1[0] << polo1[1];
-                    qDebug() << polo2[0] << polo2[1];
+                    //qDebug() << polo1[0] << polo1[1];
+                    //qDebug() << polo2[0] << polo2[1];
                     obsTan1 = observadorTanque1->calculaObservador(sinalCalculado,tanque1,polo1,polo2);
                     obsTan2 = observadorTanque2->calculaObservador(sinalCalculado,tanque2,polo1,polo2);
 
 
-                    qDebug() << "-----------";
-                    qDebug() << obsTan1;
-                    qDebug() << obsTan2;
+                    //qDebug() << "-----------";
+                    //qDebug() << obsTan1;
+                    //qDebug() << obsTan2;
                 }
             }
         }

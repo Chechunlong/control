@@ -41,8 +41,10 @@ private:
         //}
         // qLG = matG^2 + matG*(polo1+polo2) + polo1*polo2*I
         // L = qLG * Wo^-1*[0  1]^T
-    double b = 0, bold = 0;
-    double c = 0, cold = 0;
+    double b;
+    double bold;
+    double c;
+    double cold;
 
     bool bc_mudou = true;
 
@@ -83,6 +85,7 @@ private:
 
     void geraMatQL(double b, double c);
     void geraMatL(double b, double c);
+    void geraMatL2(double b, double c);
 public:
     Observador();
     ~Observador();

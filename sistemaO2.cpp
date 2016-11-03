@@ -130,7 +130,7 @@ void SistemaO2::calculaTp(double sinalLeitura, double sinalLeitAnterior, double 
 
         if(tipoAmplitude) {
             //qDebug() << sinalLeitura << sinalLeitAnterior;
-            qDebug() << "eh aqui";
+           // qDebug() << "eh aqui";
             //tr true
             if(sinalLeitura >= sinalLeitAnterior) {
 
@@ -232,7 +232,7 @@ void SistemaO2::calculaTs(double sinalLeitura, double sinalLeitAnterior, double 
         ts_aux = 0;
     }
     }
-    qDebug() << "ts " << ts;
+   // qDebug() << "ts " << ts;
 }
 
 

@@ -96,6 +96,17 @@ void Observador::geraMatL(double b, double c) {
     double **matTemp = Mat_Aloc(2,2);
     matTemp = Mat_Mult(matQL, 2, 2, matWoInv, 2, 2);
 
+    matls = Mat_Mult(matTemp, 2, 2, matColSL, 2, 1);
+
+}
+
+void Observador::geraMatL2(double b, double c) {
+
+    geraMatQL( b,  c);
+
+    double **matTemp = Mat_Aloc(2,2);
+    matTemp = Mat_Mult(matQL, 2, 2, matWoInv, 2, 2);
+
     matL = Mat_Mult(matTemp, 2, 2, matColSL, 2, 1);
 
 }
@@ -104,6 +115,10 @@ void Observador::geraMatL(double b, double c) {
 
 
 Observador::Observador() {
+    b = 0.0;
+    c = 0.0;
+    bold = 0.0;
+    cold = 0.0;
     matColSL = Mat_Aloc(2,1);
     matGlA = Mat_Aloc(2,2);
     matGlB = Mat_Aloc(2,2);
@@ -178,16 +193,33 @@ Observador::~Observador() {
 
 
 double Observador::calculaObservador(double tensao, double y, double polo1[2], double polo2[2]) {
+
     b = polo1[0]*2;
     c = polo1[0]*polo2[0] + polo1[1]*polo2[1];
 
+    // qDebug() << "polos";
+    qDebug() << polo1[0] << polo1[1];
+    qDebug() << polo2[0] << polo2[1];
+    //qDebug() << "zzzzzzz " << b << c;
+
     if(b != bold || c != cold) {
-        //qDebug() << "calculaObservador " << b << c;
-        geraMatL(b,c);
+       // qDebug() << "#######################################!";
+       // qDebug() << "calculaObservador " << b << c;
+        geraMatL2(b,c);
         //matL[0][0] = matls[0][0];
         //matL[1][0] = matls[1][0];
+
+        //qDebug() << "matL" << matL[0][0] << matL[1][0];
+        //qDebug() << "matls" << matls[0][0] << matls[1][0];
+
+        //qDebug() << "b c";
+        //qDebug() << b << c;
+        //qDebug() << bold << cold;
         bold = b;
         cold = c;
+        bold = b;
+        cold = c;
+        //qDebug() << bold << cold;
     }
 
     matXObs = Mat_Sum(Mat_Mult(matG,2,2,matXObs,2,1), \
@@ -226,7 +258,7 @@ double** Observador::getPoloFromL(double** matls)  {
 
 
     double complex = pow(b,2)-4*c;
-    double real =  -b/2;
+    double real =  b/2;
 
 
     if(complex<0) complex *=-1;
@@ -243,12 +275,18 @@ double** Observador::getPoloFromL(double** matls)  {
 }
 
 double** Observador::getLFromPolo(double** matpolos) {
+   // qDebug() << "matpolos[0][0]" << matpolos[0][0];
+   // qDebug() << "matpolos[0][1]" << matpolos[0][1];
+   // qDebug() << "matpolos[1][0]" << matpolos[1][0];
+   // qDebug() << "matpolos[1][1]" << matpolos[1][1];
   double b = matpolos[0][0]*2;
   double c = matpolos[0][0]*matpolos[1][0] + matpolos[0][1]*matpolos[1][1];
    // return geraMatL(b,c);
-  //qDebug() << "b" << b;
-  //qDebug() << "c" << c;
-    //geraMatL(b,c);
+ // qDebug() << "b" << b;
+ // qDebug() << "c" << c;
+    geraMatL(b,c);
+
+
 
     //qDebug() << "matls00" << matls[0][0];
     //qDebug() << "matls10" << matls[1][0];

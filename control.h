@@ -313,7 +313,7 @@ private:
 
     double sinalParCas;
 
-    bool simulacao = false;
+    bool simulacao = true;
 
     bool debCas = true;
 

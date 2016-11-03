@@ -168,11 +168,18 @@ MainWindow::~MainWindow()
 }
 void MainWindow:: UI_connect_observador_LtoP()
 {
+
+
     matls[0][0] = ui->dSpinL1->value();
     matls[1][0] = ui->dSpinL2->value();
 
 
     matpolos = control->getPoloFromL(matls);
+
+
+    ui->dSpinP1Real->blockSignals(true);
+    ui->dSpinP2Real->blockSignals(true);
+    ui->dSpinComplexo->blockSignals(true);
 
     ui->dSpinP1Real->setValue(matpolos[0][0]);
     ui->dSpinComplexo->setValue(matpolos[0][1]);
@@ -180,12 +187,16 @@ void MainWindow:: UI_connect_observador_LtoP()
     ui->dSpinP2Real->setValue(matpolos[1][0]);
     ui->labelComplexo->setText(QString::number(matpolos[1][1],'g',3));
 
+    ui->dSpinP1Real->blockSignals(false);
+    ui->dSpinP2Real->blockSignals(false);
+    ui->dSpinComplexo->blockSignals(false);
+
 }
 void MainWindow:: UI_connect_observador_PtoL()
 {
+
     double c = ui->dSpinComplexo->value();
     double p1 = ui->dSpinP1Real->value();
-    double p2 = ui->dSpinP2Real->value();
     if(c > -1e-5 && c < 1e-5)
     {
         ui->dSpinP2Real->setEnabled(true);
@@ -197,6 +208,7 @@ void MainWindow:: UI_connect_observador_PtoL()
         ui->dSpinP2Real->setValue(p1);
         ui->labelComplexo->setText(QString::number(-c,'g',3));
     }
+    double p2 = ui->dSpinP2Real->value();
 
 
     matpolos[0][0] = p1;
@@ -204,16 +216,24 @@ void MainWindow:: UI_connect_observador_PtoL()
     matpolos[1][0] = p2;
     matpolos[1][1] = (-1)*c;
 
-    qDebug() << " matpolos[0][0]" <<  matpolos[0][0];
-    qDebug() << " matpolos[0][1]" <<  matpolos[0][1];
-    qDebug() << " matpolos[1][0]" <<  matpolos[1][0];
-    qDebug() << " matpolos[1][1]" <<  matpolos[1][1];
+    //qDebug() << "p1" << p1;
+   // qDebug() << "p2" << p2;
+   // qDebug() << "c" << c;
+
+
+
 
     matls = control->getLFromPolo(matpolos);
-    qDebug() << " matls[0][0]" <<  matls[0][0];
-    qDebug() << " matls[1][0]" <<  matls[1][0];
+
+
+    ui->dSpinL1->blockSignals(true);
+    ui->dSpinL2->blockSignals(true);
+
     ui->dSpinL1->setValue(matls[0][0]);
     ui->dSpinL2->setValue(matls[1][0]);
+
+    ui->dSpinL1->blockSignals(false);
+    ui->dSpinL2->blockSignals(false);
 }
 
 void MainWindow:: UI_connect_tipoDeSistema()
@@ -831,10 +851,11 @@ void MainWindow::data()
     //bool controladorSimplesO2 = ui->radioSimples->isChecked();
 
     double polo1[2] = {ui->dSpinP1Real->value(),ui->dSpinComplexo->value()};
-    double polo2[2] = {ui->dSpinP2Real->value(),ui->dSpinComplexo->value()};
+    double polo2[2] = {ui->dSpinP2Real->value(),-(ui->dSpinComplexo->value())};
 
-
-
+    qDebug() << "polos main windows";
+    qDebug() << polo1[0] << polo1[1];
+    qDebug() << polo2[0] << polo2[1];
     if(malhaAberta) {
         control->setTensao(amplitude);
         control->setTipoMalha(M_ABERTA);
