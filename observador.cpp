@@ -96,7 +96,7 @@ void Observador::geraMatL(double b, double c) {
     double **matTemp = Mat_Aloc(2,2);
     matTemp = Mat_Mult(matQL, 2, 2, matWoInv, 2, 2);
 
-    matls = Mat_Mult(matTemp, 2, 2, matColSL, 2, 1);
+    matL = Mat_Mult(matTemp, 2, 2, matColSL, 2, 1);
 
 }
 
@@ -182,7 +182,7 @@ double Observador::calculaObservador(double tensao, double y, double polo1[2], d
     c = polo1[0]*polo2[0] + polo1[1]*polo2[1];
 
     if(b != bold || c != cold) {
-        qDebug() << "calculaObservador " << b << c;
+        //qDebug() << "calculaObservador " << b << c;
         geraMatL(b,c);
         //matL[0][0] = matls[0][0];
         //matL[1][0] = matls[1][0];
@@ -199,11 +199,15 @@ double Observador::calculaObservador(double tensao, double y, double polo1[2], d
     temp =  Mat_Mult(matC,1,2, matXObs,2,1);
 
     yObs = temp[0][0];
+    erro = y - yObs;
   //  qDebug() << "yObs " << yObs;
     Mat_Free(1,1,temp);
     return yObs;
 }
 
+double Observador::getErroObs() {
+    return erro;
+}
 
 double** Observador::getMatL() {
     return matL;
@@ -244,7 +248,7 @@ double** Observador::getLFromPolo(double** matpolos) {
    // return geraMatL(b,c);
   //qDebug() << "b" << b;
   //qDebug() << "c" << c;
-    geraMatL(b,c);
+    //geraMatL(b,c);
 
     //qDebug() << "matls00" << matls[0][0];
     //qDebug() << "matls10" << matls[1][0];

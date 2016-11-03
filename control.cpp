@@ -532,15 +532,15 @@ double Control::getObsTan1() {
 }
 
 double Control::getObsErTan1() {
-    return obsErTan1;
+    return observadorTanque1->getErroObs();
 }
 
 double Control::getObsTan2() {
-    return obsTan2;
+  return obsTan2;
 }
 
 double Control::getObsErTan2() {
-    return obsErTan2;
+    return observadorTanque2->getErroObs();
 }
 
 void Control::setPolos(double polo1[2], double polo2[2]) {

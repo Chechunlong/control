@@ -171,6 +171,7 @@ void MainWindow:: UI_connect_observador_LtoP()
     matls[0][0] = ui->dSpinL1->value();
     matls[1][0] = ui->dSpinL2->value();
 
+
     matpolos = control->getPoloFromL(matls);
 
     ui->dSpinP1Real->setValue(matpolos[0][0]);
@@ -208,8 +209,7 @@ void MainWindow:: UI_connect_observador_PtoL()
     qDebug() << " matpolos[1][0]" <<  matpolos[1][0];
     qDebug() << " matpolos[1][1]" <<  matpolos[1][1];
 
-   // matls = control->getLFromPolo(matpolos);
-
+    matls = control->getLFromPolo(matpolos);
     qDebug() << " matls[0][0]" <<  matls[0][0];
     qDebug() << " matls[1][0]" <<  matls[1][0];
     ui->dSpinL1->setValue(matls[0][0]);

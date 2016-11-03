@@ -71,6 +71,8 @@ private:
     double** matpolos;/*2x2*/
     double** matls; /*2x1*/
 
+    double erro = 0;
+
     double** Mat_Aloc(int linhas, int colunas);
     double** Mat_Free(int linhas, int colunas, double** mat);
     double** Mat_Mult(double **matrizA, int linhasMatrizA, int colunasMatrizA, \
@@ -88,6 +90,7 @@ public:
     double getNivelObs();
 
     double calculaObservador(double tensao, double y, double polo1[], double polo2[]); /* y é o nivel do tanque */
+    double getErroObs();
     double** getMatL();
     void setMatL(double** matL);
     double** getPoloFromL(double** matls);
