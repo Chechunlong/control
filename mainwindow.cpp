@@ -96,9 +96,14 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->cb_SinalParcial,   SIGNAL(toggled(bool)), this, SLOT(UI_configPlotGraficosE()));
     //connect(ui->cb_plot_erro_2,           SIGNAL(toggled(bool)), this, SLOT(UI_configPlotGraficosL()));
     //connect(ui->cb_plot_setPoint_2,       SIGNAL(toggled(bool)), this, SLOT(UI_configPlotGraficosL()));
-    connect(ui->cb_plot_p_2,              SIGNAL(toggled(bool)), this, SLOT(UI_configPlotGraficosL()));
-    connect(ui->cb_plot_i_2,              SIGNAL(toggled(bool)), this, SLOT(UI_configPlotGraficosL()));
-    connect(ui->cb_plot_d_2,              SIGNAL(toggled(bool)), this, SLOT(UI_configPlotGraficosL()));
+    connect(ui->cb_plot_p_2,        SIGNAL(toggled(bool)), this, SLOT(UI_configPlotGraficosL()));
+    connect(ui->cb_plot_i_2,        SIGNAL(toggled(bool)), this, SLOT(UI_configPlotGraficosL()));
+    connect(ui->cb_plot_d_2,        SIGNAL(toggled(bool)), this, SLOT(UI_configPlotGraficosL()));
+    connect(ui->checkErroObsTq01,   SIGNAL(toggled(bool)), this, SLOT(UI_configPlotGraficosL()));
+    connect(ui->checkErroObsTq02,   SIGNAL(toggled(bool)), this, SLOT(UI_configPlotGraficosL()));
+    connect(ui->checkObsTq01,       SIGNAL(toggled(bool)), this, SLOT(UI_configPlotGraficosL()));
+    connect(ui->checkObsTq02,       SIGNAL(toggled(bool)), this, SLOT(UI_configPlotGraficosL()));
+
 
     // Botões
     connect(ui->buttonAtualizar,SIGNAL(clicked(bool)),this,SLOT(data()));
@@ -131,7 +136,28 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->rbSistemaO2,  SIGNAL(toggled(bool)), this, SLOT(UI_tipo2Ordem_setEnable()));
     connect(ui->radioFechada, SIGNAL(toggled(bool)), this, SLOT(UI_tipo2Ordem_setEnable()));
 
+    //Observador de Estado
+    connect(ui->radioObservador,SIGNAL(toggled(bool)), this, SLOT(UI_connect_tipoDeSistema()));
+    connect(ui->radioFechada,   SIGNAL(toggled(bool)), this, SLOT(UI_connect_tipoDeSistema()));
+    connect(ui->rbSistemaO2,    SIGNAL(toggled(bool)), this, SLOT(UI_connect_tipoDeSistema()));
+    connect(ui->dSpinL1, SIGNAL(valueChanged(double)), this, SLOT(UI_connect_observador_LtoP()));
+    connect(ui->dSpinL2, SIGNAL(valueChanged(double)), this, SLOT(UI_connect_observador_LtoP()));
+    connect(ui->dSpinP1Real, SIGNAL(valueChanged(double)), this, SLOT(UI_connect_observador_PtoL()));
+    connect(ui->dSpinP2Real, SIGNAL(valueChanged(double)), this, SLOT(UI_connect_observador_PtoL()));
+    connect(ui->dSpinComplexo, SIGNAL(valueChanged(double)), this, SLOT(UI_connect_observador_PtoL()));
+
     UI_configPanel(); /* Método principal para setar o INIT da UI */
+
+    matls = (double**)calloc(2, sizeof(double));
+
+    matpolos = (double**)calloc(2, sizeof(double));
+
+    for(int i=0; i<2; i++) {
+        matpolos[i] = (double*)calloc(2, sizeof(double));
+    }
+    for(int i=0; i<2; i++) {
+        matls[i] = (double*)calloc(1, sizeof(double));
+    }
 }
 
 MainWindow::~MainWindow()
@@ -139,6 +165,64 @@ MainWindow::~MainWindow()
     threadEscrita->terminate();
     threadLeitura->terminate();
     delete ui;
+}
+void MainWindow:: UI_connect_observador_LtoP()
+{
+    matls[0][0] = ui->dSpinL1->value();
+    matls[1][0] = ui->dSpinL2->value();
+
+    matpolos = control->getPoloFromL(matls);
+
+    ui->dSpinP1Real->setValue(matpolos[0][0]);
+    ui->dSpinComplexo->setValue(matpolos[0][1]);
+
+    ui->dSpinP2Real->setValue(matpolos[1][0]);
+    ui->labelComplexo->setText(QString::number(matpolos[1][1],'g',3));
+
+}
+void MainWindow:: UI_connect_observador_PtoL()
+{
+    double c = ui->dSpinComplexo->value();
+    double p1 = ui->dSpinP1Real->value();
+    double p2 = ui->dSpinP2Real->value();
+    if(c > -1e-5 && c < 1e-5)
+    {
+        ui->dSpinP2Real->setEnabled(true);
+        ui->labelComplexo->setText("0.0");
+    }
+    else
+    {
+        ui->dSpinP2Real->setEnabled(false);
+        ui->dSpinP2Real->setValue(p1);
+        ui->labelComplexo->setText(QString::number(-c,'g',3));
+    }
+
+
+    matpolos[0][0] = p1;
+    matpolos[0][1] = c;
+    matpolos[1][0] = p2;
+    matpolos[1][1] = (-1)*c;
+
+    qDebug() << " matpolos[0][0]" <<  matpolos[0][0];
+    qDebug() << " matpolos[0][1]" <<  matpolos[0][1];
+    qDebug() << " matpolos[1][0]" <<  matpolos[1][0];
+    qDebug() << " matpolos[1][1]" <<  matpolos[1][1];
+
+   // matls = control->getLFromPolo(matpolos);
+
+    qDebug() << " matls[0][0]" <<  matls[0][0];
+    qDebug() << " matls[1][0]" <<  matls[1][0];
+    ui->dSpinL1->setValue(matls[0][0]);
+    ui->dSpinL2->setValue(matls[1][0]);
+}
+
+void MainWindow:: UI_connect_tipoDeSistema()
+{
+    bool obs =  ui->radioFechada->isChecked() &&
+                ui->rbSistemaO2->isChecked() &&
+                ui->radioObservador->isChecked();
+    ui->frameKP->setVisible(obs);
+    ui->groupObservador->setVisible(obs);
 }
 
 void MainWindow::UI_configGraphWrite()
@@ -211,13 +295,17 @@ void MainWindow::UI_configGraphRead()
         ui->graficoLeitura->graph(i+2)->removeFromLegend();
     }
 
-    for(int i=8; i<14; i++) {
+    for(int i=8; i<18; i++) {
         if(i == 8 )nomeCanal = "P ";
         else if(i == 9 )nomeCanal = "I ";
         else if(i == 10 )nomeCanal = "D ";
         else if(i == 11 )nomeCanal = "P Cascata ";
         else if(i == 12 )nomeCanal = "I Cascata";
         else if(i == 13 )nomeCanal = "D Cascata";
+        else if(i == 14 )nomeCanal = "Obs. Tanque 01";
+        else if(i == 15 )nomeCanal = "Obs. Tanque 02";
+        else if(i == 16 )nomeCanal = "Erro Obs. Tq.1";
+        else if(i == 17 )nomeCanal = "Erro Obs. Tq.2";
 
         ui->graficoLeitura->addGraph();
         ui->graficoLeitura->graph(i+2)->setPen(QPen(QColor(rand()%200+10,rand()%200+10,rand()%200+10,255)));
@@ -268,13 +356,18 @@ void MainWindow::UI_configPlotGraficosL()
     vectorGrafLeitura[6] = ui->cb_plot_i_2->isChecked();
     vectorGrafLeitura[7] = ui->cb_plot_d_2->isChecked();
 
+    vectorGrafLeitura[8] = ui->checkObsTq01->isChecked();
+    vectorGrafLeitura[9] = ui->checkObsTq02->isChecked();
+    vectorGrafLeitura[10] = ui->checkErroObsTq01->isChecked();
+    vectorGrafLeitura[11] = ui->checkErroObsTq02->isChecked();
+
     for(int i=0; i<2; i++)
     {
         ui->graficoLeitura->graph(i)->setVisible(vectorGrafLeitura[i]);
         if(vectorGrafLeitura[i]) ui->graficoLeitura->graph(i)->addToLegend();
         else                     ui->graficoLeitura->graph(i)->removeFromLegend();
     }
-    for(int i=8;i<14; i++)
+    for(int i=8;i<18; i++)
     {
         ui->graficoLeitura->graph(i+2)->setVisible(vectorGrafLeitura[i-6]);
         if(vectorGrafLeitura[i-6]) ui->graficoLeitura->graph(i+2)->addToLegend();
@@ -358,6 +451,7 @@ void MainWindow::UI_configPanel()
 
     ui->dSpinAux->setVisible(false);
     ui->labelAux->setVisible(false);
+    ui->frameKP->setVisible(false);
 
     UI_malhaAberta();
     UI_configControlador();
@@ -732,8 +826,14 @@ void MainWindow::data()
 
     bool primeiraOrdem = ui->rbSistemaO1->isChecked();
     bool segundaOrdem = ui->rbSistemaO2->isChecked();
-    bool controladorCascataO2 = ui->radioCascata->isChecked();
-    bool controladorSimplesO2 = ui->radioSimples->isChecked();
+    bool observador = ui->radioObservador->isChecked();
+    //bool controladorCascataO2 = ui->radioCascata->isChecked();
+    //bool controladorSimplesO2 = ui->radioSimples->isChecked();
+
+    double polo1[2] = {ui->dSpinP1Real->value(),ui->dSpinComplexo->value()};
+    double polo2[2] = {ui->dSpinP2Real->value(),ui->dSpinComplexo->value()};
+
+
 
     if(malhaAberta) {
         control->setTensao(amplitude);
@@ -762,6 +862,14 @@ void MainWindow::data()
 
             control->setTipoOrdemSistema(SISTEMA_ORDEM_2);
             control->setCanalLeitura(1);
+
+
+        }
+        if(observador) {
+            control->setPolos(polo1,polo2);
+            control->setObservador(true);
+        } else {
+            control->setObservador(false);
         }
     }
 
@@ -788,44 +896,21 @@ void MainWindow::sendData()
     if(canalEscrita < 0) str_canalEscrita = "Nenhum canal selecionado";
     else str_canalEscrita = "Escrevendo em canal " + QString::number(canalEscrita);
 
-    QString str_sinalEnviado   = "Sinal enviado = " + QString::number(trunca(sinalEscrita)) + " V";
-    QString str_sinalCalculado = "Sinal calculado = " + QString::number(trunca(sinalCalculado)) + " V";
+    QString str_sinalEnviado   = "Sinal enviado = " + QString::number(sinalEscrita) + " V";
+    QString str_sinalCalculado = "Sinal calculado = " + QString::number(sinalCalculado) + " V";
 
-    ui->lb_tensaoEscrita->setText(" ");
-    ui->lb_tensaoCalculada->setText(" ");
-    ui->lb_canalEscrita->setText(" ");
+    ui->lb_tensaoEscrita->setText(str_sinalEnviado);
+    ui->lb_tensaoCalculada->setText(str_sinalCalculado);
+    ui->lb_canalEscrita->setText(str_canalEscrita);
 
     ui->graficoEscrita->graph(0)->addData(tempoEscrita, sinalEscrita);
     ui->graficoEscrita->graph(1)->addData(tempoEscrita, sinalCalculado);
-    ui->graficoEscrita->graph(2)->addData(tempoLeitura,control->getSinalPar());
     ui->graficoEscrita->graph(0)->removeData(tempoEscrita-120);
     ui->graficoEscrita->graph(1)->removeData(tempoEscrita-120);
-    ui->graficoEscrita->graph(2)->removeData(tempoEscrita-120);
 
     ui->graficoEscrita->xAxis->setRange(tempoEscrita, 60, Qt::AlignRight);
     tempoEscrita += 0.1;
     ui->graficoEscrita->replot();
-}
-
-
-double trunca(double numero, int n) {
-
-    //return numero;
-
-    double fator = 10.0;
-
-    for(int i=0; i<n; i++) fator *= fator;
-
-    return (int)numero + ( ( (int)((numero - (int)numero) * fator) ) /  fator);
-}
-
-double MainWindow::trunca(double numero) {
-
-    //return numero;
-
-    double fator = 10.0;
-
-    return (int)numero + ( ( (int)((numero - (int)numero) * fator) ) /  fator);
 }
 
 void MainWindow::receiveData()
@@ -842,100 +927,105 @@ void MainWindow::receiveData()
         tanque1 = control->getCanalValue(0);
         tanque2 = control->getCanalValue(1);
 
+        if(ordemSistema == SISTEMA_ORDEM_1) sinalLeitura = tanque1;
+        else if(ordemSistema == SISTEMA_ORDEM_2) sinalLeitura = tanque2;
 
-       // if(canalLeituraVec[i]) {
+        ui->pb_tanque1->setValue(tanque1);
+        ui->pb_tanque2->setValue(tanque2);
+        ui->graficoLeitura->graph(0+2)->addData(tempoLeitura,tanque1);
+        ui->graficoLeitura->graph(1+2)->addData(tempoLeitura,tanque2);
 
-            if(ordemSistema == SISTEMA_ORDEM_1) sinalLeitura = tanque1;
-            else if(ordemSistema == SISTEMA_ORDEM_2) sinalLeitura = tanque2;
+        if(i == canalLeitura) {
+            if(tipoMalha == M_FECHADA) {
+                double erro = control->getErro();
+                double setPoint = control->getAmplitude();
 
-            ui->pb_tanque1->setValue(tanque1);
-            ui->pb_tanque2->setValue(tanque2);
-            ui->graficoLeitura->graph(0+2)->addData(tempoLeitura,tanque1);
-            ui->graficoLeitura->graph(1+2)->addData(tempoLeitura,tanque2);
+                double ii = control->getI();
+                double pp = control->getP();
+                double dd = control->getD();
 
-           // qDebug() << canalLeitura;
-            if(i == canalLeitura) {
-                if(tipoMalha == M_FECHADA) {
-                    double erro = control->getErro();
-                    double setPoint = control->getAmplitude();
+                Controller *ccas = new Controller();
+                ccas = control->getControlerEsc();
+                double ii2 = ccas->getI();
+                double pp2 = ccas->getP();
+                double dd2 = ccas->getD();
 
-                    double ii = control->getI();
-                    double pp = control->getP();
-                    double dd = control->getD();
-
-                    Controller *ccas = new Controller();
-                    ccas = control->getControlerEsc();
-                    double ii2 = ccas->getI();
-                    double pp2 = ccas->getP();
-                    double dd2 = ccas->getD();
-
-                    ui->lb_erro->setText("Erro = " + QString::number(trunca(erro)) + " cm");
-
-                    ui->graficoLeitura->graph(0)->addData(tempoLeitura,erro);
-                    ui->graficoLeitura->graph(1)->addData(tempoLeitura,setPoint);
-                    ui->graficoLeitura->graph(0)->removeData(tempoLeitura-120);
-                    ui->graficoLeitura->graph(1)->removeData(tempoLeitura-120);
-
-                    ui->graficoLeitura->graph(10)->addData(tempoLeitura,pp);
-                    ui->graficoLeitura->graph(11)->addData(tempoLeitura,ii);
-                    ui->graficoLeitura->graph(12)->addData(tempoLeitura,dd);
-                    ui->graficoLeitura->graph(10)->removeData(tempoLeitura-120);
-                    ui->graficoLeitura->graph(11)->removeData(tempoLeitura-120);
-                    ui->graficoLeitura->graph(12)->removeData(tempoLeitura-120);
-
-                    ui->graficoLeitura->graph(13)->addData(tempoLeitura,pp2);
-                    ui->graficoLeitura->graph(14)->addData(tempoLeitura,ii2);
-                    ui->graficoLeitura->graph(15)->addData(tempoLeitura,dd2);
-                    ui->graficoLeitura->graph(13)->removeData(tempoLeitura-120);
-                    ui->graficoLeitura->graph(14)->removeData(tempoLeitura-120);
-                    ui->graficoLeitura->graph(15)->removeData(tempoLeitura-120);
+                double obsTanque1 = control->getObsTan1();
+                double obsTanque2 = control->getObsTan2();
+                double obsErTanque1 = control->getObsErTan1();
+                double obsErTanque2 = control->getObsErTan2();
 
 
-                    //ui->lb_pid->setText("P = " + QString::number(pp) + " I = " + QString::number(ii) + " D = " + QString::number(dd));
+                ui->lb_erro->setText("Erro = " + QString::number(erro) + " cm");
 
-                    if(ordemSistema == SISTEMA_ORDEM_2) {
-                        bool statusTr = control->getStatusTr();
-                        bool statusTp = control->getStatusTp();
-                        bool statusMp = control->getStatusMp();
-                        bool statusTs = control->getStatusTs();
+                ui->graficoLeitura->graph(0)->addData(tempoLeitura,erro);
+                ui->graficoLeitura->graph(1)->addData(tempoLeitura,setPoint);
+                ui->graficoLeitura->graph(0)->removeData(tempoLeitura-120);
+                ui->graficoLeitura->graph(1)->removeData(tempoLeitura-120);
 
-                        double tr = control->getTr();
-                        double tp = control->getTp();
-                        double ts = control->getTs();
-                        double mp = control->getMp();
+                ui->graficoLeitura->graph(10)->addData(tempoLeitura,pp);
+                ui->graficoLeitura->graph(11)->addData(tempoLeitura,ii);
+                ui->graficoLeitura->graph(12)->addData(tempoLeitura,dd);
+                ui->graficoLeitura->graph(10)->removeData(tempoLeitura-120);
+                ui->graficoLeitura->graph(11)->removeData(tempoLeitura-120);
+                ui->graficoLeitura->graph(12)->removeData(tempoLeitura-120);
 
-                        double pmp;
+                ui->graficoLeitura->graph(13)->addData(tempoLeitura,pp2);
+                ui->graficoLeitura->graph(14)->addData(tempoLeitura,ii2);
+                ui->graficoLeitura->graph(15)->addData(tempoLeitura,dd2);
+                ui->graficoLeitura->graph(13)->removeData(tempoLeitura-120);
+                ui->graficoLeitura->graph(14)->removeData(tempoLeitura-120);
+                ui->graficoLeitura->graph(15)->removeData(tempoLeitura-120);
 
-                            pmp = mp/MAX_LEVEL;
-                            pmp *= 100;
-                            pmp = trunca(pmp);
+                ui->graficoLeitura->graph(16)->addData(tempoLeitura,obsTanque1);
+                ui->graficoLeitura->graph(17)->addData(tempoLeitura,obsTanque2);
+                ui->graficoLeitura->graph(18)->addData(tempoLeitura,obsErTanque1);
+                ui->graficoLeitura->graph(19)->addData(tempoLeitura,obsErTanque2);
 
-                        if(statusTr) ui->lb_tr->setText("Tr = " + QString::number(tr) + " ms");
-                        else ui->lb_tr->clear();
-                        if(statusTp) ui->lb_tp->setText("Tp = " + QString::number(tp) + " ms");
-                        else ui->lb_tp->clear();
-                        ui->lb_ts->setText("Ts = " + QString::number(ts) + " s");
-                        //else ui->lb_ts->clear();
-                        if(statusMp)ui->lb_mp->setText("Mp = " + QString::number(mp) + " cm (" + QString::number(pmp) +"%)");
-                        else ui->lb_mp->clear();
+                ui->graficoLeitura->graph(16)->removeData(obsTanque1-120);
+                ui->graficoLeitura->graph(17)->removeData(obsTanque2-120);
+                ui->graficoLeitura->graph(18)->removeData(obsErTanque1-120);
+                ui->graficoLeitura->graph(19)->removeData(obsErTanque2-120);
+
+                if(ordemSistema == SISTEMA_ORDEM_2) {
+                    bool statusTr = control->getStatusTr();
+                    bool statusTp = control->getStatusTp();
+                    bool statusMp = control->getStatusMp();
+                    bool statusTs = control->getStatusTs();
+
+                    double tr = control->getTr();
+                    double tp = control->getTp();
+                    double ts = control->getTs();
+                    double mp = control->getMp();
+
+                    double pmp;
+                    pmp = mp/MAX_LEVEL;
+                    pmp *= 100;
+
+                    if(statusTr) ui->lb_tr->setText("Tr = " + QString::number(tr) + " ms");
+                    else ui->lb_tr->clear();
+                    if(statusTp) ui->lb_tp->setText("Tp = " + QString::number(tp) + " ms");
+                    else ui->lb_tp->clear();
+                    if(statusTs) ui->lb_ts->setText("Ts = " + QString::number(ts) + " s");
+                    else ui->lb_ts->clear();
+                    if(statusMp) ui->lb_mp->setText("Mp = " + QString::number(mp) + " cm (" + QString::number(pmp) +"%)");
+                    else ui->lb_mp->clear();
 
 
-                    } else {
-                        ui->lb_tr->clear();
-                        ui->lb_tp->clear();
-                        ui->lb_mp->clear();
-                        ui->lb_ts->clear();
-                    }
+                } else {
+                    ui->lb_tr->clear();
+                    ui->lb_tp->clear();
+                    ui->lb_mp->clear();
+                    ui->lb_ts->clear();
                 }
-                ui->lb_sinalLido->setText("Nível do tanque 1 = " + QString::number(trunca(tanque1)) + " cm");
-                ui->lb_sinalLidoT2->setText("Nível do tanque 2 = " + QString::number(trunca(tanque2)) + " cm");
             }
-      //  }
+            ui->lb_sinalLido->setText("Nível do tanque 1 = " + QString::number(tanque1) + " cm");
+            ui->lb_sinalLidoT2->setText("Nível do tanque 2 = " + QString::number(tanque2) + " cm");
+        }
     }
 
     ui->graficoLeitura->xAxis->setRange(tempoLeitura, 60, Qt::AlignRight);
     tempoLeitura += 0.1;
-    //ui->graficoLeitura->yAxis->setRangeLower(0.0);
     ui->graficoLeitura->replot();
 }
 void MainWindow::keyPressEvent(QKeyEvent *event)
@@ -944,24 +1034,6 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     if(event->key() == Qt::Key_F1)
     {
         ui->graficoEscrita->saveJpg("Grafico Escrita.jpg",0,0,9,10);
-
-        QPixmap pixmap("Grafico Escrita.jpg");
-        //pixmap.setDevicePixelRatio(.1);
-
-        QPrinter printer(QPrinter::HighResolution); //create your QPrinter (don't need to be high resolution, anyway)
-        printer.setPageSize(QPrinter::A4);
-        printer.setOrientation(QPrinter::Portrait);
-        printer.setPageMargins (15,15,15,15,QPrinter::Millimeter);
-        printer.setFullPage(false);
-        printer.setOutputFileName("output.pdf");
-        printer.setOutputFormat(QPrinter::PdfFormat); //you can use native format of system usin QPrinter::NativeFormat
-
-        QPainter painter(&printer); // create a painter which will paint 'on printer'.
-        painter.setFont(QFont("Tahoma",8));
-        painter.drawText(200,200,"Test");
-        painter.drawPixmap(100,400,pixmap);
-        painter.end();
-
     }
     else if (event->key() == Qt::Key_F2)
     {

@@ -197,7 +197,20 @@ public:
 
     void setModeControleCas(double value);
 
+    double** getMatL();
+    void setMatL(double**matL);
 
+    double getObsTan1();
+    double getObsErTan1();
+    double getObsTan2();
+    double getObsErTan2();
+    void setPolos(double polo1[2], double polo2[2]);
+
+    void setObservador(bool observador);
+
+
+    double**  getPoloFromL(double** mat);
+    double**  getLFromPolo(double** mat);
 
 private:
     Quanser *quanser;
@@ -207,7 +220,8 @@ private:
     SistemaO2 *sistemaO2;
     Tanque *tanq;
 
-    Observador *observador;
+    Observador *observadorTanque1;
+    Observador *observadorTanque2;
 
     FiltroMMV *ftanque1;
     FiltroMMV *ftanque2;
@@ -299,11 +313,17 @@ private:
 
     double sinalParCas;
 
-    bool simulacao = true;
+    bool simulacao = false;
 
     bool debCas = true;
 
-    double observado;
+
+    double obsTan1, obsErTan1;
+    double obsTan2, obsErTan2;
+    double polo1[2]  = { 0};
+    double polo2[2]  = { 0};
+    bool observador = false;
+
 };
 
 #endif // CONTROL_H

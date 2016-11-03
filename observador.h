@@ -8,6 +8,8 @@
 
 #include <QDebug>
 #include <iostream>
+
+#include <cmath>
 class Observador {
 
 private:
@@ -59,11 +61,15 @@ private:
 
     double **matC; /*1x2*/
 
+    const double wozz = 153.3742331;
 
     double **matColSL;
 
     double **matXObs; /* 2x1 x observador*/
     double yObs; /* Y observador */
+
+    double** matpolos;/*2x2*/
+    double** matls; /*2x1*/
 
     double** Mat_Aloc(int linhas, int colunas);
     double** Mat_Free(int linhas, int colunas, double** mat);
@@ -82,6 +88,10 @@ public:
     double getNivelObs();
 
     double calculaObservador(double tensao, double y, double polo1[], double polo2[]); /* y é o nivel do tanque */
+    double** getMatL();
+    void setMatL(double** matL);
+    double** getPoloFromL(double** matls);
+    double** getLFromPolo(double** matpolos);
 };
 
 #endif // OBSERVADOR_H

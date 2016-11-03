@@ -96,7 +96,7 @@ void Observador::geraMatL(double b, double c) {
     double **matTemp = Mat_Aloc(2,2);
     matTemp = Mat_Mult(matQL, 2, 2, matWoInv, 2, 2);
 
-    matL = Mat_Mult(matTemp, 2, 2, matColSL, 2, 1);
+    matls = Mat_Mult(matTemp, 2, 2, matColSL, 2, 1);
 
 }
 
@@ -124,6 +124,9 @@ Observador::Observador() {
 
     matXObs[0][0] = 0.0;
     matXObs[1][0] = 0.0;
+
+    matpolos = Mat_Aloc(2,2);
+    matls = Mat_Aloc(2,1);
 
     /*-------------------*/
 
@@ -181,6 +184,8 @@ double Observador::calculaObservador(double tensao, double y, double polo1[2], d
     if(b != bold || c != cold) {
         qDebug() << "calculaObservador " << b << c;
         geraMatL(b,c);
+        //matL[0][0] = matls[0][0];
+        //matL[1][0] = matls[1][0];
         bold = b;
         cold = c;
     }
@@ -190,8 +195,6 @@ double Observador::calculaObservador(double tensao, double y, double polo1[2], d
                       Mat_MultEscalar(matH, 2, 1, tensao), \
                       2, 1);
 
-   // qDebug() << "matXObs[0][0] " << matXObs[0][0];
-   // qDebug() << "matXObs[1][0] " << matXObs[1][0];
     double **temp = Mat_Aloc(1,1);
     temp =  Mat_Mult(matC,1,2, matXObs,2,1);
 
@@ -199,4 +202,52 @@ double Observador::calculaObservador(double tensao, double y, double polo1[2], d
   //  qDebug() << "yObs " << yObs;
     Mat_Free(1,1,temp);
     return yObs;
+}
+
+
+double** Observador::getMatL() {
+    return matL;
+}
+
+void Observador::setMatL(double** matL) {
+    this->matL = matL;
+}
+
+double** Observador::getPoloFromL(double** matls)  {
+
+    double l1 =matls[0][0];
+    double l2 =matls[1][0];
+    double b = (l2/wozz - matGlA[1][0])/ matG[1][0];
+    double c = l1/wozz - matGlA[0][0] - b*matG[0][0];
+
+
+    double complex = pow(b,2)-4*c;
+    double real =  -b/2;
+
+
+    if(complex<0) complex *=-1;
+    complex = sqrt(complex)/2;
+
+    matpolos[0][0] = real;
+    matpolos[0][1] = complex;
+
+    matpolos[1][0] = real;
+    matpolos[1][1] = -complex;
+
+
+    return matpolos;
+}
+
+double** Observador::getLFromPolo(double** matpolos) {
+  double b = matpolos[0][0]*2;
+  double c = matpolos[0][0]*matpolos[1][0] + matpolos[0][1]*matpolos[1][1];
+   // return geraMatL(b,c);
+  //qDebug() << "b" << b;
+  //qDebug() << "c" << c;
+    geraMatL(b,c);
+
+    //qDebug() << "matls00" << matls[0][0];
+    //qDebug() << "matls10" << matls[1][0];
+    return matls;
+
 }

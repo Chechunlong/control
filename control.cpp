@@ -12,7 +12,8 @@ Control::Control(int port, QString ip)
     ftanque1 = new FiltroMMV();
     ftanque2 = new FiltroMMV();
 
-    observador = new Observador();
+    observadorTanque1 = new Observador();
+    observadorTanque2 = new Observador();
 
 
 /*    timeAux     = 0;
@@ -88,6 +89,7 @@ double Control::filtroMM(double erro[]){
     return trunca(tmp/P_MM);
 }
 
+
 double Control::trunca(double numero) {
 
     //return numero;
@@ -105,8 +107,8 @@ int Control::getCanalLeitura() { return canalLeitura; }
 double Control::getCanalValue(int value) { return canaisLeitura_value[value]; }
 
 double Control::getErro() {
-    //return erro;
-    return observado;
+    return erro;
+    //return observado;
 }
 
 int Control::getTipoMalha() { return tipoMalha; }
@@ -379,17 +381,6 @@ void Control::calculaSinal() {
 
         sinalParCas = calculaTensaoPID(controller, tipoControler, Kp, Ki, Kd, erro, sinalLeitura);
 
-        if(debCas) {
-       // qDebug() << "erro = " << erro;
-       // qDebug() << "sinalCalculado = " << sinalParCas;
-       // qDebug() << "kp = " << Kp << " ki = " << Ki << " kd = " << Kd;
-       // qDebug() << "KpCas = " << KpCas << " KiCas = " << KiCas << " KdCas = " << KdCas;
-       // qDebug() << "############";
-
-
-
-        }
-
         if(ordemSistema == SISTEMA_ORDEM_2) {
            if(modeSegOrdem == C_O2_CASCATA) {                
                 erroCas = sinalParCas - tanque1;
@@ -397,12 +388,17 @@ void Control::calculaSinal() {
             } else if(modeSegOrdem == C_O2_CONVENCIONAL) {
                 sinalCalculado = sinalParCas;
 
-                double polo1[] = {0.5, 0.4 };
-                double polo2[] = {0.5, -0.4 };
-                //double polo1[] = {0.3, 0.9 };
-                //double polo2[] = {0.3, -0.9 };
+                if(observador) {
+                    qDebug() << polo1[0] << polo1[1];
+                    qDebug() << polo2[0] << polo2[1];
+                    obsTan1 = observadorTanque1->calculaObservador(sinalCalculado,tanque1,polo1,polo2);
+                    obsTan2 = observadorTanque2->calculaObservador(sinalCalculado,tanque2,polo1,polo2);
 
-                observado = observador->calculaObservador(sinalCalculado,tanque2,polo1,polo2);
+
+                    qDebug() << "-----------";
+                    qDebug() << obsTan1;
+                    qDebug() << obsTan2;
+                }
             }
         }
     }
@@ -475,7 +471,7 @@ void Control::receiveSigal() {
         }
 
 
-            qDebug() << "tanque1 = " << tanque1 << " tanque2 = " << tanque2;
+           // qDebug() << "tanque1 = " << tanque1 << " tanque2 = " << tanque2;
 
 
         if(canal==canalLeitura) {
@@ -521,5 +517,49 @@ void Control::receiveSigal() {
 }
 
 
+double** Control::getMatL() {
+    return observadorTanque1->getMatL();
+}
+
+void Control::setMatL(double** matL) {
+    observadorTanque1->setMatL(matL);
+    observadorTanque2->setMatL(matL);
+}
 
 
+double Control::getObsTan1() {
+    return obsTan1;
+}
+
+double Control::getObsErTan1() {
+    return obsErTan1;
+}
+
+double Control::getObsTan2() {
+    return obsTan2;
+}
+
+double Control::getObsErTan2() {
+    return obsErTan2;
+}
+
+void Control::setPolos(double polo1[2], double polo2[2]) {
+    this->polo1[0] = polo1[0];
+    this->polo1[1] = polo1[1];
+    this->polo2[0] = polo2[0];
+    this->polo2[1] = polo2[1];
+}
+
+void Control::setObservador(bool observador) {
+    this->observador = observador;
+}
+
+
+double**  Control::getPoloFromL(double** mat)  {
+    observadorTanque1->getPoloFromL(mat);
+}
+
+
+double**  Control::getLFromPolo(double** mat)  {
+    observadorTanque1->getLFromPolo(mat);
+}

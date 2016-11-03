@@ -80,6 +80,7 @@ private slots:
     void UI_configControlador();
     void UI_limitRandInput();
     void UI_tipo2Ordem_setEnable();
+    void UI_connect_tipoDeSistema();
 
     void connectServer();
     void zerarSinal();
@@ -88,11 +89,10 @@ private slots:
     void sendData();
     void receiveData();
 
-    double trunca(double numero);
-
     void keyPressEvent(QKeyEvent *event);
 
-
+    void UI_connect_observador_LtoP();
+    void UI_connect_observador_PtoL();
 private:
     Ui::MainWindow *ui;
 
@@ -108,8 +108,8 @@ private:
 
     bool canalLeituraVec[NUMB_CAN_READ];
     bool canalLeituraPlotVec[NUMB_CAN_READ];
-    bool vectorGrafLeitura[5];
-    bool sinalPlotEscrita[PLOT_ESCRITA];
+    bool vectorGrafLeitura[10];
+    bool sinalPlotEscrita[PLOT_ESCRITA+1];
     int canalEscrita = 0;
 
     double tanque1 = 0;
@@ -125,6 +125,12 @@ private:
 
     double tempoLeitura = 0.0;
     double tempoEscrita = 0.0;
+
+    double** matpolos;
+    double** matls;
+
+
+
 
 };
 
