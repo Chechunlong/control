@@ -48,13 +48,15 @@ double** Observador::Mat_Mult(double **matrizA, int linhasMatrizA, int colunasMa
     return matrizC;
 }
 
-double** Observador::Mat_MultEscalar(double **mat, int linhas, int colunas, int escalar) {
+double** Observador::Mat_MultEscalar(double **mat, int linhas, int colunas, double escalar) {
+
     double **matResul = Mat_Aloc(linhas, colunas);
     for(int i=0; i<linhas; i++) {
         for(int j=0; j<colunas; j++) {
             matResul[i][j] = mat[i][j] * escalar;
         }
     }
+
     return matResul;
 }
 
@@ -86,7 +88,6 @@ void Observador::geraMatQL(double b, double c) {
 
     matQL = Mat_Sum(matGlA, matGlB, matGlC, 2, 2);
 
-    //return matQL;
 }
 
 void Observador::geraMatL(double b, double c) {
@@ -94,7 +95,9 @@ void Observador::geraMatL(double b, double c) {
 
     double **matTemp = Mat_Aloc(2,2);
     matTemp = Mat_Mult(matQL, 2, 2, matWoInv, 2, 2);
+
     matL = Mat_Mult(matTemp, 2, 2, matColSL, 2, 1);
+
 }
 
 /****************/
@@ -175,36 +178,25 @@ double Observador::calculaObservador(double tensao, double y, double polo1[2], d
     b = polo1[0]*2;
     c = polo1[0]*polo2[0] + polo1[1]*polo2[1];
 
-    geraMatL(b,c);
-
-    qDebug() << "b = " << b;
-    qDebug() << "c = " << c;
-
-
-
-
-    //double **matGnew = Mat_Aloc(2,1);
-    //matGnew = ;
-
-    //qDebug() << "matGnew[0][0] " << matGnew[0][0];
-    //qDebug() << "matGnew[1][0] " << matGnew[1][0];
-    //qDebug() << "matL[0][0] " << matL[0][0];
-    //qDebug() << "matL[1][0] " << matL[1][0];
-    //qDebug() << "matH[0][0] " << matH[0][0];
-    //qDebug() << "matH[1][0] " << matH[1][0];
+    if(b != bold || c != cold) {
+        qDebug() << "calculaObservador " << b << c;
+        geraMatL(b,c);
+        bold = b;
+        cold = c;
+    }
 
     matXObs = Mat_Sum(Mat_Mult(matG,2,2,matXObs,2,1), \
                       Mat_MultEscalar(matL, 2, 1, y-yObs), \
                       Mat_MultEscalar(matH, 2, 1, tensao), \
                       2, 1);
 
-    qDebug() << "matXObs[0][0] " << matXObs[0][0];
-    qDebug() << "matXObs[1][0] " << matXObs[1][0];
+   // qDebug() << "matXObs[0][0] " << matXObs[0][0];
+   // qDebug() << "matXObs[1][0] " << matXObs[1][0];
     double **temp = Mat_Aloc(1,1);
     temp =  Mat_Mult(matC,1,2, matXObs,2,1);
 
     yObs = temp[0][0];
-    qDebug() << "yObs " << yObs;
+  //  qDebug() << "yObs " << yObs;
     Mat_Free(1,1,temp);
     return yObs;
 }

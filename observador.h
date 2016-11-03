@@ -39,8 +39,10 @@ private:
         //}
         // qLG = matG^2 + matG*(polo1+polo2) + polo1*polo2*I
         // L = qLG * Wo^-1*[0  1]^T
-    double b;
-    double c;
+    double b = 0, bold = 0;
+    double c = 0, cold = 0;
+
+    bool bc_mudou = true;
 
     double nivelObs;
 
@@ -67,7 +69,7 @@ private:
     double** Mat_Free(int linhas, int colunas, double** mat);
     double** Mat_Mult(double **matrizA, int linhasMatrizA, int colunasMatrizA, \
                       double **matrizB, int linhasMatrizB, int colunasMatrizB);
-    double** Mat_MultEscalar(double **mat, int linhas, int colunas, int escalar);
+    double** Mat_MultEscalar(double **mat, int linhas, int colunas, double escalar);
     double** Mat_Sum(double **matA, double **matB, int linhas, int colunas);
     double** Mat_Sum(double **matA, double **matB, double **matC, int linhas, int colunas);
 

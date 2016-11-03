@@ -391,27 +391,24 @@ void Control::calculaSinal() {
         }
 
         if(ordemSistema == SISTEMA_ORDEM_2) {
-           if(modeSegOrdem == C_O2_CASCATA) {
-                //qDebug() << "controle cascata -: controlador " << tipoControlerCas;
-                //qDebug() << sinalParCas;
+           if(modeSegOrdem == C_O2_CASCATA) {                
                 erroCas = sinalParCas - tanque1;
-                //erroCas = trunca(erroCas);
                 sinalCalculado = calculaTensaoPID(contCascata, tipoControlerCas, KpCas, KiCas, KdCas, erroCas, sinalCalculado);
             } else if(modeSegOrdem == C_O2_CONVENCIONAL) {
                 sinalCalculado = sinalParCas;
+
+                double polo1[] = {0.5, 0.4 };
+                double polo2[] = {0.5, -0.4 };
+                //double polo1[] = {0.3, 0.9 };
+                //double polo2[] = {0.3, -0.9 };
+
+                observado = observador->calculaObservador(sinalCalculado,tanque2,polo1,polo2);
             }
         }
     }
     else if(tipoMalha == M_ABERTA) {
         sinalCalculado = calculaTensao(tensao);
     }
-
-
-    double polo1[] = {0.5, 0.4 };
-    double polo2[] = {0.5, -0.4 };
-
-    observado = observador->calculaObservador(sinalCalculado,tanque2,polo1,polo2);
-
 
 
     timeAux += 0.1;
