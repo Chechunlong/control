@@ -38,6 +38,9 @@ class Controller
 
 
     private:
+
+
+
         double erroAnt;
         double integrador;
         double tensaoAnt;

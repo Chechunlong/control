@@ -9,6 +9,13 @@ Control::Control(int port, QString ip)
     sistemaO2 = new SistemaO2();
     tanq = new Tanque();
 
+    ftanque1 = new FiltroMMV();
+    ftanque2 = new FiltroMMV();
+
+    observadorTanque1 = new Observador();
+    observadorTanque2 = new Observador();
+
+
 /*    timeAux     = 0;
     tipoSinal   = 0;
 
@@ -73,12 +80,22 @@ Control::Control(int port, QString ip)
 }
 /* Recebe um array de tamanho M,
    a saida é a média do ponto[0].*/
+
 double Control::filtroMM(double erro[]){
     double tmp = 0;
     for(int i=0;i < P_MM;i++){
         tmp += erro[i];
     }
-    return tmp/P_MM;
+    return trunca(tmp/P_MM);
+}
+
+
+double Control::trunca(double numero) {
+
+    //return numero;
+    double fator = 10000.0;
+
+    return (int)numero + ( ( (int)((numero - (int)numero) * fator) ) /  fator);
 }
 
 double Control::getAmplitude() { return amplitude; }
@@ -89,7 +106,10 @@ int Control::getCanalLeitura() { return canalLeitura; }
 
 double Control::getCanalValue(int value) { return canaisLeitura_value[value]; }
 
-double Control::getErro() { return erro; }
+double Control::getErro() {
+    return erro;
+    //return observado;
+}
 
 int Control::getTipoMalha() { return tipoMalha; }
 
@@ -143,6 +163,11 @@ double Control::getTd() const { return this->tempoDerivativo; }
 double Control::getP() const { return controller->getP(); }
 double Control::getI() const { return controller->getI(); }
 double Control::getD() const { return controller->getD(); }
+
+Controller * Control::getControlerEsc() const { return contCascata; }
+
+double Control::getSinalPar() const { return sinalParCas; }
+
 
 double Control::getTempoIntegrativo() const { return tempoIntegrativo; }
 
@@ -204,12 +229,7 @@ void Control::setWindUP(bool value) { windUP = value; }
 
 void Control::setModeSegOrdem(int value) { modeSegOrdem = value; }
 
-void Control::setTipoControlerCas(double value) {
-    tipoControlerCas = value;
-    {
-        qDebug() << "tipoControlerCas = " << tipoControlerCas;
-    }
-}
+void Control::setTipoControlerCas(double value) { tipoControlerCas = value; }
 
 void Control::setKpCas(double value) { KpCas = value; }
 
@@ -244,10 +264,12 @@ void Control::zerarSinal() {
     delete controller;
     delete contCascata;
     delete signal;
+    delete sistemaO2;
 
     controller = new Controller();
     contCascata = new Controller();
     signal = new Signal();
+    sistemaO2 = new SistemaO2();
 
     tipoMalha = M_ABERTA;
     tensao = 0;
@@ -288,7 +310,8 @@ void Control::tempoControle() {
     //else ts = sistemaO2->getTs();
 
     sistemaO2->calculaTs(sinalLeitura,sinalLeitura_old,amplitude);
-     ts = sistemaO2->getTs();
+
+    ts = sistemaO2->getTs();
 }
 
 double Control::calculaTensao(double tensao) {
@@ -356,25 +379,33 @@ void Control::calculaSinal() {
             Para Malha fechada e 2a ordem convencional
         */
 
-        sinalCalculado = calculaTensaoPID(controller, tipoControler, Kp, Ki, Kd, erro, sinalLeitura);
+        sinalParCas = calculaTensaoPID(controller, tipoControler, Kp, Ki, Kd, erro, sinalLeitura);
 
-        if(debCas)
-        qDebug() << "sinalCalculado = " << sinalCalculado;
+        if(ordemSistema == SISTEMA_ORDEM_2) {
+           if(modeSegOrdem == C_O2_CASCATA) {                
+                erroCas = sinalParCas - tanque1;
+                sinalCalculado = calculaTensaoPID(contCascata, tipoControlerCas, KpCas, KiCas, KdCas, erroCas, sinalCalculado);
+            } else if(modeSegOrdem == C_O2_CONVENCIONAL) {
+                sinalCalculado = sinalParCas;
 
-        if(debCas) {
-            qDebug() << "KpCas = " << KpCas << " KiCas = " << KiCas << " KdCas = " << KdCas;
-        }
+                if(observador) {
+                    //qDebug() << polo1[0] << polo1[1];
+                    //qDebug() << polo2[0] << polo2[1];
+                    obsTan1 = observadorTanque1->calculaObservador(sinalCalculado,tanque1,polo1,polo2);
+                    obsTan2 = observadorTanque2->calculaObservador(sinalCalculado,tanque2,polo1,polo2);
 
-        if(ordemSistema == SISTEMA_ORDEM_2 && modeSegOrdem == C_O2_CASCATA) {
-            qDebug() << "controle cascata -: controlador " << tipoControlerCas;
 
-            erroCas = sinalCalculado - tanque1;
-            sinalCalculado = calculaTensaoPID(contCascata, tipoControlerCas, KpCas, KiCas, KdCas, erroCas, sinalCalculado);
+                    //qDebug() << "-----------";
+                    //qDebug() << obsTan1;
+                    //qDebug() << obsTan2;
+                }
+            }
         }
     }
     else if(tipoMalha == M_ABERTA) {
         sinalCalculado = calculaTensao(tensao);
     }
+
 
     timeAux += 0.1;
 }
@@ -401,22 +432,52 @@ void Control::receiveSigal() {
     for(int canal=0; canal<2; canal++) {
 
         if(simulacao) {
+
+            //gg = 0;
             tanque1 = tanq->getNivelTq1();
             tanque2 = tanq->getNivelTq2();
+
+            //tanque1 = trunca(tanque1);
+            //tanque2 = trunca(tanque2);
+
             canaisLeitura_value[0] = tanque1;
             canaisLeitura_value[1] = tanque2;
         } else {
+
+
+                //std::cout << signal/1000;
+
             canaisLeitura_value[canal] = readCanal(canal);
-            tanque1 = canaisLeitura_value[0];
-            tanque2 = canaisLeitura_value[1];
+
+           if(canal == 0) {
+                //ftanque1->add(canaisLeitura_value[0]);
+                //tanque1 = ftanque1->media();
+               tanque1 = canaisLeitura_value[0];
+            } else if(canal == 1) {
+                //ftanque2->add(canaisLeitura_value[1]);
+                //tanque2 = ftanque2->media();
+               tanque2 = canaisLeitura_value[1];
+            }
+
+            //tanque1 = canaisLeitura_value[0];
+            //tanque2 = canaisLeitura_value[1];
+
+
+            //tanque1 = trunca(tanque1);
+            //tanque2 = trunca(tanque2);
+
+            //if(tanque1 < 0) tanque1 = 0;
+            //if(tanque2 < 0) tanque2 = 0;
         }
 
-        if(debCas) {
-            qDebug() << "tanque1 = " << tanque1 << " tanque2 = " << tanque2;
-        }
+
+           // qDebug() << "tanque1 = " << tanque1 << " tanque2 = " << tanque2;
+
 
         if(canal==canalLeitura) {
             sinalLeitura_old = sinalLeitura;
+
+
 
             if(ordemSistema == SISTEMA_ORDEM_1) sinalLeitura = tanque1;
             else if(ordemSistema == SISTEMA_ORDEM_2) sinalLeitura = tanque2;
@@ -424,14 +485,22 @@ void Control::receiveSigal() {
             if(tipoMalha == M_FECHADA) {
                 erro = amplitude - sinalLeitura;
 
-                if(auxContErro >= 5){
-                    auxContErro = 0;
-                }
+               // qDebug() << "erro = " << erro << " aplitude = " << amplitude << " sinalLeitura = " << sinalLeitura;
 
-                arrayErro[auxContErro] = erro;
-                auxContErro++;
+                //sinalLeitura = trunca(sinalLeitura);
 
-                erro = this->filtroMM(arrayErro);
+
+
+                //if(auxContErro >= 5){
+                //    auxContErro = 0;
+                //}
+
+                //qDebug() << "erro = " << erro;
+
+                //arrayErro[auxContErro] = erro;
+               // auxContErro++;
+
+                //erro = this->filtroMM(arrayErro);
 
                 if(ordemSistema ==  SISTEMA_ORDEM_2)  {
                     tempoControle();
@@ -448,5 +517,49 @@ void Control::receiveSigal() {
 }
 
 
+double** Control::getMatL() {
+    return observadorTanque1->getMatL();
+}
+
+void Control::setMatL(double** matL) {
+    observadorTanque1->setMatL(matL);
+    observadorTanque2->setMatL(matL);
+}
 
 
+double Control::getObsTan1() {
+    return obsTan1;
+}
+
+double Control::getObsErTan1() {
+    return observadorTanque1->getErroObs();
+}
+
+double Control::getObsTan2() {
+  return obsTan2;
+}
+
+double Control::getObsErTan2() {
+    return observadorTanque2->getErroObs();
+}
+
+void Control::setPolos(double polo1[2], double polo2[2]) {
+    this->polo1[0] = polo1[0];
+    this->polo1[1] = polo1[1];
+    this->polo2[0] = polo2[0];
+    this->polo2[1] = polo2[1];
+}
+
+void Control::setObservador(bool observador) {
+    this->observador = observador;
+}
+
+
+double**  Control::getPoloFromL(double** mat)  {
+    observadorTanque1->getPoloFromL(mat);
+}
+
+
+double**  Control::getLFromPolo(double** mat)  {
+    observadorTanque1->getLFromPolo(mat);
+}

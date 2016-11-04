@@ -8,6 +8,10 @@
 
 #include "tanque.h"
 
+#include "filtrommv.h"
+
+#include "observador.h"
+
 #define MAX_VOLTAGE 4
 #define MIN_VOLTAGE -4
 
@@ -37,7 +41,7 @@
 #define C_O2_CASCATA 2
 
 //parametro para o filtro média movel
-#define P_MM 20
+#define P_MM 10
 
 class Control
 {
@@ -64,6 +68,8 @@ public:
 
     double filtroMM(double erro[]);
 
+    double trunca(double numero);
+
 
     // Controle
     int getModeControle() const;
@@ -89,6 +95,10 @@ public:
     double getP() const;
     double getI() const;
     double getD() const;
+
+    Controller* getControlerEsc() const;
+
+    double getSinalPar() const;
 
     double getTempoIntegrativo() const;
     void setTempoIntegrativo(double value);
@@ -187,7 +197,20 @@ public:
 
     void setModeControleCas(double value);
 
+    double** getMatL();
+    void setMatL(double**matL);
 
+    double getObsTan1();
+    double getObsErTan1();
+    double getObsTan2();
+    double getObsErTan2();
+    void setPolos(double polo1[2], double polo2[2]);
+
+    void setObservador(bool observador);
+
+
+    double**  getPoloFromL(double** mat);
+    double**  getLFromPolo(double** mat);
 
 private:
     Quanser *quanser;
@@ -197,6 +220,12 @@ private:
     SistemaO2 *sistemaO2;
     Tanque *tanq;
 
+    Observador *observadorTanque1;
+    Observador *observadorTanque2;
+
+    FiltroMMV *ftanque1;
+    FiltroMMV *ftanque2;
+
     int tipoMalha = M_FECHADA;  /* 0 -> fechada, 1 -> aberto*/
 
     double timeAux = 0.0;
@@ -204,7 +233,7 @@ private:
 
     double sinalEscrita = 0;
     double sinalLeitura = 0;
-    double sinalLeitura_old = 0;
+    double sinalLeitura_old = 100;
     double sinalCalculado = 0;
 
     // Update data function: _data()
@@ -217,7 +246,7 @@ private:
     // Malha fechada function: _receiveData()
     double erro = 0;
     double erroAnt = 0;
-    double arrayErro[5] = {0};
+    double arrayErro[P_MM] = {0};
     int auxContErro = 0;
 
     int canalEscrita = 0;
@@ -253,6 +282,10 @@ private:
     double I = 0;
     double D = 0;
 
+    double Pcas =0;
+    double Icas =0;
+    double Dcas =0;
+
     // Sistema de Ordem 2
     int ordemSistema = SISTEMA_ORDEM_1;
     int modeSegOrdem = C_O2_CONVENCIONAL; /* Se eh convencional ou em cascata */
@@ -278,9 +311,19 @@ private:
     double tanque1 = 0;
     double tanque2 = 0;
 
-    bool simulacao = false;
+    double sinalParCas;
+
+    bool simulacao = true;
 
     bool debCas = true;
+
+
+    double obsTan1, obsErTan1;
+    double obsTan2, obsErTan2;
+    double polo1[2]  = { 0};
+    double polo2[2]  = { 0};
+    bool observador = false;
+
 };
 
 #endif // CONTROL_H
