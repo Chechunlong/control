@@ -15,7 +15,7 @@ double** Observador::Mat_Aloc(int linhas, int colunas) {
     return mat;
 }
 
-double** Observador::Observador::Mat_Free(int linhas, int colunas, double** mat) {
+double** Observador::Mat_Free(int linhas, int colunas, double** mat) {
     if(mat == NULL) return NULL;
 
     for(int i=0; i<linhas; i++) {
@@ -169,11 +169,11 @@ Observador::Observador() {
     matI[1][0] = 0.0;
     matI[1][1] = 1.0;
 
-    //matH[0][0] = 0.021196;
-    //matH[1][0] = 0.000069;
+    matH[0][0] = 0.021196;
+    matH[1][0] = 0.000069;
 
-    matH[0][0] = 0.02955;
-    matH[1][0] = 0.00009687;
+//    matH[0][0] = 0.02955;
+//    matH[1][0] = 0.00009687;
 
     matWoInv[0][0] = -152.3708589;
     matWoInv[0][1] = 153.3742331;
@@ -230,6 +230,9 @@ double Observador::calculaObservador(double tensao, double y, double polo1[2], d
         //qDebug() << bold << cold;
        // exit(-1);
     }
+    qDebug() << "matL";
+    qDebug() << matL[0][0];
+    qDebug() << matL[1][0];
 
     matXObs = Mat_Sum(Mat_Mult(matG,2,2,matXObs,2,1), \
                       Mat_MultEscalar(matL, 2, 1, y-yObs), \
@@ -239,9 +242,18 @@ double Observador::calculaObservador(double tensao, double y, double polo1[2], d
     double **temp = Mat_Aloc(1,1);
     temp =  Mat_Mult(matC,1,2, matXObs,2,1);
 
+
+    //qDebug() << "matX";
+    //qDebug() << matXObs[0][0];
+    //qDebug() << matXObs[1][0];
+
+
+
     yObs = temp[0][0];
     erro = y - yObs;
-  //  qDebug() << "yObs " << yObs;
+
+
+ // qDebug() << "yObs " << yObs;
     Mat_Free(1,1,temp);
     return yObs;
 }

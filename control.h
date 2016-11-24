@@ -12,6 +12,8 @@
 
 #include "observador.h"
 
+#include "seguidor.h"
+
 #define MAX_VOLTAGE 4
 #define MIN_VOLTAGE -4
 
@@ -31,6 +33,7 @@
 #define M_FECHADA 0
 #define M_ABERTA 1
 
+
 #define CONTROLE_CONST_TEMP 0
 #define CONTROLE_GANHO 1
 
@@ -39,6 +42,7 @@
 
 #define C_O2_CONVENCIONAL 1
 #define C_O2_CASCATA 2
+#define C_O2_SEGUIDOR 3
 
 //parametro para o filtro média movel
 #define P_MM 10
@@ -222,6 +226,8 @@ private:
 
     Observador *observadorTanque1;
     Observador *observadorTanque2;
+
+    Seguidor *seguidor;
 
     FiltroMMV *ftanque1;
     FiltroMMV *ftanque2;

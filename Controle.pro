@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     controller.cpp \
     conectar.cpp \
     sistemaO2.cpp \
-    observador.cpp
+    observador.cpp \
+    seguidor.cpp
 
 HEADERS  += mainwindow.h \
     quanser.h \
@@ -31,7 +32,9 @@ HEADERS  += mainwindow.h \
     sistemaO2.h \
     tanque.h \
     filtrommv.h \
-    observador.h
+    observador.h \
+    seguidor.h \
+    matriz.h
 
 FORMS    += mainwindow.ui \
     conectar.ui

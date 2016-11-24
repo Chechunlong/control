@@ -15,6 +15,8 @@ Control::Control(int port, QString ip)
     observadorTanque1 = new Observador();
     observadorTanque2 = new Observador();
 
+    //seguidor = new Seguidor();
+
 
 /*    timeAux     = 0;
     tipoSinal   = 0;
@@ -399,7 +401,13 @@ void Control::calculaSinal() {
                     //qDebug() << obsTan1;
                     //qDebug() << obsTan2;
                 }
-            }
+            } else if(modeSegOrdem == C_O2_SEGUIDOR) {
+                qDebug() << "seguidor";
+                double polo1[2] = {0.9980,0};
+                double polo2[2] = {0.9920,0};
+                double polo3 = 0.9048;
+                sinalCalculado = seguidor->seguidor(amplitude,tanque1,tanque2,polo1,polo2,polo3);
+           }
         }
     }
     else if(tipoMalha == M_ABERTA) {
