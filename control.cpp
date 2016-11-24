@@ -411,11 +411,11 @@ void Control::calculaSinal() {
             } else if(modeSegOrdem == C_O2_SEGUIDOR) {
 
                 double polos[5];
-                polos[0] = 0.9980;
+                polos[0] = 0.990;
                 polos[1] = 0.0;
-                polos[2] = 0.9920;
+                polos[2] = 0.990;
                 polos[3] = 0.0;
-                polos[4] = 0.9048;
+                polos[4] = 0.5;
                 sinalCalculado = seguidor->seguidor(tanque1, tanque2, amplitude, polos);
             }
         }

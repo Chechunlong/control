@@ -4,6 +4,9 @@
 #include <assert.h>
 #include <stdlib.h>
 
+#include <QDebug>
+
+
 class Matriz
 {
 public:
@@ -48,15 +51,33 @@ public:
         }
     }
 
-    void Mat_Qg(double **matQg, double **matG, double **matI, double escalarB, double escalarC, double escalarD, \
+    void Mat_Qg(double **matQg, double **matG, double **matG2, double **matG3, double **matI, double escalarB, double escalarC, double escalarD, \
                 int linhas, int colunas)
     {
+#ifdef DEB_QG_
+        qDebug() << "matQg +++++";
+        qDebug() << escalarB << escalarC << escalarD;
+        qDebug() << "--------";
+#endif
         for(int i=0; i<linhas; i++)
         {
             for(int j=0; j<colunas; j++)
             {
-                matQg[i][j] = matG[i][j] + escalarB*matG[i][j] + escalarC*matG[i][j] + escalarD*matI[i][j];
+                matQg[i][j] = matG3[i][j] + escalarB*matG2[i][j] + escalarC*matG[i][j] + escalarD*matI[i][j];
+
+#define DEB_QG_
+#ifdef DEB_QG_
+                if(i==0 && j == 0) {
+            qDebug() << matQg[i][0] << matQg[i][1] << matQg[i][2];
+
+            qDebug() << "############" << matG3[0][0] << escalarB*matG2[0][0] << escalarC*matG[0][0] << escalarD*matI[0][0];
+            //qDebug() << "############" << matG3[0][0] << 1*matG2[0][0] << 1*matG[0][0] << 1*matI[0][0];
+            qDebug() << "@@@@@@" << matQg[0][0];
+            qDebug() <<matG3[i][j] + escalarB*matG2[i][j] + escalarC*matG[i][j] + escalarD*matI[i][j];
+                }
+#endif
             }
+
         }
     }
 

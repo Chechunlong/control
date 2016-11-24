@@ -11,6 +11,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 TARGET = Controle
 TEMPLATE = app
 
+LIBS += -larmadillo
+
 SOURCES += main.cpp\
         mainwindow.cpp \
     qcustomplot.cpp \

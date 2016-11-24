@@ -4,6 +4,11 @@
 #include "matriz.h"
 #include <QDebug>
 
+
+#include <armadillo>
+
+using namespace arma;
+
 class Seguidor : public Matriz
 {
     double polosOld[5];
@@ -16,15 +21,17 @@ class Seguidor : public Matriz
     double tensao;
     double v;
 
-    double **matGG; /* 3x3 */
-    double **matHH; /* 3x1 */
-    double **matWI; /* 3x3 */
-    double **matArckemann; /* 1x3*/
-    double **matLinhaArck; /* 1x3*/
-    double **matQg; /* 3x3 */
-    double **matIm; /* 3x3 */
-    double **matGanhos; /* 1x3*/
-    double **matAuxGanhos; /* 3x3 */
+    mat::fixed<3,3> matGG; /* 3x3 */
+    mat::fixed<3,3> matGG2; /* 3x3 */
+    mat::fixed<3,3> matGG3; /* 3x3 */
+    mat::fixed<3,1> matHH; /* 3x1 */
+    mat::fixed<3,3> matWI; /* 3x3 */
+    mat::fixed<1,3> matArckemann; /* 1x3*/
+    mat::fixed<1,3> matLinhaArck; /* 1x3*/
+    mat::fixed<3,3> matQg; /* 3x3 */
+    mat::fixed<3,3> matIm; /* 3x3 */
+    mat::fixed<1,3> matGanhos; /* 1x3*/
+    mat::fixed<3,3> matAuxGanhos; /* 3x3 */
 
     bool verificaPolos(double polos[5]);
     void ganhosArckemann();
