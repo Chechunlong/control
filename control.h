@@ -12,6 +12,8 @@
 
 #include "observador.h"
 
+#include "seguidor.h"
+
 #define MAX_VOLTAGE 4
 #define MIN_VOLTAGE -4
 
@@ -39,6 +41,7 @@
 
 #define C_O2_CONVENCIONAL 1
 #define C_O2_CASCATA 2
+#define C_O2_SEGUIDOR 3
 
 //parametro para o filtro média movel
 #define P_MM 10
@@ -222,6 +225,7 @@ private:
 
     Observador *observadorTanque1;
     Observador *observadorTanque2;
+    Seguidor *seguidor;
 
     FiltroMMV *ftanque1;
     FiltroMMV *ftanque2;
@@ -311,7 +315,7 @@ private:
     double tanque1 = 0;
     double tanque2 = 0;
 
-    double sinalParCas;
+    double sinalParCas = 0;
 
     bool simulacao = true;
 

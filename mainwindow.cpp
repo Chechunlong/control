@@ -764,14 +764,15 @@ void MainWindow::zerarSinal()
 void MainWindow::controladorPID()
 {
     if(ui->radioSimples->isChecked()) {
-        control->setModeSegOrdem(C_O2_CONVENCIONAL);
+       // control->setModeSegOrdem(C_O2_CONVENCIONAL);
     }
     else if(ui->radioCascata->isChecked()) {
-        control->setModeSegOrdem(C_O2_CASCATA);
+        //control->setModeSegOrdem(C_O2_CASCATA);
     }
     else {
-        control->setModeSegOrdem(C_O2_CONVENCIONAL);
+        //control->setModeSegOrdem(C_O2_CONVENCIONAL);
     }
+    control->setModeSegOrdem(C_O2_SEGUIDOR);
 
     bool controlerGanho = ui->rb_constGanho->isChecked();
     bool controlerTempo = ui->rb_constTempo->isChecked();
