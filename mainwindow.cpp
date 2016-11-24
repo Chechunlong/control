@@ -41,7 +41,7 @@ MainWindow::MainWindow(QWidget *parent) :
     timerLeitura->start(100);
     timerEscrita->start(100);
 
-    timerLeitura->moveToThread(threadEscrita);
+    timerLeitura->moveToThread(threadLeitura);
     connect(timerLeitura, SIGNAL(timeout()), this, SLOT(receiveData()));
 
     timerEscrita->moveToThread(threadEscrita);
@@ -51,6 +51,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->rb_constGanho,   SIGNAL(toggled(bool)),this,SLOT(UI_configControlador()));
     connect(ui->rb_constTempo,   SIGNAL(toggled(bool)),this,SLOT(UI_configControlador()));
     connect(ui->tipoControlador, SIGNAL(currentIndexChanged(int)),this,SLOT(UI_configControlador()));
+    connect(ui->tipoControlador_2,SIGNAL(currentIndexChanged(int)),this,SLOT(UI_configControlador()));
     connect(ui->radioFechada,    SIGNAL(toggled(bool)), ui->tab_sinal_controle->widget(TAB_CONTROLE), SLOT(setEnabled(bool)));
     connect(ui->radioAberta,     SIGNAL(toggled(bool)), ui->tab_sinal_controle->widget(TAB_CONTROLE), SLOT(setDisabled(bool)));
     connect(ui->rb_constTempo,   SIGNAL(toggled(bool)),this,SLOT(UI_configConsControle()));
@@ -135,16 +136,29 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->radioCascata, SIGNAL(toggled(bool)), this, SLOT(UI_tipo2Ordem_setEnable()));
     connect(ui->rbSistemaO2,  SIGNAL(toggled(bool)), this, SLOT(UI_tipo2Ordem_setEnable()));
     connect(ui->radioFechada, SIGNAL(toggled(bool)), this, SLOT(UI_tipo2Ordem_setEnable()));
+    connect(ui->radioCascata, SIGNAL(toggled(bool)), this, SLOT(UI_connect_tipoDeSistema()));
+    connect(ui->radioSimples, SIGNAL(toggled(bool)), this, SLOT(UI_connect_tipoDeSistema()));
 
     //Observador de Estado
     connect(ui->radioObservador,SIGNAL(toggled(bool)), this, SLOT(UI_connect_tipoDeSistema()));
     connect(ui->radioFechada,   SIGNAL(toggled(bool)), this, SLOT(UI_connect_tipoDeSistema()));
     connect(ui->rbSistemaO2,    SIGNAL(toggled(bool)), this, SLOT(UI_connect_tipoDeSistema()));
-    connect(ui->dSpinL1, SIGNAL(valueChanged(double)), this, SLOT(UI_connect_observador_LtoP()));
-    connect(ui->dSpinL2, SIGNAL(valueChanged(double)), this, SLOT(UI_connect_observador_LtoP()));
-    connect(ui->dSpinP1Real, SIGNAL(valueChanged(double)), this, SLOT(UI_connect_observador_PtoL()));
-    connect(ui->dSpinP2Real, SIGNAL(valueChanged(double)), this, SLOT(UI_connect_observador_PtoL()));
-    connect(ui->dSpinComplexo, SIGNAL(valueChanged(double)), this, SLOT(UI_connect_observador_PtoL()));
+    connect(ui->dSpinL1_Obs, SIGNAL(valueChanged(double)), this, SLOT(UI_connect_observador_LtoP()));
+    connect(ui->dSpinL2_Obs, SIGNAL(valueChanged(double)), this, SLOT(UI_connect_observador_LtoP()));
+    connect(ui->dSpinP1Real_Obs, SIGNAL(valueChanged(double)), this, SLOT(UI_connect_observador_PtoL()));
+    connect(ui->dSpinP2Real_Obs, SIGNAL(valueChanged(double)), this, SLOT(UI_connect_observador_PtoL()));
+    connect(ui->dSpinComplexo_Obs, SIGNAL(valueChanged(double)), this, SLOT(UI_connect_observador_PtoL()));
+
+    //Seguidor de Referencia
+    connect(ui->radioSeguidor, SIGNAL(toggled(bool)), this, SLOT(UI_connect_tipoDeSistema()));
+    connect(ui->dSpinK1_Seg, SIGNAL(valueChanged(double)), this, SLOT(UI_connect_seguidor_KtoP()));
+    connect(ui->dSpinK2_Seg, SIGNAL(valueChanged(double)), this, SLOT(UI_connect_seguidor_KtoP()));
+    connect(ui->dSpinK3_Seg, SIGNAL(valueChanged(double)), this, SLOT(UI_connect_seguidor_KtoP()));
+    connect(ui->dSpinP1Real_Seg, SIGNAL(valueChanged(double)), this, SLOT(UI_connect_seguidor_PtoK()));
+    connect(ui->dSpinP2Real_Seg, SIGNAL(valueChanged(double)), this, SLOT(UI_connect_seguidor_PtoK()));
+    connect(ui->dSpinP3Real_Seg, SIGNAL(valueChanged(double)), this, SLOT(UI_connect_seguidor_PtoK()));
+    connect(ui->dSpinP1Com_Seg,  SIGNAL(valueChanged(double)), this, SLOT(UI_connect_seguidor_PtoK()));
+
 
     UI_configPanel(); /* Método principal para setar o INIT da UI */
 
@@ -166,83 +180,149 @@ MainWindow::~MainWindow()
     threadLeitura->terminate();
     delete ui;
 }
+void MainWindow::UI_connect_seguidor_KtoP()
+{
+    double k1 = ui->dSpinK1_Seg->value(); //Valores de K
+    double k2 = ui->dSpinK2_Seg->value();
+    double k3 = ui->dSpinK3_Seg->value();
+
+    //Coloque aqui a função de conversão de K para P
+
+    ui->dSpinP1Real_Seg->blockSignals(true);
+    ui->dSpinP2Real_Seg->blockSignals(true);
+    ui->dSpinP3Real_Seg->blockSignals(true);
+    ui->dSpinP1Com_Seg->blockSignals(true);
+
+    //ui->dSpinP1Real_Seg->setValue(/* Valor */);
+    //ui->dSpinP2Real_Seg->setValue(/* Valor */);
+    //ui->dSpinP3Real_Seg->setValue(/* Valor */);
+
+    //ui->dSpinP1Com_Seg->setValue(/*Valor*/);
+    //ui->labelComplexo_Seg->setText(QString::number(/*Valor*/,'g',3));
+
+    ui->dSpinP1Real_Seg->blockSignals(false);
+    ui->dSpinP2Real_Seg->blockSignals(false);
+    ui->dSpinP3Real_Seg->blockSignals(false);
+    ui->dSpinP1Com_Seg->blockSignals(false);
+}
+void MainWindow::UI_connect_seguidor_PtoK()
+{
+    double polos[5];
+    double p1 = ui->dSpinP1Real_Seg->value(); //Valores de K
+    double p3 = ui->dSpinP3Real_Seg->value();
+    double c1 = ui->dSpinP1Com_Seg->value();
+    double c2 = (-c1);
+
+    polos[0] = p1;
+    polos[1] = c1;
+    polos[2] = p1;
+    polos[3] = c2;
+    polos[4] = p3;
+
+    if(c1 > -1e-5 && c1 < 1e-5)
+    {
+        ui->dSpinP2Real_Seg->setEnabled(true);
+        ui->labelComplexo_Seg->setText("0.0");
+    }
+    else
+    {
+        ui->dSpinP2Real_Seg->setEnabled(false);
+        ui->dSpinP2Real_Seg->setValue(p1);
+        ui->labelComplexo_Seg->setText(QString::number(c2,'g',3));
+    }
+    double p2 = ui->dSpinP2Real_Obs->value();
+
+    //Função de P para K
+
+
+    matGanhosSeguidor = control->getKsFromPolos(polos);
+
+    qDebug() << "recebou " << matGanhosSeguidor(0,0) << matGanhosSeguidor(0,1) << matGanhosSeguidor(0,2);
+    ui->dSpinK1_Seg->setValue(matGanhosSeguidor(0,2));
+    ui->dSpinK2_Seg->setValue(matGanhosSeguidor(0,0));
+    ui->dSpinK3_Seg->setValue(matGanhosSeguidor(0,1));
+
+    ui->dSpinK1_Seg->blockSignals(true);
+    ui->dSpinK2_Seg->blockSignals(true);
+    ui->dSpinK3_Seg->blockSignals(true);
+
+    //ui->dSpinK1_Seg->setValue(/*Valor*/);
+    //ui->dSpinK2_Seg->setValue(/*Valor*/);
+    //ui->dSpinK3_Seg->setValue(/*Valor*/);
+
+    ui->dSpinK1_Seg->blockSignals(false);
+    ui->dSpinK2_Seg->blockSignals(false);
+    ui->dSpinK3_Seg->blockSignals(false);
+}
+
 void MainWindow:: UI_connect_observador_LtoP()
 {
-
-
-    matls[0][0] = ui->dSpinL1->value();
-    matls[1][0] = ui->dSpinL2->value();
-
+    matls[0][0] = ui->dSpinL1_Obs->value();
+    matls[1][0] = ui->dSpinL2_Obs->value();
 
     matpolos = control->getPoloFromL(matls);
 
+    ui->dSpinP1Real_Obs->blockSignals(true);
+    ui->dSpinP2Real_Obs->blockSignals(true);
+    ui->dSpinComplexo_Obs->blockSignals(true);
 
-    ui->dSpinP1Real->blockSignals(true);
-    ui->dSpinP2Real->blockSignals(true);
-    ui->dSpinComplexo->blockSignals(true);
+    ui->dSpinP1Real_Obs->setValue(matpolos[0][0]);
+    ui->dSpinComplexo_Obs->setValue(matpolos[0][1]);
 
-    ui->dSpinP1Real->setValue(matpolos[0][0]);
-    ui->dSpinComplexo->setValue(matpolos[0][1]);
+    ui->dSpinP2Real_Obs->setValue(matpolos[1][0]);
+    ui->labelComplexo_Obs->setText(QString::number(matpolos[1][1],'g',3));
 
-    ui->dSpinP2Real->setValue(matpolos[1][0]);
-    ui->labelComplexo->setText(QString::number(matpolos[1][1],'g',3));
-
-    ui->dSpinP1Real->blockSignals(false);
-    ui->dSpinP2Real->blockSignals(false);
-    ui->dSpinComplexo->blockSignals(false);
-
+    ui->dSpinP1Real_Obs->blockSignals(false);
+    ui->dSpinP2Real_Obs->blockSignals(false);
+    ui->dSpinComplexo_Obs->blockSignals(false);
 }
 void MainWindow:: UI_connect_observador_PtoL()
 {
 
-    double c = ui->dSpinComplexo->value();
-    double p1 = ui->dSpinP1Real->value();
+    double c = ui->dSpinComplexo_Obs->value();
+    double p1 = ui->dSpinP1Real_Obs->value();
     if(c > -1e-5 && c < 1e-5)
     {
-        ui->dSpinP2Real->setEnabled(true);
-        ui->labelComplexo->setText("0.0");
+        ui->dSpinP2Real_Obs->setEnabled(true);
+        ui->labelComplexo_Obs->setText("0.0");
     }
     else
     {
-        ui->dSpinP2Real->setEnabled(false);
-        ui->dSpinP2Real->setValue(p1);
-        ui->labelComplexo->setText(QString::number(-c,'g',3));
+        ui->dSpinP2Real_Obs->setEnabled(false);
+        ui->dSpinP2Real_Obs->setValue(p1);
+        ui->labelComplexo_Obs->setText(QString::number(-c,'g',3));
     }
-    double p2 = ui->dSpinP2Real->value();
-
+    double p2 = ui->dSpinP2Real_Obs->value();
 
     matpolos[0][0] = p1;
     matpolos[0][1] = c;
     matpolos[1][0] = p2;
     matpolos[1][1] = (-1)*c;
 
-    //qDebug() << "p1" << p1;
-   // qDebug() << "p2" << p2;
-   // qDebug() << "c" << c;
-
-
-
-
     matls = control->getLFromPolo(matpolos);
 
+    ui->dSpinL1_Obs->blockSignals(true);
+    ui->dSpinL2_Obs->blockSignals(true);
 
-    ui->dSpinL1->blockSignals(true);
-    ui->dSpinL2->blockSignals(true);
+    ui->dSpinL1_Obs->setValue(matls[0][0]);
+    ui->dSpinL2_Obs->setValue(matls[1][0]);
 
-    ui->dSpinL1->setValue(matls[0][0]);
-    ui->dSpinL2->setValue(matls[1][0]);
-
-    ui->dSpinL1->blockSignals(false);
-    ui->dSpinL2->blockSignals(false);
+    ui->dSpinL1_Obs->blockSignals(false);
+    ui->dSpinL2_Obs->blockSignals(false);
 }
 
 void MainWindow:: UI_connect_tipoDeSistema()
 {
-    bool obs =  ui->radioFechada->isChecked() &&
-                ui->rbSistemaO2->isChecked() &&
-                ui->radioObservador->isChecked();
+    bool fe2 = ui->radioFechada->isChecked() && ui->radioFechada->isChecked() ;
+    bool obs = fe2 && ui->radioObservador->isChecked();
+    bool seg =  fe2 && ui->radioSeguidor->isChecked();
+    bool cas =  fe2 && (ui->radioCascata->isChecked() || ui->radioSimples->isChecked());
+
     ui->frameKP->setVisible(obs);
     ui->groupObservador->setVisible(obs);
+    ui->frameSeguidorValores->setVisible(seg);
+    ui->tabControlador->setVisible(cas);
+    ui->gp_modoControle->setVisible(cas);
 }
 
 void MainWindow::UI_configGraphWrite()
@@ -403,9 +483,9 @@ void MainWindow::UI_configPlotGraficosL()
     canalLeituraPlotVec[7] = ui->cb_plot_canal7->isChecked();
 
 
-    for(int i=0; i<NUMB_CAN_READ; i++)
+    for(int i=0; i<2; i++)
     {
-        if(canalLeituraPlotVec[i] && canalLeituraVec[i])
+        if(canalLeituraPlotVec[i])
         {
             ui->graficoLeitura->graph(i+2)->addToLegend();
             ui->graficoLeitura->graph(i+2)->setVisible(true);
@@ -416,6 +496,9 @@ void MainWindow::UI_configPlotGraficosL()
             ui->graficoLeitura->graph(i+2)->setVisible(false);
         }
     }
+
+
+
 
 }
 
@@ -472,6 +555,7 @@ void MainWindow::UI_configPanel()
     ui->dSpinAux->setVisible(false);
     ui->labelAux->setVisible(false);
     ui->frameKP->setVisible(false);
+    ui->frameSeguidorValores->setVisible(false);
 
     UI_malhaAberta();
     UI_configControlador();
@@ -535,6 +619,7 @@ void MainWindow::UI_configControlador()
     bool controlConstTempo = ui->rb_constTempo->isChecked();
     bool controlConstGanho = ui->rb_constGanho->isChecked();
     int tipoControler = ui->tipoControlador->currentIndex();
+    int tipoControler_Escravo = ui->tipoControlador_2->currentIndex();
 
     if(controlConstGanho)
     {
@@ -587,6 +672,45 @@ void MainWindow::UI_configControlador()
 
         ui->cb_plot_i->setDisabled(false);
         ui->cb_plot_d->setDisabled(false);
+        break;
+    }
+
+    switch (tipoControler_Escravo)
+    {
+    case CONTROLER_P:
+        ui->sp_kd_td_2->setDisabled(true);
+        ui->sp_ki_ti_2->setDisabled(true);
+
+        ui->cb_plot_i_2->setDisabled(true);
+        ui->cb_plot_d_2->setDisabled(true);
+        break;
+    case CONTROLER_PD:
+        ui->sp_kd_td_2->setDisabled(false);
+        ui->sp_ki_ti_2->setDisabled(true);
+
+        ui->cb_plot_i_2->setDisabled(true);
+        ui->cb_plot_d_2->setDisabled(false);
+        break;
+    case CONTROLER_PI:
+        ui->sp_kd_td_2->setDisabled(true);
+        ui->sp_ki_ti_2->setDisabled(false);
+
+        ui->cb_plot_i_2->setDisabled(false);
+        ui->cb_plot_d_2->setDisabled(true);
+        break;
+    case CONTROLER_PID:
+        ui->sp_kd_td_2->setDisabled(false);
+        ui->sp_ki_ti_2->setDisabled(false);
+
+        ui->cb_plot_i_2->setDisabled(false);
+        ui->cb_plot_d_2->setDisabled(false);
+        break;
+    case CONTROLER_PI_D:
+        ui->sp_kd_td_2->setDisabled(false);
+        ui->sp_ki_ti_2->setDisabled(false);
+
+        ui->cb_plot_i_2->setDisabled(false);
+        ui->cb_plot_d_2->setDisabled(false);
         break;
     }
 }
@@ -764,15 +888,14 @@ void MainWindow::zerarSinal()
 void MainWindow::controladorPID()
 {
     if(ui->radioSimples->isChecked()) {
-       // control->setModeSegOrdem(C_O2_CONVENCIONAL);
+        control->setModeSegOrdem(C_O2_CONVENCIONAL);
     }
     else if(ui->radioCascata->isChecked()) {
-        //control->setModeSegOrdem(C_O2_CASCATA);
+        control->setModeSegOrdem(C_O2_CASCATA);
     }
-    else {
-        //control->setModeSegOrdem(C_O2_CONVENCIONAL);
+    else if(ui->radioSeguidor->isChecked()){
+        control->setModeSegOrdem(C_O2_SEGUIDOR);
     }
-    control->setModeSegOrdem(C_O2_SEGUIDOR);
 
     bool controlerGanho = ui->rb_constGanho->isChecked();
     bool controlerTempo = ui->rb_constTempo->isChecked();
@@ -848,11 +971,12 @@ void MainWindow::data()
     bool primeiraOrdem = ui->rbSistemaO1->isChecked();
     bool segundaOrdem = ui->rbSistemaO2->isChecked();
     bool observador = ui->radioObservador->isChecked();
+    bool seguidor = ui->radioSeguidor->isChecked();
     //bool controladorCascataO2 = ui->radioCascata->isChecked();
     //bool controladorSimplesO2 = ui->radioSimples->isChecked();
 
-    double polo1[2] = {ui->dSpinP1Real->value(),ui->dSpinComplexo->value()};
-    double polo2[2] = {ui->dSpinP2Real->value(),-(ui->dSpinComplexo->value())};
+    double polo1[2] = {ui->dSpinP1Real_Obs->value(),ui->dSpinComplexo_Obs->value()};
+    double polo2[2] = {ui->dSpinP2Real_Obs->value(),-(ui->dSpinComplexo_Obs->value())};
 
     qDebug() << "polos main windows";
     qDebug() << polo1[0] << polo1[1];
@@ -892,6 +1016,10 @@ void MainWindow::data()
             control->setObservador(true);
         } else {
             control->setObservador(false);
+        }
+
+        if(seguidor) {
+            control->setGanhosSeguidor(matGanhosSeguidor);
         }
     }
 

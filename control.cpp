@@ -356,7 +356,7 @@ void Control::calculaSinal() {
 
     if(tipoMalha == M_FECHADA) {
 
-        if(ordemSistema == SISTEMA_ORDEM_2)
+        if(modeSegOrdem != C_O2_SEGUIDOR)
         {
             if(modeControle == CONTROLE_CONST_TEMP) {
                Ki = Kp / tempoIntegrativo;
@@ -377,10 +377,7 @@ void Control::calculaSinal() {
 
                 }
             }
-        }
 
-        if(modeSegOrdem == C_O2_SEGUIDOR)
-        {
             controller->setWindUp(windUP);
 
             /*
@@ -411,12 +408,12 @@ void Control::calculaSinal() {
             } else if(modeSegOrdem == C_O2_SEGUIDOR) {
 
                 double polos[5];
-                polos[0] = 0.990;
-                polos[1] = 0.0;
-                polos[2] = 0.990;
-                polos[3] = 0.0;
+                polos[0] = 0.99;
+                polos[1] = 0.00;
+                polos[2] = 0.99;
+                polos[3] = 0.00;
                 polos[4] = 0.5;
-                sinalCalculado = seguidor->seguidor(tanque1, tanque2, amplitude, polos);
+                sinalCalculado = seguidor->seguidor(tanque1, tanque2, erro, ganhosSeguidor);
             }
         }
     }
@@ -580,4 +577,14 @@ double**  Control::getPoloFromL(double** mat)  {
 
 double**  Control::getLFromPolo(double** mat)  {
     observadorTanque1->getLFromPolo(mat);
+}
+
+mat Control::getKsFromPolos(double polos[5])
+{
+    return seguidor->getKsFromPolos(polos);
+}
+
+void Control::setGanhosSeguidor(mat ganhos)
+{
+    ganhosSeguidor = ganhos;
 }

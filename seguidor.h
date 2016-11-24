@@ -17,7 +17,6 @@ class Seguidor : public Matriz
     double ganhoK1;
     double ganhoK21;
     double ganhoK22;
-    double erro;
     double tensao;
     double v;
 
@@ -33,13 +32,19 @@ class Seguidor : public Matriz
     mat::fixed<1,3> matGanhos; /* 1x3*/
     mat::fixed<3,3> matAuxGanhos; /* 3x3 */
 
+    mat::fixed<3,3> matQgTemp;
+    mat::fixed<1,3> matArckemannTemp;
+    mat::fixed<1,3> matGanhosTemp;
+
+
     bool verificaPolos(double polos[5]);
     void ganhosArckemann();
 public:
     Seguidor();
     ~Seguidor();
 
-    double seguidor(double nivelT1, double nivelT2, double setPoint, double polos[5]);
+    double seguidor(double nivelT1, double nivelT2, double erro, mat ganhos);
+    mat getKsFromPolos(double polos[5]);
 };
 
 #endif // SEGUIDOR_H

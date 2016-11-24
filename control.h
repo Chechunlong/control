@@ -215,6 +215,9 @@ public:
     double**  getPoloFromL(double** mat);
     double**  getLFromPolo(double** mat);
 
+    mat getKsFromPolos(double polos[5]);
+    void setGanhosSeguidor(mat ganhos);
+
 private:
     Quanser *quanser;
     Signal *signal;
@@ -317,7 +320,7 @@ private:
 
     double sinalParCas = 0;
 
-    bool simulacao = true;
+    bool simulacao = false;
 
     bool debCas = true;
 
@@ -326,6 +329,9 @@ private:
     double obsTan2, obsErTan2;
     double polo1[2]  = { 0};
     double polo2[2]  = { 0};
+
+    mat::fixed<1,3> ganhosSeguidor;
+    double polosSeguidor[5] = {0};
     bool observador = false;
 
 };
