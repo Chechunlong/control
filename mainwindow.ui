@@ -85,7 +85,7 @@
               <enum>Qt::RightToLeft</enum>
              </property>
              <property name="currentIndex">
-              <number>0</number>
+              <number>1</number>
              </property>
              <widget class="QWidget" name="tab_sinal">
               <attribute name="title">
@@ -175,18 +175,28 @@
                    <property name="frameShadow">
                     <enum>QFrame::Plain</enum>
                    </property>
-                   <layout class="QHBoxLayout" name="layoutTipo2Ordem">
-                    <item>
-                     <widget class="QRadioButton" name="radioObservador">
+                   <layout class="QGridLayout" name="gridLayout_15">
+                    <item row="2" column="2">
+                     <widget class="QRadioButton" name="radioSeguidor">
                       <property name="layoutDirection">
                        <enum>Qt::LeftToRight</enum>
                       </property>
                       <property name="text">
-                       <string>Observador</string>
+                       <string>Seguidor</string>
                       </property>
                      </widget>
                     </item>
-                    <item>
+                    <item row="0" column="3">
+                     <widget class="QRadioButton" name="radioSimples">
+                      <property name="layoutDirection">
+                       <enum>Qt::LeftToRight</enum>
+                      </property>
+                      <property name="text">
+                       <string>Simples</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="0" column="2">
                      <widget class="QRadioButton" name="radioCascata">
                       <property name="layoutDirection">
                        <enum>Qt::LeftToRight</enum>
@@ -196,13 +206,13 @@
                       </property>
                      </widget>
                     </item>
-                    <item>
-                     <widget class="QRadioButton" name="radioSimples">
+                    <item row="2" column="3">
+                     <widget class="QRadioButton" name="radioObservador">
                       <property name="layoutDirection">
                        <enum>Qt::LeftToRight</enum>
                       </property>
                       <property name="text">
-                       <string>Simples</string>
+                       <string>Observador</string>
                       </property>
                      </widget>
                     </item>
@@ -246,147 +256,6 @@
                          <width>130</width>
                          <height>0</height>
                         </size>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QFrame" name="frameKP">
-                    <property name="frameShape">
-                     <enum>QFrame::StyledPanel</enum>
-                    </property>
-                    <property name="frameShadow">
-                     <enum>QFrame::Raised</enum>
-                    </property>
-                    <layout class="QGridLayout" name="gridLayout_13">
-                     <item row="0" column="0">
-                      <widget class="QLabel" name="label">
-                       <property name="text">
-                        <string>L1</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="0" column="4">
-                      <widget class="QDoubleSpinBox" name="dSpinP1Real">
-                       <property name="decimals">
-                        <number>3</number>
-                       </property>
-                       <property name="minimum">
-                        <double>-1.000000000000000</double>
-                       </property>
-                       <property name="maximum">
-                        <double>1.000000000000000</double>
-                       </property>
-                       <property name="singleStep">
-                        <double>0.100000000000000</double>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="0" column="5" colspan="2">
-                      <widget class="QLabel" name="label_5">
-                       <property name="text">
-                        <string>+</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="1" column="0" rowspan="2">
-                      <widget class="QLabel" name="label_2">
-                       <property name="text">
-                        <string>L2</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="1" column="1" rowspan="2">
-                      <widget class="QDoubleSpinBox" name="dSpinL2">
-                       <property name="decimals">
-                        <number>3</number>
-                       </property>
-                       <property name="minimum">
-                        <double>0.000000000000000</double>
-                       </property>
-                       <property name="maximum">
-                        <double>999.990000000000009</double>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="1" column="3" rowspan="2">
-                      <widget class="QLabel" name="label_4">
-                       <property name="text">
-                        <string>P2</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="1" column="4" rowspan="2">
-                      <widget class="QDoubleSpinBox" name="dSpinP2Real">
-                       <property name="decimals">
-                        <number>3</number>
-                       </property>
-                       <property name="minimum">
-                        <double>-1.000000000000000</double>
-                       </property>
-                       <property name="maximum">
-                        <double>1.000000000000000</double>
-                       </property>
-                       <property name="singleStep">
-                        <double>0.100000000000000</double>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="0" column="1">
-                      <widget class="QDoubleSpinBox" name="dSpinL1">
-                       <property name="decimals">
-                        <number>3</number>
-                       </property>
-                       <property name="minimum">
-                        <double>0.000000000000000</double>
-                       </property>
-                       <property name="maximum">
-                        <double>999.990000000000009</double>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="0" column="3">
-                      <widget class="QLabel" name="label_3">
-                       <property name="text">
-                        <string>P1</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="0" column="8">
-                      <widget class="QDoubleSpinBox" name="dSpinComplexo">
-                       <property name="decimals">
-                        <number>3</number>
-                       </property>
-                       <property name="minimum">
-                        <double>-1.000000000000000</double>
-                       </property>
-                       <property name="maximum">
-                        <double>1.000000000000000</double>
-                       </property>
-                       <property name="singleStep">
-                        <double>0.100000000000000</double>
-                       </property>
-                       <property name="value">
-                        <double>0.000000000000000</double>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="1" column="5" rowspan="2" colspan="2">
-                      <widget class="QLabel" name="label_6">
-                       <property name="text">
-                        <string>+</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="1" column="8" rowspan="2">
-                      <widget class="QLabel" name="labelComplexo">
-                       <property name="text">
-                        <string>0.000</string>
-                       </property>
-                       <property name="alignment">
-                        <set>Qt::AlignCenter</set>
                        </property>
                       </widget>
                      </item>
@@ -597,6 +466,22 @@
                      </property>
                     </widget>
                    </item>
+                   <item row="2" column="0">
+                    <spacer name="verticalSpacer_9">
+                     <property name="orientation">
+                      <enum>Qt::Vertical</enum>
+                     </property>
+                     <property name="sizeType">
+                      <enum>QSizePolicy::Fixed</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>20</width>
+                       <height>5</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
                    <item row="3" column="0" colspan="2">
                     <widget class="QGroupBox" name="gp_parametrosControle">
                      <property name="layoutDirection">
@@ -606,7 +491,33 @@
                       <string>Parâmetros de ajuste</string>
                      </property>
                      <layout class="QGridLayout" name="gridLayout_11">
-                      <item row="1" column="0">
+                      <item row="2" column="1">
+                       <spacer name="verticalSpacer_13">
+                        <property name="orientation">
+                         <enum>Qt::Vertical</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>20</width>
+                          <height>40</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                      <item row="4" column="1">
+                       <spacer name="verticalSpacer_15">
+                        <property name="orientation">
+                         <enum>Qt::Vertical</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>20</width>
+                          <height>40</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                      <item row="3" column="0">
                        <widget class="QLabel" name="lb_ki_ti">
                         <property name="layoutDirection">
                          <enum>Qt::LeftToRight</enum>
@@ -619,7 +530,7 @@
                         </property>
                        </widget>
                       </item>
-                      <item row="0" column="1">
+                      <item row="1" column="1">
                        <widget class="QDoubleSpinBox" name="sp_kp">
                         <property name="layoutDirection">
                          <enum>Qt::LeftToRight</enum>
@@ -635,7 +546,7 @@
                         </property>
                        </widget>
                       </item>
-                      <item row="2" column="0">
+                      <item row="5" column="0">
                        <widget class="QLabel" name="lb_kd_td">
                         <property name="layoutDirection">
                          <enum>Qt::LeftToRight</enum>
@@ -648,14 +559,14 @@
                         </property>
                        </widget>
                       </item>
-                      <item row="1" column="4">
+                      <item row="3" column="4">
                        <widget class="QComboBox" name="combo_Tr">
                         <property name="enabled">
                          <bool>false</bool>
                         </property>
                        </widget>
                       </item>
-                      <item row="0" column="0">
+                      <item row="1" column="0">
                        <widget class="QLabel" name="lb_kp">
                         <property name="layoutDirection">
                          <enum>Qt::LeftToRight</enum>
@@ -668,7 +579,7 @@
                         </property>
                        </widget>
                       </item>
-                      <item row="2" column="1">
+                      <item row="5" column="1">
                        <widget class="QDoubleSpinBox" name="sp_kd_td">
                         <property name="layoutDirection">
                          <enum>Qt::LeftToRight</enum>
@@ -681,14 +592,14 @@
                         </property>
                        </widget>
                       </item>
-                      <item row="2" column="4">
+                      <item row="5" column="4">
                        <widget class="QComboBox" name="combo_Mp">
                         <property name="enabled">
                          <bool>false</bool>
                         </property>
                        </widget>
                       </item>
-                      <item row="1" column="3">
+                      <item row="3" column="3">
                        <widget class="QLabel" name="label_Tr">
                         <property name="text">
                          <string>Tr =</string>
@@ -698,7 +609,7 @@
                         </property>
                        </widget>
                       </item>
-                      <item row="1" column="1">
+                      <item row="3" column="1">
                        <widget class="QDoubleSpinBox" name="sp_ki_ti">
                         <property name="layoutDirection">
                          <enum>Qt::LeftToRight</enum>
@@ -711,14 +622,14 @@
                         </property>
                        </widget>
                       </item>
-                      <item row="0" column="4">
+                      <item row="1" column="4">
                        <widget class="QComboBox" name="combo_Ts">
                         <property name="enabled">
                          <bool>false</bool>
                         </property>
                        </widget>
                       </item>
-                      <item row="0" column="3">
+                      <item row="1" column="3">
                        <widget class="QLabel" name="label_Ts">
                         <property name="text">
                          <string>Ts =</string>
@@ -728,7 +639,7 @@
                         </property>
                        </widget>
                       </item>
-                      <item row="2" column="3">
+                      <item row="5" column="3">
                        <widget class="QLabel" name="label_Mp">
                         <property name="enabled">
                          <bool>true</bool>
@@ -741,10 +652,36 @@
                         </property>
                        </widget>
                       </item>
+                      <item row="0" column="1">
+                       <spacer name="verticalSpacer_10">
+                        <property name="orientation">
+                         <enum>Qt::Vertical</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>20</width>
+                          <height>40</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                      <item row="6" column="1">
+                       <spacer name="verticalSpacer_16">
+                        <property name="orientation">
+                         <enum>Qt::Vertical</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>20</width>
+                          <height>40</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
                      </layout>
                     </widget>
                    </item>
-                   <item row="2" column="1">
+                   <item row="0" column="1">
                     <spacer name="verticalSpacer_5">
                      <property name="orientation">
                       <enum>Qt::Vertical</enum>
@@ -760,7 +697,7 @@
                      </property>
                     </spacer>
                    </item>
-                   <item row="0" column="1">
+                   <item row="0" column="0">
                     <spacer name="verticalSpacer_6">
                      <property name="orientation">
                       <enum>Qt::Vertical</enum>
@@ -776,24 +713,8 @@
                      </property>
                     </spacer>
                    </item>
-                   <item row="0" column="0">
+                   <item row="2" column="1">
                     <spacer name="verticalSpacer_7">
-                     <property name="orientation">
-                      <enum>Qt::Vertical</enum>
-                     </property>
-                     <property name="sizeType">
-                      <enum>QSizePolicy::Fixed</enum>
-                     </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>20</width>
-                       <height>5</height>
-                      </size>
-                     </property>
-                    </spacer>
-                   </item>
-                   <item row="2" column="0">
-                    <spacer name="verticalSpacer_9">
                      <property name="orientation">
                       <enum>Qt::Vertical</enum>
                      </property>
@@ -812,10 +733,10 @@
                   <zorder>gp_parametrosControle</zorder>
                   <zorder>lb_tipoControlador</zorder>
                   <zorder>tipoControlador</zorder>
+                  <zorder>verticalSpacer_9</zorder>
                   <zorder>verticalSpacer_5</zorder>
                   <zorder>verticalSpacer_6</zorder>
                   <zorder>verticalSpacer_7</zorder>
-                  <zorder>verticalSpacer_9</zorder>
                  </widget>
                  <widget class="QWidget" name="tabEscravo">
                   <attribute name="title">
@@ -999,6 +920,22 @@
                      </property>
                     </widget>
                    </item>
+                   <item row="2" column="1">
+                    <spacer name="verticalSpacer">
+                     <property name="orientation">
+                      <enum>Qt::Vertical</enum>
+                     </property>
+                     <property name="sizeType">
+                      <enum>QSizePolicy::Fixed</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>20</width>
+                       <height>5</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
                    <item row="0" column="1">
                     <spacer name="verticalSpacer_2">
                      <property name="orientation">
@@ -1031,25 +968,386 @@
                      </property>
                     </spacer>
                    </item>
-                   <item row="2" column="1">
-                    <spacer name="verticalSpacer">
-                     <property name="orientation">
-                      <enum>Qt::Vertical</enum>
-                     </property>
-                     <property name="sizeType">
-                      <enum>QSizePolicy::Fixed</enum>
-                     </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>20</width>
-                       <height>5</height>
-                      </size>
-                     </property>
-                    </spacer>
-                   </item>
                   </layout>
                  </widget>
                 </widget>
+               </item>
+               <item>
+                <widget class="QFrame" name="frameKP">
+                 <property name="layoutDirection">
+                  <enum>Qt::LeftToRight</enum>
+                 </property>
+                 <property name="frameShape">
+                  <enum>QFrame::StyledPanel</enum>
+                 </property>
+                 <property name="frameShadow">
+                  <enum>QFrame::Raised</enum>
+                 </property>
+                 <layout class="QGridLayout" name="gridLayout_16">
+                  <item row="0" column="0">
+                   <widget class="QLabel" name="label_7">
+                    <property name="text">
+                     <string>L1</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="5">
+                   <widget class="QDoubleSpinBox" name="dSpinP1Real_Obs">
+                    <property name="decimals">
+                     <number>3</number>
+                    </property>
+                    <property name="minimum">
+                     <double>-1.000000000000000</double>
+                    </property>
+                    <property name="maximum">
+                     <double>1.000000000000000</double>
+                    </property>
+                    <property name="singleStep">
+                     <double>0.100000000000000</double>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="6" colspan="2">
+                   <widget class="QLabel" name="label_8">
+                    <property name="text">
+                     <string>+ i</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="0" rowspan="2">
+                   <widget class="QLabel" name="label_9">
+                    <property name="text">
+                     <string>L2</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="1" rowspan="2">
+                   <widget class="QDoubleSpinBox" name="dSpinL2_Obs">
+                    <property name="decimals">
+                     <number>3</number>
+                    </property>
+                    <property name="minimum">
+                     <double>0.000000000000000</double>
+                    </property>
+                    <property name="maximum">
+                     <double>999.990000000000009</double>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="4" rowspan="2">
+                   <widget class="QLabel" name="label_10">
+                    <property name="text">
+                     <string>P2</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="5" rowspan="2">
+                   <widget class="QDoubleSpinBox" name="dSpinP2Real_Obs">
+                    <property name="decimals">
+                     <number>3</number>
+                    </property>
+                    <property name="minimum">
+                     <double>-1.000000000000000</double>
+                    </property>
+                    <property name="maximum">
+                     <double>1.000000000000000</double>
+                    </property>
+                    <property name="singleStep">
+                     <double>0.100000000000000</double>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="1">
+                   <widget class="QDoubleSpinBox" name="dSpinL1_Obs">
+                    <property name="decimals">
+                     <number>3</number>
+                    </property>
+                    <property name="minimum">
+                     <double>0.000000000000000</double>
+                    </property>
+                    <property name="maximum">
+                     <double>999.990000000000009</double>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="4">
+                   <widget class="QLabel" name="label_11">
+                    <property name="text">
+                     <string>P1</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="9">
+                   <widget class="QDoubleSpinBox" name="dSpinComplexo_Obs">
+                    <property name="decimals">
+                     <number>3</number>
+                    </property>
+                    <property name="minimum">
+                     <double>-1.000000000000000</double>
+                    </property>
+                    <property name="maximum">
+                     <double>1.000000000000000</double>
+                    </property>
+                    <property name="singleStep">
+                     <double>0.100000000000000</double>
+                    </property>
+                    <property name="value">
+                     <double>0.000000000000000</double>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="6" rowspan="2" colspan="2">
+                   <widget class="QLabel" name="label_12">
+                    <property name="text">
+                     <string>+ i</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="9" rowspan="2">
+                   <widget class="QLabel" name="labelComplexo_Obs">
+                    <property name="frameShape">
+                     <enum>QFrame::StyledPanel</enum>
+                    </property>
+                    <property name="text">
+                     <string>0.000</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignCenter</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="3" rowspan="3">
+                   <widget class="Line" name="line_2">
+                    <property name="frameShadow">
+                     <enum>QFrame::Raised</enum>
+                    </property>
+                    <property name="orientation">
+                     <enum>Qt::Vertical</enum>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item>
+                <widget class="QFrame" name="frameSeguidorValores">
+                 <property name="layoutDirection">
+                  <enum>Qt::RightToLeft</enum>
+                 </property>
+                 <property name="frameShape">
+                  <enum>QFrame::StyledPanel</enum>
+                 </property>
+                 <property name="frameShadow">
+                  <enum>QFrame::Raised</enum>
+                 </property>
+                 <layout class="QGridLayout" name="gridLayout_17">
+                  <item row="1" column="0" rowspan="2">
+                   <widget class="Line" name="line_4">
+                    <property name="frameShadow">
+                     <enum>QFrame::Plain</enum>
+                    </property>
+                    <property name="lineWidth">
+                     <number>2</number>
+                    </property>
+                    <property name="midLineWidth">
+                     <number>0</number>
+                    </property>
+                    <property name="orientation">
+                     <enum>Qt::Vertical</enum>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="7">
+                   <widget class="QDoubleSpinBox" name="dSpinP1Real_Seg">
+                    <property name="layoutDirection">
+                     <enum>Qt::LeftToRight</enum>
+                    </property>
+                    <property name="decimals">
+                     <number>6</number>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="4" rowspan="3">
+                   <widget class="Line" name="line">
+                    <property name="frameShadow">
+                     <enum>QFrame::Raised</enum>
+                    </property>
+                    <property name="orientation">
+                     <enum>Qt::Vertical</enum>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="2" rowspan="2">
+                   <widget class="Line" name="line_3">
+                    <property name="frameShadow">
+                     <enum>QFrame::Plain</enum>
+                    </property>
+                    <property name="lineWidth">
+                     <number>2</number>
+                    </property>
+                    <property name="midLineWidth">
+                     <number>0</number>
+                    </property>
+                    <property name="orientation">
+                     <enum>Qt::Vertical</enum>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="3" rowspan="2">
+                   <widget class="QLabel" name="label_19">
+                    <property name="text">
+                     <string>K2</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="1">
+                   <widget class="QDoubleSpinBox" name="dSpinK1_Seg">
+                    <property name="layoutDirection">
+                     <enum>Qt::LeftToRight</enum>
+                    </property>
+                    <property name="decimals">
+                     <number>6</number>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="1">
+                   <widget class="QDoubleSpinBox" name="dSpinK2_Seg">
+                    <property name="layoutDirection">
+                     <enum>Qt::LeftToRight</enum>
+                    </property>
+                    <property name="decimals">
+                     <number>6</number>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="7">
+                   <widget class="QDoubleSpinBox" name="dSpinP2Real_Seg">
+                    <property name="layoutDirection">
+                     <enum>Qt::LeftToRight</enum>
+                    </property>
+                    <property name="decimals">
+                     <number>6</number>
+                    </property>
+                    <property name="maximum">
+                     <double>1.000000000000000</double>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="6">
+                   <widget class="QLabel" name="label_16">
+                    <property name="text">
+                     <string>+ i</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="5">
+                   <widget class="QDoubleSpinBox" name="dSpinP1Com_Seg">
+                    <property name="layoutDirection">
+                     <enum>Qt::LeftToRight</enum>
+                    </property>
+                    <property name="decimals">
+                     <number>6</number>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="7">
+                   <widget class="QDoubleSpinBox" name="dSpinP3Real_Seg">
+                    <property name="layoutDirection">
+                     <enum>Qt::LeftToRight</enum>
+                    </property>
+                    <property name="decimals">
+                     <number>6</number>
+                    </property>
+                    <property name="maximum">
+                     <double>1.000000000000000</double>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="1">
+                   <widget class="QDoubleSpinBox" name="dSpinK3_Seg">
+                    <property name="layoutDirection">
+                     <enum>Qt::LeftToRight</enum>
+                    </property>
+                    <property name="decimals">
+                     <number>6</number>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="8">
+                   <widget class="QLabel" name="label_14">
+                    <property name="text">
+                     <string>P2</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="8">
+                   <widget class="QLabel" name="label_13">
+                    <property name="text">
+                     <string>P1</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="8">
+                   <widget class="QLabel" name="label_15">
+                    <property name="text">
+                     <string>P3</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="6">
+                   <widget class="QLabel" name="label_17">
+                    <property name="text">
+                     <string>+ i</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="3">
+                   <widget class="QLabel" name="label_18">
+                    <property name="text">
+                     <string>K1</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="5">
+                   <widget class="QLabel" name="labelComplexo_Seg">
+                    <property name="frameShape">
+                     <enum>QFrame::StyledPanel</enum>
+                    </property>
+                    <property name="frameShadow">
+                     <enum>QFrame::Plain</enum>
+                    </property>
+                    <property name="lineWidth">
+                     <number>1</number>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                    <property name="wordWrap">
+                     <bool>false</bool>
+                    </property>
+                    <property name="margin">
+                     <number>0</number>
+                    </property>
+                    <property name="indent">
+                     <number>-1</number>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item>
+                <spacer name="verticalSpacer_8">
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                </spacer>
                </item>
               </layout>
              </widget>

@@ -93,6 +93,9 @@ private slots:
 
     void UI_connect_observador_LtoP();
     void UI_connect_observador_PtoL();
+    void UI_connect_seguidor_KtoP();
+    void UI_connect_seguidor_PtoK();
+
 private:
     Ui::MainWindow *ui;
 
@@ -130,7 +133,7 @@ private:
     double** matls;
 
 
-
+    mat::fixed<1,3> matGanhosSeguidor; /* 1x3*/
 
 };
 

@@ -15,6 +15,8 @@ Control::Control(int port, QString ip)
     observadorTanque1 = new Observador();
     observadorTanque2 = new Observador();
 
+    seguidor = new Seguidor();
+
 
 /*    timeAux     = 0;
     tipoSinal   = 0;
@@ -353,36 +355,40 @@ void Control::calculaSinal() {
     if(timeAux > periodo) timeAux = 0;
 
     if(tipoMalha == M_FECHADA) {
-        if(modeControle == CONTROLE_CONST_TEMP) {
-           Ki = Kp / tempoIntegrativo;
-           Kd = Kp * tempoDerivativo;
 
-           if(ordemSistema == SISTEMA_ORDEM_2 && modeSegOrdem == C_O2_CASCATA) {
-                KiCas = KpCas / tempoIntegrativoCas;
-                KdCas = KpCas * tempoDerivativoCas;
-           }
-        }
-        else {
-            tempoDerivativo = Kd/ Kp;
-            tempoIntegrativo = Kp / Ki;
+        if(modeSegOrdem != C_O2_SEGUIDOR)
+        {
+            if(modeControle == CONTROLE_CONST_TEMP) {
+               Ki = Kp / tempoIntegrativo;
+               Kd = Kp * tempoDerivativo;
 
-            if(ordemSistema == SISTEMA_ORDEM_2 && modeSegOrdem == C_O2_CASCATA) {
-
-                // TODO ...
-
+               if(modeSegOrdem == C_O2_CASCATA) {
+                    KiCas = KpCas / tempoIntegrativoCas;
+                    KdCas = KpCas * tempoDerivativoCas;
+               }
             }
+            else {
+                tempoDerivativo = Kd/ Kp;
+                tempoIntegrativo = Kp / Ki;
+
+                if(modeSegOrdem == C_O2_CASCATA) {
+
+                    // TODO ...
+
+                }
+            }
+
+            controller->setWindUp(windUP);
+
+            /*
+                Para Malha fechada e 2a ordem convencional
+            */
+
+            sinalParCas = calculaTensaoPID(controller, tipoControler, Kp, Ki, Kd, erro, sinalLeitura);
         }
-
-        controller->setWindUp(windUP);
-
-        /*
-            Para Malha fechada e 2a ordem convencional
-        */
-
-        sinalParCas = calculaTensaoPID(controller, tipoControler, Kp, Ki, Kd, erro, sinalLeitura);
 
         if(ordemSistema == SISTEMA_ORDEM_2) {
-           if(modeSegOrdem == C_O2_CASCATA) {                
+           if(modeSegOrdem == C_O2_CASCATA) {
                 erroCas = sinalParCas - tanque1;
                 sinalCalculado = calculaTensaoPID(contCascata, tipoControlerCas, KpCas, KiCas, KdCas, erroCas, sinalCalculado);
             } else if(modeSegOrdem == C_O2_CONVENCIONAL) {
@@ -399,6 +405,15 @@ void Control::calculaSinal() {
                     //qDebug() << obsTan1;
                     //qDebug() << obsTan2;
                 }
+            } else if(modeSegOrdem == C_O2_SEGUIDOR) {
+
+                double polos[5];
+                polos[0] = 0.99;
+                polos[1] = 0.00;
+                polos[2] = 0.99;
+                polos[3] = 0.00;
+                polos[4] = 0.5;
+                sinalCalculado = seguidor->seguidor(tanque1, tanque2, erro, ganhosSeguidor);
             }
         }
     }
@@ -562,4 +577,14 @@ double**  Control::getPoloFromL(double** mat)  {
 
 double**  Control::getLFromPolo(double** mat)  {
     observadorTanque1->getLFromPolo(mat);
+}
+
+mat Control::getKsFromPolos(double polos[5])
+{
+    return seguidor->getKsFromPolos(polos);
+}
+
+void Control::setGanhosSeguidor(mat ganhos)
+{
+    ganhosSeguidor = ganhos;
 }
