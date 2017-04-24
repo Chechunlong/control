@@ -2,7 +2,8 @@
 #define SISTEMAO2_H
 
 #include <cstdlib>
-#include <qdebug.h>
+
+//#include <qdebug.h>
 
 #define TR100 0
 #define TR95 1

@@ -320,7 +320,7 @@ private:
 
     double sinalParCas = 0;
 
-    bool simulacao = false;
+    bool simulacao = true;
 
     bool debCas = true;
 

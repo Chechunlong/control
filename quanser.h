@@ -54,6 +54,7 @@ private:
       if (result == -1)  {
          perror ("Houve erro no cliente");
          status = false;
+         status = false;
          return 1;
       }
       else {
@@ -110,15 +111,16 @@ private:
 public:
     Quanser (char* _server, int _tcpPort) {
 
+        //return true;
         //qDebug() << _server;
         //qDebug() << _tcpPort;
 
         this->tcpPort = _tcpPort;
         this->server = _server;
-        this->connectServer();
+        //this->connectServer();
 
-       //if(_tcpPort == 20081) status = true;
-       //else status = false;
+       if(_tcpPort == 20081) status = true;
+       else status = false;
     }
 
     ~Quanser(void){
@@ -169,6 +171,7 @@ public:
     }
 
     bool getStatus() {
+        return true;
         return status;
     }
 };

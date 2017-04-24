@@ -958,6 +958,11 @@ void MainWindow::controladorPID()
 
 void MainWindow::data()
 {
+
+    FuzzyUI* configFuzzy = new FuzzyUI();
+
+    configFuzzy->show();
+
     double  amplitude = ui->dSpinAmp->value();
     double  periodo   = ui->dSpinPeriodo->value();
     double  offSet    = ui->dSpinOffSet->value();

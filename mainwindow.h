@@ -6,6 +6,7 @@
 #include "qthread.h"
 #include "qcustomplot.h"
 #include "control.h"
+#include "fuzzyUI.h"
 
 #include "conectar.h"
 
@@ -124,7 +125,7 @@ private:
     double sinalLeitura = 0;
     int ordemSistema = 0;
 
-    bool start = false;
+    bool start = true;
 
     double tempoLeitura = 0.0;
     double tempoEscrita = 0.0;

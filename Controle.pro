@@ -22,7 +22,8 @@ SOURCES += main.cpp\
     conectar.cpp \
     sistemaO2.cpp \
     observador.cpp \
-    seguidor.cpp
+    seguidor.cpp \
+    fuzzyUI.cpp
 
 HEADERS  += mainwindow.h \
     quanser.h \
@@ -36,9 +37,11 @@ HEADERS  += mainwindow.h \
     filtrommv.h \
     observador.h \
     seguidor.h \
-    matriz.h
+    matriz.h \
+    fuzzyUI.h
 
 FORMS    += mainwindow.ui \
-    conectar.ui
+    conectar.ui \
+    fuzzy.ui
 
 DISTFILES +=
